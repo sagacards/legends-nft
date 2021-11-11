@@ -15,6 +15,7 @@ module Ledger {
         assets  : Assets.Assets;
         ledger  : [?Principal];
         legends : [Legend];
+        supply  : Nat;
     };
 
     public type MintingStage = { #admins; #community; #general; };
