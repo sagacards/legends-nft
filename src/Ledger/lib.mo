@@ -18,19 +18,6 @@ module {
     public class Ledger (state : Types.State) {
 
 
-        /////////////
-        // Config //
-        ///////////
-
-
-        public let supply = {
-            admins = 25;
-            community = 25;
-            general = 100;
-            total = 150;
-        };
-
-
         ////////////////////////
         // Utils / Internals //
         //////////////////////
@@ -45,14 +32,6 @@ module {
             return null;
         };
 
-        private func _getMintsThisStage () : Nat {
-            switch (mintingStage) {
-                case (#admins) supply.admins - 1;
-                case (#community) supply.community - 1;
-                case (#general) supply.general - 1;
-            };
-        };
-
         public func _getLegend (i : Nat) : Types.Legend {
             legends[i];
         };
@@ -64,7 +43,7 @@ module {
 
 
         var mintingStage : Types.MintingStage = #admins;
-        var ledger : [var ?Principal] = Array.init(supply.total, null);
+        var ledger : [var ?Principal] = Array.init(state.supply, null);
         var legends : [Types.Legend] = [];
 
         // Provision ledger from stable state
@@ -106,11 +85,8 @@ module {
             assert(state.admins._isAdmin(caller));
             switch (_getNextMintIndex()) {
                 case (?i) {
-                    if (i <= _getMintsThisStage()) {
-                        ledger[i] := ?to;
-                        return #ok();
-                    };
-                    #err("No more supply this stage.");
+                    ledger[i] := ?to;
+                    #ok();
                 };
                 case _ #err("No more supply.");
             }
@@ -122,10 +98,10 @@ module {
             conf    : [Types.Legend],
         ) : Result.Result<(), Text> {
             assert(state.admins._isAdmin(caller));
-            if (conf.size() != supply.total) {
+            if (conf.size() != state.supply) {
                 return #err(
                     "Must include configuration for " #
-                    Nat.toText(supply.total) #
+                    Nat.toText(state.supply) #
                     " legends. Received " #
                     Nat.toText(conf.size())
                 );

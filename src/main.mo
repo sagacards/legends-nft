@@ -17,6 +17,14 @@ import LedgerTypes "Ledger/types";
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
 
+    /////////////
+    // Config //
+    ///////////
+
+
+    let supply = 100;
+
+
     ///////////////////
     // Stable State //
     /////////////////
@@ -32,7 +40,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     // Ledger
 
-    private stable var stableLedger : [?Principal] = Array.tabulate<?Principal>(150, func (i) { null });
+    private stable var stableLedger : [?Principal] = Array.tabulate<?Principal>(supply, func (i) { null });
     private stable var stableLegends : [LedgerTypes.Legend] = [];
 
     // Upgrades
@@ -127,6 +135,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
 
     let ledger = Ledger.Ledger({
+        supply;
         admins;
         assets;
         ledger = stableLedger;
