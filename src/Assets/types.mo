@@ -21,6 +21,7 @@ module Assets {
     public type Meta = {
         tags        : [Text];
         filename    : Text;
+        name        : Text;
         description : Text;
     };
 

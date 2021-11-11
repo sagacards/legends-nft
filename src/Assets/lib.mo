@@ -21,9 +21,9 @@ module {
     public class Assets (state : Types.State) {
 
 
-        //////////////////////////////
-        // Utilities and Internals //
-        ////////////////////////////
+        /////////////////
+        //  Internals //
+        ///////////////
 
 
         // Writes a new asset to state, including the denormalized index
@@ -40,12 +40,69 @@ module {
             };
         };
 
-        public func flattenPayload (payload : [Blob]) : Blob {
+        // Determine whether an asset has a given tag.
+        private func _assetHasTag (
+            asset   : Types.Record,
+            tag     : Text,
+        ) : Bool {
+            for (t in asset.meta.tags.vals()) {
+                if (t == tag) return true;
+            };
+            return false;
+        };
+
+
+        ////////////////
+        // Utilities //
+        //////////////
+
+
+        // Turn a list of blobs into one blob.
+        public func _flattenPayload (payload : [Blob]) : Blob {
             Blob.fromArray(
                 Array.foldLeft<Blob, [Nat8]>(payload, [], func (a : [Nat8], b : Blob) {
                     Array.append(a, Blob.toArray(b));
                 })
             );
+        };
+
+        // Find the first asset with a given tag.
+        public func _findTag (tag : Text) : ?Types.Record {
+            Array.find<Types.Record>(assets.toArray(), func (asset : Types.Record) {
+                _assetHasTag(asset, tag);
+            });
+        };
+
+        // Find the first asset with all given tag.
+        public func _findTags (tags : [Text]) : ?Types.Record {
+            Array.find<Types.Record>(assets.toArray(), func (asset : Types.Record) {
+                for (tag in tags.vals()) {
+                    if (_assetHasTag(asset, tag) == false) return false;
+                };
+                return true;
+            });
+        };
+
+        // Find all asset with a given tag.
+        public func _findAllTag (tag : Text) : [Types.Record] {
+            Array.filter<Types.Record>(assets.toArray(), func (asset : Types.Record) {
+                _assetHasTag(asset, tag);
+            });
+        };
+
+        // Get all possible card borders.
+        public func _getAllCardBorders () : [Types.Record] {
+            _findAllTag("border");
+        };
+
+        // Get all possible card backs.
+        public func _getAllCardBacks () : [Types.Record] {
+            _findAllTag("backs");
+        };
+
+        // Get card preview.
+        public func _getPreview () : ?Types.Record {
+            _findTag("preview");
         };
 
 

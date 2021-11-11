@@ -1,10 +1,11 @@
 #!/bin/zsh
 
 file=${1}
-tags=("${(@s/ /)2}")
-description=${3}
-threshold=${4:-100000}
-network=${5:-local}
+name=${2}
+tags=("${(@s/ /)3}")
+description=${4}
+threshold=${5:-100000}
+network=${6:-local}
 
 filename=$(echo $file | sed -E "s/.+\///")
 fileextension=$(echo $file | sed -E "s/.+\.//")
@@ -26,6 +27,7 @@ echo "Finalizing asset \"$filename\""
 dfx canister --network $network call legends uploadFinalize "(\
     \"image/$fileextension\",\
     record {\
+        \"name\" = \"$name\";\
         \"filename\" = \"$filename\";\
         \"tags\" = vec { $(for tag in $tags; echo \"$tag\"\;) };\
         \"description\" = \"$description\";\
