@@ -2,6 +2,7 @@
 
 import Admins "../Admins";
 import Assets "../Assets";
+import Ledger "../Ledger";
 
 
 module {
@@ -9,6 +10,7 @@ module {
     public type State = {
         admins : Admins.Admins;
         assets : Assets.Assets;
+        ledger : Ledger.Ledger;
     };
 
     public type HeaderField = (Text, Text);

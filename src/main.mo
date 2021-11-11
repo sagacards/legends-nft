@@ -10,14 +10,16 @@ import Assets "Assets";
 import AssetTypes "Assets/types";
 import Http "Http";
 import HttpTypes "Http/types";
+import Ledger "Ledger";
+import LedgerTypes "Ledger/types";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
 
-    /////////////////////
-    // Canister State //
     ///////////////////
+    // Stable State //
+    /////////////////
 
 
     // Assets
@@ -28,6 +30,11 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     private stable var stableAdmins : [Principal] = [creator];
 
+    // Ledger
+
+    private stable var stableLedger : [?Principal] = Array.tabulate<?Principal>(150, func (i) { null });
+    private stable var stableLegends : [LedgerTypes.Legend] = [];
+
     // Upgrades
 
     system func preupgrade() {
@@ -37,6 +44,14 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
         // Preserve admins
         stableAdmins := admins.toStable();
+
+        let { ledger = x; legends } = ledger.toStable();
+
+        // Preserve ledger
+        stableLedger := x;
+
+        // Preserve legends
+        stableLegends := legends;
     };
 
     system func postupgrade() {
@@ -72,7 +87,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
 
     let assets = Assets.Assets({
-        admins = admins;
+        admins;
         assets = stableAssets;
     });
 
@@ -106,12 +121,45 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
 
+    /////////////
+    // Ledger //
+    ///////////
+
+
+    let ledger = Ledger.Ledger({
+        admins;
+        assets;
+        ledger = stableLedger;
+        legends = stableLegends;
+    });
+
+    public shared func readLedger () : async [?Principal] {
+        ledger.read();
+    };
+
+    public shared ({ caller }) func mint (
+        to : Principal,
+    ) : async Result.Result<(), Text> {
+        ledger.mint(caller, to);
+    };
+
+    public shared ({ caller }) func configureLegends (
+        conf : [LedgerTypes.Legend],
+    ) : async Result.Result<(), Text> {
+        ledger.configureLegends(caller, conf);
+    };
+
+
     ///////////
     // HTTP //
     /////////
 
 
-    let httpHandler = Http.HttpHandler({ assets; admins; });
+    let httpHandler = Http.HttpHandler({
+        assets;
+        admins;
+        ledger;
+    });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
         httpHandler.request(request);

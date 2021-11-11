@@ -2,15 +2,20 @@
 
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
+import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
 
 // Project Imports
 
 import AssetTypes "../Assets/types";
+import Stoic "../Integrations/Stoic";
 
 // Module Imports
 
 import Types "types";
+
+
+import Debug "mo:base/Debug";
 
 
 module {
@@ -50,7 +55,7 @@ module {
                 case (?path) {
                     switch (state.assets.getAssetByName(path)) {
                         case (?asset) ({
-                            body = state.assets.flattenPayload(asset.asset.payload);
+                            body = state.assets._flattenPayload(asset.asset.payload);
                             headers = [
                                 ("Content-Type", "text/plain"),
                             ];
@@ -113,20 +118,6 @@ module {
             };
         };
 
-        private func http_token_preview(request : Types.Request) : Types.Response {
-            let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
-            // let { index } = ExtToniq.TokenIdentifier.decode(tokenId);
-            {
-                body = "";
-                headers = [
-                    ("Content-Type", "text/plain"),
-                    ("Cache-Control", "max-age=31536000"), // Cache one year
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
 
         private func http_404(msg : ?Text) : Types.Response {
             {
@@ -157,6 +148,33 @@ module {
                 ];
                 status_code = 400;
                 streaming_strategy = null;
+            };
+        };
+
+
+        /////////////////////
+        // Stoic Handlers //
+        ///////////////////
+
+
+        public func http_token_preview(request : Types.Request) : Types.Response {
+            Debug.print("Token Preview...");
+            let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
+            let { index } = Stoic.decodeToken(tokenId);
+            let legend = state.ledger._getLegend(Nat32.toNat(index));
+            Debug.print(legend.back);
+            Debug.print(legend.border);
+            switch (state.assets._findTags(["static-preview", legend.border])) {
+                case (?asset) ({
+                    body = state.assets._flattenPayload(asset.asset.payload);
+                    headers = [
+                        ("Content-Type", "text/plain"),
+                        ("Cache-Control", "max-age=31536000"), // Cache one year
+                    ];
+                    status_code = 200;
+                    streaming_strategy = null;
+                });
+                case null http_404(?"Missing preview asset.");
             };
         };
 
