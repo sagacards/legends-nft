@@ -22,7 +22,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     ///////////
 
 
-    let supply = 100;
+    let supply = 100 + 17;
 
 
     ///////////////////
