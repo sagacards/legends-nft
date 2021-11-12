@@ -2,6 +2,26 @@ network=${1:-local}
 
 dfx canister --network $network call legends configureLegends\
     "(vec {\
+
+        record { back = \"Saxon\"; border = \"Saxon\"; ink = \"Copper\"; };\
+        record { back = \"Saxon\"; border = \"Saxon\"; ink = \"Silver\"; };\
+        record { back = \"Saxon\"; border = \"Saxon\"; ink = \"Gold\"; };\
+        record { back = \"Worn Saxon\"; border = \"Worn Saxon\"; ink = \"Canopy\"; };\
+        record { back = \"Staggered\"; border = \"Bordered Saxon\"; ink = \"Rose\"; };\
+        record { back = \"Round\"; border = \"Fate\"; ink = \"Spice\"; };\
+        record { back = \"Staggered\"; border = \"Fate\"; ink = \"Midnight\"; };\
+
+        record { back = \"Thin\"; border = \"Fate\"; ink = \"Copper\"; };\
+        record { back = \"Thin\"; border = \"Fate\"; ink = \"Silver\"; };\
+        record { back = \"Bare\"; border = \"Fate\"; ink = \"Copper\"; };\
+        record { back = \"Bare\"; border = \"Fate\"; ink = \"Silver\"; };\
+        record { back = \"Round\"; border = \"Fate\"; ink = \"Copper\"; };\
+        record { back = \"Staggered\"; border = \"Bordered Saxon\"; ink = \"Gold\"; };\
+        record { back = \"Thicc\"; border = \"Bordered Saxon\"; ink = \"Copper\"; };\
+        record { back = \"Greek\"; border = \"Bordered Saxon\"; ink = \"Gold\"; };\
+        record { back = \"Worn Saxon\"; border = \"Worn Saxon\"; ink = \"Copper\"; };\
+        record { back = \"Saxon\"; border = \"Saxon\"; ink = \"Copper\"; };\
+
         record { back = \"Thin\"; border = \"Fate\";	ink = \"Copper\"; };\
         record { back = \"Thin\"; border = \"Fate\";	ink = \"Copper\"; };\
         record { back = \"Thin\"; border = \"Fate\";	ink = \"Copper\"; };\
