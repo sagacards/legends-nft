@@ -8,9 +8,11 @@ import Principal "mo:base/Principal";
 
 import Types "types";
 
+
 module {
 
     public func decodeToken (tid : Text) : Types.Token {
+        let principal = Principal.fromText(tid);
         let bytes = Blob.toArray(Principal.toBlob(Principal.fromText(tid)));
         var index : Nat8 = 0;
         var _canister : [Nat8] = [];

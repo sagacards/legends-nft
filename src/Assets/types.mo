@@ -3,6 +3,12 @@ import Admins "../Admins";
 
 module Assets {
 
+    public type Tag = Text;
+    
+    public type FilePath = Text;
+
+    public type Color = Text;
+
     public type State = {
         assets : [Record];
         admins : Admins.Admins;
@@ -19,10 +25,36 @@ module Assets {
     };
 
     public type Meta = {
-        tags        : [Text];
-        filename    : Text;
+        tags        : [Tag];
+        filename    : FilePath;
         name        : Text;
         description : Text;
+    };
+
+    public type AssetManifest = [{}];
+
+    public type LegendManifest = {
+        back    : Tag;
+        border  : Tag;
+        ink     : Tag;
+        maps    : {
+            normal      : FilePath;
+            layers      : [FilePath];
+            back        : FilePath;
+            border      : FilePath;
+            background   : FilePath;
+        };
+        colors  : {
+            base        : Color;
+            specular    : Color;
+            emissive    : Color;
+        };
+        views   : {
+            flat        : FilePath;
+            sideBySide  : FilePath;
+            animated    : FilePath;
+            interactive : FilePath;
+        }
     };
 
 }
