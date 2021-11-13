@@ -2,6 +2,7 @@
 
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
+import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
 
@@ -28,28 +29,7 @@ module {
         //////////////////
 
 
-        private func path_handler_1 (path : ?Text) : Types.Response {
-            {
-                body = Text.encodeUtf8("OK");
-                headers = [
-                    ("Content-Type", "text/plain"),
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
-        private func path_handler_2 (path : ?Text) : Types.Response {
-            {
-                body = Text.encodeUtf8("OK");
-                headers = [
-                    ("Content-Type", "text/plain"),
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
+        // Serves an asset based on its filename.
         private func asset_filename_handler (path : ?Text) : Types.Response {
             switch (path) {
                 case (?path) {
@@ -69,6 +49,7 @@ module {
             };
         };
 
+        // Serves a JSON list of all assets in the canister.
         private func asset_manifest_handler (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
@@ -94,10 +75,145 @@ module {
                     "\n]"
                 );
                 headers = [
-                    ("Content-Type", "text/plain"),
+                    ("Content-Type", "application/json"),
                 ];
                 status_code = 200;
                 streaming_strategy = null;
+            }
+        };
+
+        // Serves a JSON manifest of all assets required to render a particular legend
+        private func legend_manifest_handler (path : ?Text) : Types.Response {
+            let index : ?Nat = switch (path) {
+                case (?path) {
+                    var match : ?Nat = null;
+                    for (i in Iter.range(0, state.supply - 1)) {
+                        if (Nat.toText(i) == path) {
+                            match := ?i;
+                        };
+                    };
+                    match;
+                };
+                case _ null;
+            };
+            switch (index) {
+                case (?i) {
+                    let { back; border; ink; } = state.ledger.nfts(?i)[0];
+                    let manifest : AssetTypes.LegendManifest = {
+                        back;
+                        border;
+                        ink;
+                        maps = {
+                            normal = do {
+                                switch (state.assets._findTag("normal")) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            layers = do {
+                                Array.map<AssetTypes.Record, AssetTypes.FilePath>(
+                                    state.assets._findAllTag("layer"),
+                                    func (record) {
+                                        record.meta.filename;
+                                    },
+                                );
+                            };
+                            back = do {
+                                switch (state.assets._findTags(["back", back])) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            border = do {
+                                switch (state.assets._findTags(["border", border])) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            background = do {
+                                switch (state.assets._findTag("background")) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                        };
+                        colors = do {
+                            var map = {
+                                base     = "#000000";
+                                specular = "#000000";
+                                emissive = "#000000";
+                            };
+                            for ((name, colors) in state.assets.inkColors.vals()) {
+                                if (name == ink) map := colors;
+                            };
+                            map;
+                        };
+                        views = {
+                            flat = do {
+                                switch (state.assets._findTags(["preview", "flat"])) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            sideBySide = do {
+                                switch (state.assets._findTags(["preview", "side-by-side"])) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            animated = do {
+                                switch (state.assets._findTags(["preview", "animated"])) {
+                                    case (?a) a.meta.filename;
+                                    case _ "";
+                                };
+                            };
+                            interactive = "";
+                        };
+                    };
+                    return {
+                        body = Text.encodeUtf8("{\n" #
+                            "\t\"back\"     : \"" # manifest.back # "\",\n" #
+                            "\t\"border\"   : \"" # manifest.border # "\",\n" #
+                            "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
+                            "\t\"maps\"     : {\n" #
+                                "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
+                                "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
+                                "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
+                                "\t\t\"background\" : \"/assets/" # manifest.maps.background # "\",\n" #
+                                "\t\t\"layers\"     : [\n" #
+                                    Array.foldLeft<AssetTypes.FilePath, Text>(
+                                        manifest.maps.layers,
+                                        "",
+                                        func (a, b) {
+                                            let comma = switch (a == "") {
+                                                case true "\t\t\t";
+                                                case false ",\n\t\t\t";
+                                            };
+                                            return a # comma # "\"/assets/" # b # "\""
+                                        },
+                                    ) # "\n" #
+                                "\t\t]\n" #
+                            "\t},\n" #
+                            "\t\"colors\": {\n" #
+                                "\t\t\"base\"       : \"" # manifest.colors.base # "\",\n" #
+                                "\t\t\"specular\"   : \"" # manifest.colors.specular # "\",\n" #
+                                "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\"\n" #
+                            "\t},\n" #
+                            "\t\"views\": {\n" #
+                                "\t\t\"flat\"       : \"/assets/" # manifest.views.flat # "\",\n" #
+                                "\t\t\"sideBySide\" : \"/assets/" # manifest.views.sideBySide # "\",\n" #
+                                "\t\t\"animated\"   : \"/assets/" # manifest.views.animated # "\",\n" #
+                                "\t\t\"interactive\": \"" # manifest.views.interactive # "\"\n" #
+                            "\t}\n" #
+                        "\n}");
+                        headers = [
+                            ("Content-Type", "application/json"),
+                        ];
+                        status_code = 200;
+                        streaming_strategy = null;
+                    };
+                };
+                case null http_404(?"Invalid index.")
             }
         };
         
@@ -162,9 +278,12 @@ module {
             let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
             let { index } = Stoic.decodeToken(tokenId);
             let legend = state.ledger._getLegend(Nat32.toNat(index));
-            Debug.print(legend.back);
-            Debug.print(legend.border);
-            switch (state.assets._findTags(["static-preview", legend.border])) {
+            switch (
+                state.assets._findTags([
+                    "preview", "side-by-side", "back-" # legend.back,
+                    "border-" # legend.border, "ink-" # legend.ink
+                ])
+            ) {
                 case (?asset) ({
                     body = state.assets._flattenPayload(asset.asset.payload);
                     headers = [
@@ -185,11 +304,10 @@ module {
 
 
         let paths : [(Text, (path: ?Text) -> Types.Response)] = [
-            ("path1", path_handler_1),
-            ("path2", path_handler_2),
             ("asset", asset_filename_handler),
             ("assets", asset_filename_handler),
             ("asset-manifest", asset_manifest_handler),
+            ("legend-manifest", legend_manifest_handler),
         ];
 
 

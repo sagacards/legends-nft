@@ -116,8 +116,19 @@ module {
         ///////////////
 
 
-        public func read () : [?Principal] {
-            Array.freeze(ledger);
+        public func read (index : ?Nat) : [?Principal] {
+            switch (index) {
+                case (?i) [ledger[i]];
+                case _ Array.freeze(ledger);
+            };
+        };
+
+
+        public func nfts (index : ?Nat) : [Types.Legend] {
+            switch (index) {
+                case (?i) [legends[i]];
+                case _ legends;
+            };
         };
 
 

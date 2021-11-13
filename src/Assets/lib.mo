@@ -29,7 +29,11 @@ module {
         // Writes a new asset to state, including the denormalized index
         private func _addAsset (record : Types.Record) : Result.Result<(), Text> {
             switch (files.get(record.meta.filename)) {
-                case (?exists) return #err("Filename already exists.");
+                case (?i) {
+                    // Add asset to state
+                    assets.put(i, record);
+                    #ok();
+                };
                 case _ {
                     // Store a denormalized index of filename to asset index
                     files.put(record.meta.filename, assets.size());
@@ -129,6 +133,59 @@ module {
         public func toStable () : [Types.Record] {
             return assets.toArray();
         };
+
+
+        ////////////////////////////
+        // Ink Color Definitions //
+        //////////////////////////
+
+
+        public let inkColors : [
+            (
+                Text,
+                {
+                    base     : Types.Color;
+                    specular : Types.Color;
+                    emissive : Types.Color;
+                }
+            )
+        ] = [
+            ("copper", {
+                base     = "#000000";
+                specular = "#4e230a";
+                emissive = "#a78319";
+            }),
+            ("silver", {
+                base     = "#33343b";
+                specular = "#8e98a0";
+                emissive = "#c4c0a7";
+            }),
+            ("gold", {
+                base     = "#764007";
+                specular = "#c1ab59";
+                emissive = "#c1ab59";
+            }),
+            ("canopy", {
+                base     = "#3a3e39";
+                specular = "#57b44b";
+                emissive = "#424800";
+            }),
+            ("rose", {
+                base     = "#524f32";
+                specular = "#4b0000";
+                emissive = "#ff00ee";
+            }),
+            ("spice", {
+                base     = "#341414";
+                specular = "#620909";
+                emissive = "#b40000";
+            }),
+            ("midnight", {
+                base     = "#191224";
+                specular = "#7239aa";
+                emissive = "#00536c";
+            }),
+        ];
 
 
         /////////////////

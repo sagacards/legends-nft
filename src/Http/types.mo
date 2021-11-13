@@ -11,6 +11,7 @@ module {
         admins : Admins.Admins;
         assets : Assets.Assets;
         ledger : Ledger.Ledger;
+        supply : Nat;
     };
 
     public type HeaderField = (Text, Text);

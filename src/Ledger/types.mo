@@ -23,6 +23,7 @@ module Ledger {
     public type Legend = {
         back    : Text;
         border  : Text;
+        ink     : Text;
     };
 
 };

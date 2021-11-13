@@ -143,7 +143,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     });
 
     public shared func readLedger () : async [?Principal] {
-        ledger.read();
+        ledger.read(null);
     };
 
     public shared ({ caller }) func mint (
@@ -168,6 +168,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         assets;
         admins;
         ledger;
+        supply;
     });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
