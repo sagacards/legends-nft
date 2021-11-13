@@ -1,14 +1,15 @@
 #!/bin/zsh
 
 file=${1}
+filename=$(echo $file | sed -E "s/.+\///")
+fileextension=$(echo $file | sed -E "s/.+\.//")
 name=${2}
 tags=("${(@s/ /)3}")
 description=${4}
-threshold=${5:-100000}
+mime=${5:-image/$fileextension}
 network=${6:-local}
+threshold=${7:-100000}
 
-filename=$(echo $file | sed -E "s/.+\///")
-fileextension=$(echo $file | sed -E "s/.+\.//")
 
 echo "Emptying buffer..."
 dfx canister --network $network call legends uploadClear
@@ -25,7 +26,7 @@ while [ $i -le $byteSize ]; do
 done
 echo "Finalizing asset \"$filename\""
 dfx canister --network $network call legends uploadFinalize "(\
-    \"image/$fileextension\",\
+    \"\",\
     record {\
         \"name\" = \"$name\";\
         \"filename\" = \"$filename\";\

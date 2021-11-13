@@ -1,8 +1,10 @@
 // 3rd Party Imports
 
 import Array "mo:base/Array";
+import Blob "mo:base/Blob";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
+import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
 
@@ -35,6 +37,7 @@ module {
                             body = state.assets._flattenPayload(asset.asset.payload);
                             headers = [
                                 ("Content-Type", "text/plain"),
+                                ("Access-Control-Allow-Origin", "*"),
                             ];
                             status_code = 200;
                             streaming_strategy = null;
@@ -205,6 +208,7 @@ module {
                         "\n}");
                         headers = [
                             ("Content-Type", "application/json"),
+                            ("Access-Control-Allow-Origin", "*"),
                         ];
                         status_code = 200;
                         streaming_strategy = null;
@@ -214,7 +218,7 @@ module {
             }
         };
 
-        public func http_token_index_preview (request : Types.Request) : Types.Response {
+        private func http_token_index_preview (request : Types.Request) : Types.Response {
             let index = Iter.toArray(Text.tokens(request.url, #text("tokenindex=")))[1];
             var j : ?Nat = null;
             label l for (i in Iter.range(0, state.supply)) {
@@ -246,6 +250,50 @@ module {
                 };
                 case _ http_404(?"No token at that index.");
             };
+        };
+
+        private func http_preview_app (
+            path : ?Text,
+        ) : Types.Response {
+            let index : ?Nat = switch (path) {
+                case (?path) {
+                    var match : ?Nat = null;
+                    for (i in Iter.range(0, state.supply - 1)) {
+                        if (Nat.toText(i) == path) {
+                            match := ?i;
+                        };
+                    };
+                    match;
+                };
+                case _ null;
+            };
+            let app = switch (state.assets._findTag("preview-app")) {
+                case (?a) {
+                    switch (Text.decodeUtf8(state.assets._flattenPayload(a.asset.payload))) {
+                        case (?t) t;
+                        case _ "";
+                    }
+                };
+                case _ return http_404(?"Missing preview app.");
+            };
+            switch (index) {
+                case (?i) ({
+                    body = Text.encodeUtf8(
+                        "<!doctype html>" #
+                        "<html>" #
+                        app #
+                        "<script>window.legendIndex = " # Nat.toText(i) # "</script>" #
+                        "</html>"
+                    );
+                    headers = [
+                        ("Content-Type", "text/html"),
+                        ("Cache-Control", "max-age=31536000"), // Cache one year
+                    ];
+                    status_code = 200;
+                    streaming_strategy = null;
+                });
+                case _ http_404(?"Bad index.");
+            }
         };
         
         
@@ -338,6 +386,7 @@ module {
             ("assets", asset_filename_handler),
             ("asset-manifest", asset_manifest_handler),
             ("legend-manifest", legend_manifest_handler),
+            ("legend-preview", http_preview_app),
         ];
 
 

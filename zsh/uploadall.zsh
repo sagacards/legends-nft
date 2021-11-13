@@ -54,3 +54,7 @@ tags() {  # xD
 }
 
 for file in art/preview-side-by-side/*; zsh zsh/upload.zsh $file "Side by Side Preview" "$(tags $file)" "A static preview displaying the card back and border"
+
+# Upload Preview App
+
+zsh zsh/upload.zsh client/dist/index.html "Animated Preview App" "preview-app" "A javascript/html client for previewing legends" "text/html; charset=utf-8"
