@@ -16,9 +16,6 @@ import Stoic "../Integrations/Stoic";
 import Types "types";
 
 
-import Debug "mo:base/Debug";
-
-
 module {
 
     public class HttpHandler (state : Types.State) {
@@ -216,6 +213,40 @@ module {
                 case null http_404(?"Invalid index.")
             }
         };
+
+        public func http_token_index_preview (request : Types.Request) : Types.Response {
+            let index = Iter.toArray(Text.tokens(request.url, #text("tokenindex=")))[1];
+            var j : ?Nat = null;
+            label l for (i in Iter.range(0, state.supply)) {
+                if (Nat.toText(i) == index) {
+                    j := ?i;
+                    break l;
+                };
+            };
+            switch (j) {
+                case (?j) {
+                    let legend = state.ledger._getLegend(j);
+                    switch (
+                        state.assets._findTags([
+                            "preview", "side-by-side", "back-" # legend.back,
+                            "border-" # legend.border, "ink-" # legend.ink
+                        ])
+                    ) {
+                        case (?asset) ({
+                            body = state.assets._flattenPayload(asset.asset.payload);
+                            headers = [
+                                ("Content-Type", "text/plain"),
+                                ("Cache-Control", "max-age=31536000"), // Cache one year
+                            ];
+                            status_code = 200;
+                            streaming_strategy = null;
+                        });
+                        case null http_404(?"Missing preview asset.");
+                    };
+                };
+                case _ http_404(?"No token at that index.");
+            };
+        };
         
         
         //////////////////////////////////////
@@ -273,8 +304,7 @@ module {
         ///////////////////
 
 
-        public func http_token_preview(request : Types.Request) : Types.Response {
-            Debug.print("Token Preview...");
+        public func http_stoic_token_preview(request : Types.Request) : Types.Response {
             let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
             let { index } = Stoic.decodeToken(tokenId);
             let legend = state.ledger._getLegend(Nat32.toNat(index));
@@ -323,7 +353,11 @@ module {
             // Stoic wallet preview
 
             if (Text.contains(request.url, #text("tokenid"))) {
-                return http_token_preview(request);
+                return http_stoic_token_preview(request);
+            };
+
+            if (Text.contains(request.url, #text("tokenindex"))) {
+                return http_token_index_preview(request);
             };
 
             // Paths
