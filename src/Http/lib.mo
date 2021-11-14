@@ -2,6 +2,7 @@
 
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
@@ -103,10 +104,28 @@ module {
                         case _ return http_404(?"Token not yet minted.");
                     };
                     let { back; border; ink; } = state.ledger.nfts(?i)[0];
+                    let nriBack = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "back-" # back })) {
+                        case (?(_, i)) i;
+                        case _ 0.0;
+                    };
+                    let nriBorder = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "border-" # border })) {
+                        case (?(_, i)) i;
+                        case _ 0.0;
+                    };
+                    let nriInk = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "ink-" # ink })) {
+                        case (?(_, i)) i;
+                        case _ 0.0;
+                    };
                     let manifest : AssetTypes.LegendManifest = {
                         back;
                         border;
                         ink;
+                        nri = {
+                            back = nriBack;
+                            border = nriBorder;
+                            ink = nriInk;
+                            avg = (nriBack + nriBorder + nriInk) / 3;
+                        };
                         maps = {
                             normal = do {
                                 switch (state.assets._findTag("normal")) {
@@ -185,6 +204,12 @@ module {
                             "\t\"back\"     : \"" # manifest.back # "\",\n" #
                             "\t\"border\"   : \"" # manifest.border # "\",\n" #
                             "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
+                            "\t\"nri\"      : {\n" #
+                                "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
+                                "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
+                                "\t\t\"ink\"        : " # Float.toText(manifest.nri.ink) # ",\n" #
+                                "\t\t\"avg\"        : " # Float.toText(manifest.nri.avg) # ",\n" #
+                            "\t},\n" #
                             "\t\"maps\"     : {\n" #
                                 "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                                 "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #

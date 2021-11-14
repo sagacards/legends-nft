@@ -37,6 +37,12 @@ module Assets {
         back    : Tag;
         border  : Tag;
         ink     : Tag;
+        nri     : {
+            back        : Float;
+            border      : Float;
+            ink         : Float;
+            avg         : Float;
+        };
         maps    : {
             normal      : FilePath;
             layers      : [FilePath];
