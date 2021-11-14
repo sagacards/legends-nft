@@ -11,8 +11,8 @@ dfx canister --network $network call legends configureLegends\
         record { border = \"round\"; back = \"fate\"; ink = \"spice\"; };\
         record { border = \"staggered\"; back = \"fate\"; ink = \"midnight\"; };\
 
-        record { border = \"thin\"; back = \"fate\"; ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\"; ink = \"silver\"; };\
+        record { border = \"line\"; back = \"fate\"; ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\"; ink = \"silver\"; };\
         record { border = \"bare\"; back = \"fate\"; ink = \"copper\"; };\
         record { border = \"bare\"; back = \"fate\"; ink = \"silver\"; };\
         record { border = \"round\"; back = \"fate\"; ink = \"copper\"; };\
@@ -22,26 +22,26 @@ dfx canister --network $network call legends configureLegends\
         record { border = \"worn-saxon\"; back = \"worn-saxon\"; ink = \"copper\"; };\
         record { border = \"saxon\"; back = \"saxon\"; ink = \"copper\"; };\
 
-        record { border = \"thin\"; back = \"fate\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"gold\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"gold\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"canopy\"; };\
-        record { border = \"thin\"; back = \"fate\";	ink = \"spice\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"silver\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"gold\"; };\
-        record { border = \"thin\"; back = \"bordered-saxon\";	ink = \"canopy\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"gold\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"gold\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"canopy\"; };\
+        record { border = \"line\"; back = \"fate\";	ink = \"spice\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"copper\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"silver\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"gold\"; };\
+        record { border = \"line\"; back = \"bordered-saxon\";	ink = \"canopy\"; };\
         record { border = \"bare\"; back = \"fate\";	ink = \"copper\"; };\
         record { border = \"bare\"; back = \"fate\";	ink = \"copper\"; };\
         record { border = \"bare\"; back = \"fate\";	ink = \"copper\"; };\
