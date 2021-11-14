@@ -36,6 +36,10 @@ module {
             legends[i];
         };
 
+        public func _getOwner (i : Nat) : ?Principal {
+            ledger[i];
+        };
+
 
         ////////////
         // State //

@@ -98,6 +98,10 @@ module {
             };
             switch (index) {
                 case (?i) {
+                    switch (state.ledger._getOwner(i)) {
+                        case (?_) ();
+                        case _ return http_404(?"Token not yet minted.");
+                    };
                     let { back; border; ink; } = state.ledger.nfts(?i)[0];
                     let manifest : AssetTypes.LegendManifest = {
                         back;
@@ -283,21 +287,27 @@ module {
                 case _ return http_404(?"Missing preview app.");
             };
             switch (index) {
-                case (?i) ({
-                    body = Text.encodeUtf8(
-                        "<!doctype html>" #
-                        "<html>" #
-                        app #
-                        "<script>window.legendIndex = " # Nat.toText(i) # "</script>" #
-                        "</html>"
-                    );
-                    headers = [
-                        ("Content-Type", "text/html"),
-                        ("Cache-Control", "max-age=31536000"), // Cache one year
-                    ];
-                    status_code = 200;
-                    streaming_strategy = null;
-                });
+                case (?i) {
+                    switch (state.ledger._getOwner(i)) {
+                        case (?_) ();
+                        case _ return http_404(?"Token not yet minted.");
+                    };
+                    return {
+                        body = Text.encodeUtf8(
+                            "<!doctype html>" #
+                            "<html>" #
+                            app #
+                            "<script>window.legendIndex = " # Nat.toText(i) # "</script>" #
+                            "</html>"
+                        );
+                        headers = [
+                            ("Content-Type", "text/html"),
+                            ("Cache-Control", "max-age=31536000"), // Cache one year
+                        ];
+                        status_code = 200;
+                        streaming_strategy = null;
+                    };
+                };
                 case _ http_404(?"Bad index.");
             }
         };
@@ -361,6 +371,10 @@ module {
         public func http_stoic_token_preview(request : Types.Request) : Types.Response {
             let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
             let { index } = Stoic.decodeToken(tokenId);
+            switch (state.ledger._getOwner(Nat32.toNat(index))) {
+                case (?_) ();
+                case _ return http_404(?"Token not yet minted.");
+            };
             let legend = state.ledger._getLegend(Nat32.toNat(index));
             switch (
                 state.assets._findTags([
