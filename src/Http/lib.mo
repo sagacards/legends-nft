@@ -156,7 +156,12 @@ module {
                                 };
                             };
                             sideBySide = do {
-                                switch (state.assets._findTags(["preview", "side-by-side"])) {
+                                switch (
+                                    state.assets._findTags([
+                                        "preview", "side-by-side", "back-" # back,
+                                        "border-" # border, "ink-" # ink
+                                    ])
+                                ) {
                                     case (?a) a.meta.filename;
                                     case _ "";
                                 };
@@ -170,6 +175,7 @@ module {
                             interactive = "";
                         };
                     };
+                    // No Motoko JSON lib supporting record types.
                     return {
                         body = Text.encodeUtf8("{\n" #
                             "\t\"back\"     : \"" # manifest.back # "\",\n" #
