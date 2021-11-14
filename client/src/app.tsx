@@ -528,6 +528,52 @@ function Light() {
 /////////////
 
 
+// Loading state
+
+function Loader () {
+    return <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif'}}>Loading...</div>
+}
+
+function Loader3 () {
+    const mesh = React.useRef<THREE.Mesh>();
+    const light = React.useRef<THREE.DirectionalLight>();
+    const center = React.useMemo(() => {
+        const c = new THREE.Object3D;
+        c.position.x = 0;
+        c.position.y = 0;
+        c.position.z = 0;
+        return c
+    }, []);
+    const colors = React.useMemo(() => [
+        new THREE.Color('#766007').convertSRGBToLinear(),
+        new THREE.Color('#c1ab59').convertSRGBToLinear(),
+        new THREE.Color('#c1ab59').convertSRGBToLinear(),
+    ], []);
+    useFrame(state => {
+        if (!mesh.current || !light.current) return;
+        mesh.current.position.y = Math.sin(state.clock.getElapsedTime() * 8) / 2;
+        mesh.current.position.x = Math.cos(state.clock.getElapsedTime() * 8) / 2;
+        light.current.lookAt(center.position);
+    });
+    return <mesh ref={mesh}>
+        <sphereGeometry args={[.125]} />
+        <meshStandardMaterial
+            color={colors[0]}
+            emissive={colors[1]}
+            emissiveIntensity={0.125}
+            metalness={7}
+        />
+        <directionalLight
+            ref={light}
+            target={center}
+            position={[0, 0, 3]}
+        />
+        {/* <ambientLight intensity={.05} /> */}
+    </mesh>
+}
+
+// Main canvas
+
 function LegendPreviewCanvas() {
     const { views : { flat, sideBySide} } = useLegendManifest()
     return (
@@ -541,7 +587,7 @@ function LegendPreviewCanvas() {
                 performance={{ min: .1, max: 1, debounce: 10000 }}
                 mode="concurrent"
             >
-                <React.Suspense fallback={<></>}>
+                <React.Suspense fallback={<Loader3 />}>
                     <LegendCard />
                     <Light />
                 </React.Suspense>
@@ -550,9 +596,11 @@ function LegendPreviewCanvas() {
     );
 }
 
+// App root
+
 export default function App() {
     return <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-        <React.Suspense fallback={<></>}>
+        <React.Suspense fallback={<Loader />}>
             <div style={{ width: '100%', height: '100%' }}>
                 <LegendPreviewCanvas />
             </div>
