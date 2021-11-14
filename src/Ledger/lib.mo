@@ -18,6 +18,34 @@ module {
     public class Ledger (state : Types.State) {
 
 
+        /////////////
+        // Config //
+        ///////////
+
+
+        public let NRI = [
+            ("back-fate"          , 0.0000),
+            ("back-bordered-saxon", 0.5283),
+            ("back-worn-saxon"    , 0.9434),
+            ("back-saxon"         , 1.0000),
+            ("border-thin"        , 0.0000),
+            ("border-bare"        , 0.0000),
+            ("border-round"       , 0.4615),
+            ("border-staggered"   , 0.4615),
+            ("border-thicc"       , 0.9231),
+            ("border-greek"       , 0.9231),
+            ("border-worn-saxon"  , 0.7692),
+            ("border-saxon"       , 1.0000),
+            ("ink-copper"         , 0.0000),
+            ("ink-silver"         , 0.3333),
+            ("ink-gold"           , 0.5833),
+            ("ink-canopy"         , 0.8056),
+            ("ink-rose"           , 0.8611),
+            ("ink-spice"          , 0.9444),
+            ("ink-midnight"       , 1.0000),
+        ];
+
+
         ////////////////////////
         // Utils / Internals //
         //////////////////////
