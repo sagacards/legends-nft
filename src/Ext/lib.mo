@@ -1,9 +1,11 @@
+import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Ext "mo:ext/Ext";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Principal "mo:base/Principal";
+import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
@@ -54,15 +56,30 @@ module {
             caller : Principal,
             request : Ext.Core.TransferRequest,
         ) : Ext.Core.TransferResponse {
-            #err(#Other("disabled"));
+            let index = switch (Ext.TokenIdentifier.decode(request.token)) {
+                case (#err(_)) { return #err(#InvalidToken(request.token)); };
+                case (#ok(_, tokenIndex)) { tokenIndex; };
+            };
+            let token = switch (state.ledger._getOwner(Nat32.toNat(index))) {
+                case (?t) t;
+                case _ return #err(#Other("Token owner doesn't exist."));
+            };
+            let callerAccount = Text.map(AccountIdentifier.toText(AccountIdentifier.fromPrincipal(caller, request.subaccount)), Prim.charToLower);
+            let from = Text.map(Ext.User.toAccountIdentifier(request.from), Prim.charToLower);
+            let to = Text.map(Ext.User.toAccountIdentifier(request.to), Prim.charToLower);
+            let owner = Text.map(token.owner, Prim.charToLower);
+            if (owner != from) return #err(#Unauthorized("Owner \"" # owner # "\" is not caller \"" # from # "\""));
+            if (from != callerAccount) return #err(#Unauthorized("Only the owner can do that."));
+            state.ledger.transfer(index,callerAccount, to);
+            #ok(Nat32.toNat(index));
         };
 
         //////////////////
         // @ext:common //
         ////////////////
 
-        // TODO
         public func metadata(
+            caller  : Principal,
             tokenId : Ext.TokenIdentifier,
         ) : Ext.Common.MetadataResponse {
             let index = switch (Ext.TokenIdentifier.decode(tokenId)) {
@@ -71,7 +88,7 @@ module {
             };
             switch (state.ledger._getOwner(Nat32.toNat(index))) {
                 case (null) { #err(#InvalidToken(tokenId)); };
-                case (?token) { #ok(#nonfungible({metadata = ?Text.encodeUtf8("Cake Slice")})); };
+                case (?token) { #ok(#nonfungible({metadata = ?Text.encodeUtf8("The Fool")})); };
             };
         };
 
