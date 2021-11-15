@@ -1,8 +1,10 @@
 // 3rd Party Imports
 
 import Array "mo:base/Array";
+import Ext "mo:ext/Ext";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
+import Time "mo:base/Time";
 
 // Project Imports
 
@@ -51,7 +53,7 @@ module {
         //////////////////////
 
 
-        private func _getNextMintIndex () : ?Nat {
+        public func _getNextMintIndex () : ?Nat {
             var i : Nat = 0;
             for (v in ledger.vals()) {
                 if (v == null) return ?i;
@@ -64,7 +66,7 @@ module {
             legends[i];
         };
 
-        public func _getOwner (i : Nat) : ?Principal {
+        public func _getOwner (i : Nat) : ?Types.Token {
             ledger[i];
         };
 
@@ -75,7 +77,7 @@ module {
 
 
         var mintingStage : Types.MintingStage = #admins;
-        var ledger : [var ?Principal] = Array.init(state.supply, null);
+        var ledger : [var ?Types.Token] = Array.init(state.supply, null);
         var legends : [Types.Legend] = [];
 
         // Provision ledger from stable state
@@ -85,7 +87,7 @@ module {
         legends := state.legends;
 
         public func toStable () : {
-            ledger  : [?Principal];
+            ledger  : [?Types.Token];
             legends : [Types.Legend];
         } {
             {
@@ -112,13 +114,17 @@ module {
         // @auth: admin
         public func mint (
             caller  : Principal,
-            to      : Principal,
-        ) : Result.Result<(), Text> {
+            to      : Ext.User,
+        ) : Result.Result<(Nat), Text> {
             assert(state.admins._isAdmin(caller));
             switch (_getNextMintIndex()) {
                 case (?i) {
-                    ledger[i] := ?to;
-                    #ok();
+                    ledger[i] := ?{
+                        createdAt = Time.now();
+                        owner = Ext.User.toAccountIdentifier(to);
+                        txId = "N/A";
+                    };
+                    #ok(i);
                 };
                 case _ #err("No more supply.");
             }
@@ -148,7 +154,7 @@ module {
         ///////////////
 
 
-        public func read (index : ?Nat) : [?Principal] {
+        public func read (index : ?Nat) : [?Types.Token] {
             switch (index) {
                 case (?i) [ledger[i]];
                 case _ Array.freeze(ledger);

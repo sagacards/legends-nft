@@ -208,7 +208,7 @@ module {
                                 "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
                                 "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
                                 "\t\t\"ink\"        : " # Float.toText(manifest.nri.ink) # ",\n" #
-                                "\t\t\"avg\"        : " # Float.toText(manifest.nri.avg) # ",\n" #
+                                "\t\t\"avg\"        : " # Float.toText(manifest.nri.avg) # "\n" #
                             "\t},\n" #
                             "\t\"maps\"     : {\n" #
                                 "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #

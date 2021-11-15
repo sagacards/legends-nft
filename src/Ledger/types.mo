@@ -1,5 +1,5 @@
 // 3rd Party Imports
-
+import Ext "mo:ext/Ext";
 
 // Project Imports
 
@@ -13,7 +13,7 @@ module Ledger {
     public type State = {
         admins  : Admins.Admins;
         assets  : Assets.Assets;
-        ledger  : [?Principal];
+        ledger  : [?Token];
         legends : [Legend];
         supply  : Nat;
     };
@@ -24,6 +24,14 @@ module Ledger {
         back    : Text;
         border  : Text;
         ink     : Text;
+    };
+
+    public type TokenIndex = Nat32;
+
+    public type Token = {
+        createdAt  : Int;
+        owner      : Ext.AccountIdentifier;
+        txId       : Text;
     };
 
 };
