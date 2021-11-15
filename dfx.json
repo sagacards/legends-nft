@@ -5,6 +5,11 @@
       "type": "motoko"
     }
   },
+  "defaults": {
+    "build": {
+      "packtool": "vessel sources"
+    }
+  },
   "dfx": "0.8.3",
   "networks": {
     "local": {

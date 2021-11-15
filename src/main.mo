@@ -1,7 +1,9 @@
 // 3rd Party Imports
 
 import Array "mo:base/Array";
+import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Ext "mo:ext/Ext";
 
 // Project Imports
 
@@ -12,6 +14,8 @@ import Http "Http";
 import HttpTypes "Http/types";
 import Ledger "Ledger";
 import LedgerTypes "Ledger/types";
+import ExtFactory "Ext";
+import ExtTypes "Ext/types";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
@@ -40,7 +44,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     // Ledger
 
-    private stable var stableLedger : [?Principal] = Array.tabulate<?Principal>(supply, func (i) { null });
+    private stable var stableLedger : [?LedgerTypes.Token] = Array.tabulate<?LedgerTypes.Token>(supply, func (i) { null });
     private stable var stableLegends : [LedgerTypes.Legend] = [];
 
     // Upgrades
@@ -142,13 +146,13 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         legends = stableLegends;
     });
 
-    public shared func readLedger () : async [?Principal] {
+    public shared func readLedger () : async [?LedgerTypes.Token] {
         ledger.read(null);
     };
 
     public shared ({ caller }) func mint (
-        to : Principal,
-    ) : async Result.Result<(), Text> {
+        to : Ext.User,
+    ) : async Result.Result<Nat, Text> {
         ledger.mint(caller, to);
     };
 
@@ -173,6 +177,56 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
         httpHandler.request(request);
+    };
+
+
+    //////////
+    // EXT //
+    ////////
+
+    func _canisterPrincipal () : Principal {
+        Principal.fromActor(canister);
+    };
+
+    let ext = ExtFactory.make({
+        ledger;
+    });
+
+    public shared ({ caller }) func allowance(
+            request : Ext.Allowance.Request,
+    ) : async Ext.Allowance.Response {
+        ext.allowance(caller, request);
+    };
+
+    public shared ({ caller }) func approve(
+        request : Ext.Allowance.ApproveRequest,
+    ) : async () {
+        ext.approve(caller, request);
+    };
+
+    public query ({ caller }) func tokens(
+        accountId : Ext.AccountIdentifier
+    ) : async Result.Result<[Ext.TokenIndex], Ext.CommonError> {
+        ext.tokens(caller, accountId);
+    };
+    
+    public query ({ caller }) func tokens_ext(
+        accountId : Ext.AccountIdentifier
+    ) : async Result.Result<[ExtTypes.TokenExt], Ext.CommonError> {
+        ext.tokens_ext(caller, accountId)
+    };
+
+    public query ({ caller }) func details(
+        tokenId : Ext.TokenIdentifier
+    ) : async Result.Result<(Ext.AccountIdentifier, ?ExtTypes.Listing), Ext.CommonError> {
+        ext.details(caller, tokenId);
+    };
+
+    public query func tokenId(
+        canister : Principal,
+        index : Ext.TokenIndex,
+    ) : async Ext.TokenIdentifier {
+        ext.tokenId(canister, index);
     };
 
 
