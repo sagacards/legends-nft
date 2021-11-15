@@ -2,11 +2,13 @@
 
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Ext "mo:ext/Ext";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
+import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 
 // Project Imports
@@ -103,6 +105,7 @@ module {
                         case (?_) ();
                         case _ return http_404(?"Token not yet minted.");
                     };
+                    let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(i));
                     let { back; border; ink; } = state.ledger.nfts(?i)[0];
                     let nriBack = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "back-" # back })) {
                         case (?(_, i)) i;
@@ -174,7 +177,7 @@ module {
                         views = {
                             flat = do {
                                 switch (state.assets._findTags(["preview", "flat"])) {
-                                    case (?a) a.meta.filename;
+                                    case (?a) "?type=card-art&tokenid=" # tokenId;
                                     case _ "";
                                 };
                             };
@@ -185,13 +188,13 @@ module {
                                         "border-" # border, "ink-" # ink
                                     ])
                                 ) {
-                                    case (?a) a.meta.filename;
+                                    case (?a) "?type=thumbnail&tokenid=" # tokenId;
                                     case _ "";
                                 };
                             };
                             animated = do {
                                 switch (state.assets._findTags(["preview", "animated"])) {
-                                    case (?a) a.meta.filename;
+                                    case (?a) "?type=animated&tokenid=" # tokenId;
                                     case _ "";
                                 };
                             };
@@ -235,9 +238,9 @@ module {
                                 "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\"\n" #
                             "\t},\n" #
                             "\t\"views\": {\n" #
-                                "\t\t\"flat\"       : \"/assets/" # manifest.views.flat # "\",\n" #
-                                "\t\t\"sideBySide\" : \"/assets/" # manifest.views.sideBySide # "\",\n" #
-                                "\t\t\"animated\"   : \"/assets/" # manifest.views.animated # "\",\n" #
+                                "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
+                                "\t\t\"sideBySide\" : \"" # manifest.views.sideBySide # "\",\n" #
+                                "\t\t\"animated\"   : \"" # manifest.views.animated # "\",\n" #
                                 "\t\t\"interactive\": \"" # manifest.views.interactive # "\"\n" #
                             "\t}\n" #
                         "\n}");
@@ -287,6 +290,39 @@ module {
             };
         };
 
+        private func _legend_preview (
+            index : Nat
+        ) : Types.Response {
+            switch (state.ledger._getOwner(index)) {
+                case (?_) ();
+                case _ return http_404(?"Token not yet minted.");
+            };
+            let app = switch (state.assets._findTag("preview-app")) {
+                case (?a) {
+                    switch (Text.decodeUtf8(state.assets._flattenPayload(a.asset.payload))) {
+                        case (?t) t;
+                        case _ "";
+                    }
+                };
+                case _ return http_404(?"Missing preview app.");
+            };
+                    return {
+                        body = Text.encodeUtf8(
+                            "<!doctype html>" #
+                            "<html>" #
+                            app #
+                    "<script>window.legendIndex = " # Nat.toText(index) # "</script>" #
+                            "</html>"
+                        );
+                        headers = [
+                            ("Content-Type", "text/html"),
+                            ("Cache-Control", "max-age=31536000"), // Cache one year
+                        ];
+                        status_code = 200;
+                        streaming_strategy = null;
+                    };
+                };
+
         private func http_preview_app (
             path : ?Text,
         ) : Types.Response {
@@ -302,37 +338,8 @@ module {
                 };
                 case _ null;
             };
-            let app = switch (state.assets._findTag("preview-app")) {
-                case (?a) {
-                    switch (Text.decodeUtf8(state.assets._flattenPayload(a.asset.payload))) {
-                        case (?t) t;
-                        case _ "";
-                    }
-                };
-                case _ return http_404(?"Missing preview app.");
-            };
             switch (index) {
-                case (?i) {
-                    switch (state.ledger._getOwner(i)) {
-                        case (?_) ();
-                        case _ return http_404(?"Token not yet minted.");
-                    };
-                    return {
-                        body = Text.encodeUtf8(
-                            "<!doctype html>" #
-                            "<html>" #
-                            app #
-                            "<script>window.legendIndex = " # Nat.toText(i) # "</script>" #
-                            "</html>"
-                        );
-                        headers = [
-                            ("Content-Type", "text/html"),
-                            ("Cache-Control", "max-age=31536000"), // Cache one year
-                        ];
-                        status_code = 200;
-                        streaming_strategy = null;
-                    };
-                };
+                case (?i) _legend_preview(i);
                 case _ http_404(?"Bad index.");
             }
         };
@@ -396,6 +403,23 @@ module {
         public func http_stoic_token_preview(request : Types.Request) : Types.Response {
             let tokenId = Iter.toArray(Text.tokens(request.url, #text("tokenid=")))[1];
             let { index } = Stoic.decodeToken(tokenId);
+            if (Text.contains(request.url, #text("type=card-art"))) {
+                return switch (state.assets._findTags(["preview", "flat"])) {
+                    case (?asset) ({
+                        body = state.assets._flattenPayload(asset.asset.payload);
+                        headers = [
+                            ("Content-Type", "text/plain"),
+                            ("Access-Control-Allow-Origin", "*"),
+                        ];
+                        status_code = 200;
+                        streaming_strategy = null;
+                    });
+                    case _ http_404(?"Asset not found.");
+                };
+            };
+            if (not Text.contains(request.url, #text("type=thumbnail"))) {
+                return _legend_preview(Nat32.toNat(index));
+            };
             switch (state.ledger._getOwner(Nat32.toNat(index))) {
                 case (?_) ();
                 case _ return http_404(?"Token not yet minted.");
