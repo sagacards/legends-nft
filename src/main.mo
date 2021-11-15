@@ -193,15 +193,27 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     });
 
     public shared ({ caller }) func allowance(
-            request : Ext.Allowance.Request,
+        request : Ext.Allowance.Request,
     ) : async Ext.Allowance.Response {
         ext.allowance(caller, request);
+    };
+    
+    public query ({ caller }) func metadata(
+        tokenId : Ext.TokenIdentifier,
+    ) : async Ext.Common.MetadataResponse {
+        ext.metadata(caller, tokenId);
     };
 
     public shared ({ caller }) func approve(
         request : Ext.Allowance.ApproveRequest,
     ) : async () {
         ext.approve(caller, request);
+    };
+
+    public shared ({ caller }) func transfer(
+        request : Ext.Core.TransferRequest,
+    ) : async Ext.Core.TransferResponse {
+        ext.transfer(caller, request);
     };
 
     public query ({ caller }) func tokens(
@@ -223,10 +235,9 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
     public query func tokenId(
-        canister : Principal,
         index : Ext.TokenIndex,
     ) : async Ext.TokenIdentifier {
-        ext.tokenId(canister, index);
+        ext.tokenId(_canisterPrincipal(), index);
     };
 
 

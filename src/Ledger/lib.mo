@@ -1,9 +1,13 @@
 // 3rd Party Imports
 
+import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Ext "mo:ext/Ext";
 import Nat "mo:base/Nat";
+import Nat32 "mo:base/Nat32";
+import Prim "mo:prim";
 import Result "mo:base/Result";
+import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 // Project Imports
@@ -68,6 +72,18 @@ module {
 
         public func _getOwner (i : Nat) : ?Types.Token {
             ledger[i];
+        };
+
+        public func _isOwner (
+            caller      : Ext.AccountIdentifier,
+            tokenIndex  : Ext.TokenIndex,
+        ) : Bool {
+            let token = switch (_getOwner(Nat32.toNat(tokenIndex))) {
+                case (?t) {
+                    Text.map(caller, Prim.charToLower) == Text.map(t.owner, Prim.charToLower);
+                };
+                case _ false;
+            };
         };
 
 
@@ -169,6 +185,24 @@ module {
             };
         };
 
+
+        public func transfer (
+            tokenIndex  : Ext.TokenIndex,
+            caller      : Ext.AccountIdentifier,
+            to          : Ext.AccountIdentifier,
+        ) : () {
+            assert (_isOwner(caller, tokenIndex));
+            let i = Nat32.toNat(tokenIndex);
+            let token = ledger[i];
+            ledger[i] := ?{
+                createdAt = switch (token) {
+                    case (?t) t.createdAt;
+                    case _ Time.now();
+                };
+                owner = to;
+                txId = "N/A";
+            };
+        };
 
     };
 
