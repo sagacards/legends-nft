@@ -14,6 +14,8 @@ import Http "Http";
 import HttpTypes "Http/types";
 import Ledger "Ledger";
 import LedgerTypes "Ledger/types";
+import Entrepot "Entrepot";
+import EntrepotTypes "Entrepot/types";
 import ExtFactory "Ext";
 import ExtTypes "Ext/types";
 
@@ -229,5 +231,15 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         ext.tokenId(canister, index);
     };
 
+
+    ///////////////
+    // Entrepot //
+    /////////////
+
+    let entrepot = Entrepot.Factory({ supply; });
+
+    public query func listings () : async EntrepotTypes.ListingsResponse {
+        entrepot.getListings();
+    };
 
 };
