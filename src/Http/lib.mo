@@ -198,7 +198,8 @@ module {
                                     case _ "";
                                 };
                             };
-                            interactive = "";
+                            interactive = "?tokenid=" # tokenId;  // TODO
+                            manifest = "?type=manifest&tokenid=" # tokenId;  // TODO
                         };
                     };
                     // No Motoko JSON lib supporting record types.
