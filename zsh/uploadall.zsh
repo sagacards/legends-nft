@@ -19,7 +19,7 @@ zsh zsh/upload.zsh art/fool-bg.webp "Fool Background" "background" "A flat backg
 # Upload Card Borders
 
 zsh zsh/upload.zsh art/border-greek.webp "Greek Card Border" "border greek" "An alpha map for the Greek card border" $network
-zsh zsh/upload.zsh art/border-line.webp "Line Card Border" "border line" "An alpha map for the Line card border" $network
+zsh zsh/upload.zsh art/border-line.webp "Line Card Border" "border thin" "An alpha map for the Line card border" $network
 zsh zsh/upload.zsh art/border-naked.webp "Nake Card Border" "border bare" "An alpha map for the Nake card border" $network
 zsh zsh/upload.zsh art/border-round.webp "Round Card Border" "border round" "An alpha map for the Round card border" $network
 zsh zsh/upload.zsh art/border-saxon-worn.webp "Worn Saxon Card Border" "border worn-saxon" "An alpha map for the Worn Saxon card border" $network
