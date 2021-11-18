@@ -164,6 +164,13 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         ledger.configureLegends(caller, conf);
     };
 
+    public shared ({ caller }) func ledgerReassign (
+        token   : Ext.TokenIdentifier,
+        to      : Ext.User,
+        confirm : Text,
+    ) : async Result.Result<(), Text> {
+        ledger.reassign(caller, token, to, confirm);
+    };
 
     public query ({ caller }) func backup () : async [?LedgerTypes.Token] {
         ledger.backup(caller);
