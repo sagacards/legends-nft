@@ -131,7 +131,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     public shared ({ caller }) func purgeAssets (
         confirm : Text
     ) : async Result.Result<(), Text> {
-        assets.purgeAssets(caller, confirm);
+        assets.purge(caller, confirm);
     };
 
 
