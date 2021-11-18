@@ -164,6 +164,32 @@ module {
             #ok();
         };
 
+        // Reassign a lost NFT
+        // @auth: admin
+        public func reassign(
+            caller  : Principal,
+            token   : Ext.TokenIdentifier,
+            to      : Ext.User,
+            confirm : Text,
+        ) : Result.Result<(), Text> {
+            assert(state.admins._isAdmin(caller));
+            if (confirm != "REASSIGN NFT") {
+                return #err("Please confirm your intention to reassign an NFT by typing in \"REASSIGN NFT\"");
+            };
+            let index = switch (Ext.TokenIdentifier.decode(token)) {
+                case (#err(_)) { return #err("Invalide token"); };
+                case (#ok(_, tokenIndex)) Nat32.toNat(tokenIndex);
+            };
+            ledger[index] := ?{
+                createdAt = switch (ledger[index]) {
+                    case (?t) t.createdAt;
+                    case _ Time.now();
+                };
+                owner = Ext.User.toAccountIdentifier(to);
+                txId = "N/A";
+            };
+            #ok();
+        };
 
         // Download a backup copy of the ledger.
         // @auth: admin
