@@ -12,4 +12,6 @@
 
 # Backup methods are functional
 
+# Complete a market listing and transaction (nns ledger? 🤮)
+
 # 
