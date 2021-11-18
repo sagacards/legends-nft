@@ -80,7 +80,7 @@ module {
         ) : Bool {
             let token = switch (_getOwner(Nat32.toNat(tokenIndex))) {
                 case (?t) {
-                    Text.map(caller, Prim.charToLower) == Text.map(t.owner, Prim.charToLower);
+                    Text.map(caller, Prim.charToUpper) == Text.map(t.owner, Prim.charToUpper);
                 };
                 case _ false;
             };

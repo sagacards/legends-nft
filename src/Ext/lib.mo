@@ -64,10 +64,10 @@ module {
                 case (?t) t;
                 case _ return #err(#Other("Token owner doesn't exist."));
             };
-            let callerAccount = Text.map(AccountIdentifier.toText(AccountIdentifier.fromPrincipal(caller, request.subaccount)), Prim.charToLower);
-            let from = Text.map(Ext.User.toAccountIdentifier(request.from), Prim.charToLower);
-            let to = Text.map(Ext.User.toAccountIdentifier(request.to), Prim.charToLower);
-            let owner = Text.map(token.owner, Prim.charToLower);
+            let callerAccount = Text.map(AccountIdentifier.toText(AccountIdentifier.fromPrincipal(caller, request.subaccount)), Prim.charToUpper);
+            let from = Text.map(Ext.User.toAccountIdentifier(request.from), Prim.charToUpper);
+            let to = Text.map(Ext.User.toAccountIdentifier(request.to), Prim.charToUpper);
+            let owner = Text.map(token.owner, Prim.charToUpper);
             if (owner != from) return #err(#Unauthorized("Owner \"" # owner # "\" is not caller \"" # from # "\""));
             if (from != callerAccount) return #err(#Unauthorized("Only the owner can do that."));
             state.ledger.transfer(index,callerAccount, to);
@@ -217,20 +217,6 @@ module {
                 i += 1;
             };
             #ok(tokens);
-        };
-
-        public func details(
-            caller  : Principal,
-            tokenId : Ext.TokenIdentifier,
-        ) : Result.Result<(Ext.AccountIdentifier, ?Types.Listing), Ext.CommonError> {
-            let index = switch (Ext.TokenIdentifier.decode(tokenId)) {
-                case (#err(_)) { return #err(#Other("Something went wrong.")); };
-                case (#ok(_, tokenIndex)) { tokenIndex; };
-            };
-            switch (state.ledger._getOwner(Nat32.toNat(index))) {
-                case (? token) { #ok((token.owner, null)); };
-                case (null)    { #err(#Other("Something went wrong.")); };
-            };
         };
 
         ///////////////////////

@@ -1,23 +1,21 @@
 // 3rd Party Imports
 
-import Array "mo:base/Array";
-import Principal "mo:base/Principal";
-import Result "mo:base/Result";
-import Ext "mo:ext/Ext";
-
-// Project Imports
-
 import Admins "Admins";
-import Assets "Assets";
+import Array "mo:base/Array";
 import AssetTypes "Assets/types";
+import Assets "Assets";
+import Entrepot "Entrepot";
+import EntrepotTypes "Entrepot/types";
+import Ext "mo:ext/Ext";
+import ExtFactory "Ext";
+import ExtTypes "Ext/types";
 import Http "Http";
 import HttpTypes "Http/types";
 import Ledger "Ledger";
 import LedgerTypes "Ledger/types";
-import Entrepot "Entrepot";
-import EntrepotTypes "Entrepot/types";
-import ExtFactory "Ext";
-import ExtTypes "Ext/types";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Types "Entrepot/types";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
@@ -49,6 +47,12 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     private stable var stableLedger : [?LedgerTypes.Token] = Array.tabulate<?LedgerTypes.Token>(supply, func (i) { null });
     private stable var stableLegends : [LedgerTypes.Legend] = [];
 
+    // Entrepot
+
+    private stable var stableListings : [(Ext.TokenIndex, EntrepotTypes.Listing)] = [];
+    private stable var stableTransactions : [(Nat, EntrepotTypes.Transaction)] = [];
+    private stable var stablePendingTransactions : [(Ext.TokenIndex, EntrepotTypes.Transaction)] = [];
+
     // Upgrades
 
     system func preupgrade() {
@@ -59,13 +63,23 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         // Preserve admins
         stableAdmins := admins.toStable();
 
-        let { ledger = x; legends } = ledger.toStable();
-
         // Preserve ledger
+        let { ledger = x; legends } = ledger.toStable();
         stableLedger := x;
 
         // Preserve legends
         stableLegends := legends;
+
+        // Preserve entrepot
+        let {
+            listings;
+            transactions;
+            pendingTransactions;
+        } = entrepot.toStable();
+        stableListings := listings;
+        stableTransactions := transactions;
+        stablePendingTransactions := pendingTransactions;
+
     };
 
     system func postupgrade() {
@@ -248,12 +262,6 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         ext.tokens_ext(caller, accountId)
     };
 
-    public query ({ caller }) func details(
-        tokenId : Ext.TokenIdentifier
-    ) : async Result.Result<(Ext.AccountIdentifier, ?ExtTypes.Listing), Ext.CommonError> {
-        ext.details(caller, tokenId);
-    };
-
     public query func tokenId(
         index : Ext.TokenIndex,
     ) : async Ext.TokenIdentifier {
@@ -265,10 +273,60 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     // Entrepot //
     /////////////
 
-    let entrepot = Entrepot.Factory({ supply; });
+    let entrepot = Entrepot.Factory({
+        admins;
+        supply;
+        ledger;
+        listings            = stableListings;
+        transactions        = stableTransactions;
+        pendingTransactions = stablePendingTransactions;
+    });
+
+    public query func details (token : Ext.TokenIdentifier) : async EntrepotTypes.DetailsResponse {
+        entrepot.details(token);
+    };
 
     public query func listings () : async EntrepotTypes.ListingsResponse {
         entrepot.getListings();
+    };
+
+    public shared ({ caller }) func list (
+        request : EntrepotTypes.ListRequest,
+    ) : async EntrepotTypes.ListResponse {
+        entrepot.list(caller, request);
+    };
+
+    public query func stats () : async (
+        Nat64,  // Total Volume
+        Nat64,  // Highest Price Sale
+        Nat64,  // Lowest Price Sale
+        Nat64,  // Current Floor Price
+        Nat,    // # Listings
+        Nat,    // # Supply
+        Nat,    // #Sales
+    ) {
+        entrepot.stats();
+    };
+
+    public shared ({ caller }) func lock (
+        token : Ext.TokenIdentifier,
+        price : Nat64,
+        buyer : Ext.AccountIdentifier,
+        bytes : [Nat8],
+    ) : async Types.LockResponse {
+        entrepot.lock(caller, token, price, buyer, bytes);
+    };
+
+    public shared func settle (
+        token : Ext.TokenIdentifier,
+    ) : async Result.Result<(), Ext.CommonError> {
+        entrepot.settle(token);
+    };
+
+    public shared ({ caller }) func purgeListings (
+        confirm : Text,
+    ) : async Result.Result<(), Text> {
+        entrepot.purgeListings(caller, confirm);
     };
 
 };
