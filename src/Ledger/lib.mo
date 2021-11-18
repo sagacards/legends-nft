@@ -165,6 +165,26 @@ module {
         };
 
 
+        // Download a backup copy of the ledger.
+        // @auth: admin
+        public func backup (
+            caller : Principal,
+        ) : [?Types.Token] {
+            assert(state.admins._isAdmin(caller));
+            Array.freeze(ledger);
+        };
+
+        // Restore the ledger from a backup.
+        // @auth: admin
+        public func restore (
+            caller  : Principal,
+            data    : [?Types.Token],
+        ) : Result.Result<(), Text> {
+            ledger := Array.thaw(data);
+            #ok();
+        };
+
+
         /////////////////
         // Public API //
         ///////////////

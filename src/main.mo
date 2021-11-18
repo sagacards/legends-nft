@@ -165,6 +165,17 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
 
+    public query ({ caller }) func backup () : async [?LedgerTypes.Token] {
+        ledger.backup(caller);
+    };
+
+    public shared ({ caller }) func restore (
+        data : [?LedgerTypes.Token],
+    ) : async Result.Result<(), Text> {
+        ledger.restore(caller, data);
+    };
+
+
     ///////////
     // HTTP //
     /////////
