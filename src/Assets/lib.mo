@@ -262,10 +262,11 @@ module {
 
         // Purge all assets from the canister
         // @auth: admin
-        public func purgeAssets(
+        public func purge(
             caller  : Principal,
             confirm : Text,
         ) : Result.Result<(), Text> {
+            assert(state.admins._isAdmin(caller));
             if (confirm != "DELETE ALL ASSETS") {
                 return #err("Please confirm your intention to delete all assets by typing in \"DELETE ALL ASSETS\"");
             };
