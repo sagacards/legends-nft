@@ -2,10 +2,14 @@
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
 import Ext "mo:ext/Ext";
+import Iter "mo:base/Iter";
+import Option "mo:base/Option";
 import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
 import Prim "mo:prim";
+import Random "mo:base/Random";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
@@ -64,6 +68,55 @@ module {
                 i += 1;
             };
             return null;
+        };
+
+        // Get a random unminted token index.
+        // Excludes non general sale tokens
+        public func _getRandomMintIndex (
+            exclude : ?[Ext.TokenIndex],
+        ) : async ?Ext.TokenIndex {
+            var i : Nat32 = 17;
+            let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
+            label l while (Nat32.toNat(i) < state.supply) {
+                switch (exclude) {
+                    case (?ex) {
+                        var msg = "Ignoring vals: ";
+                        for (v in ex.vals()) {
+                            msg := msg # Nat32.toText(v) # ", ";
+                        };
+                        if (not Option.isNull(Array.find<Ext.TokenIndex>(ex, func (a) { a == i }))) {
+                            i += 1;
+                            continue l;
+                        }
+                    };
+                    case _ ();
+                };
+                if (Option.isNull(ledger[Nat32.toNat(i)])) {
+                    unminted.add(i);
+                };
+                i += 1;
+            };
+            let size = unminted.size();
+            if (size == 0) {
+                return null;
+            };
+            var token : ?Ext.TokenIndex = null;
+            i := 0;
+            let random = Random.Finite(await Random.blob());
+            while (Option.isNull(token)) {
+                switch (random.coin()) {
+                    case (?r) {
+                        if (r) {
+                            token := ?unminted.get(Nat32.toNat(i));
+                        } else {
+                            i += 1;
+                        };
+                    };
+                    case _ token := ?unminted.get(0);
+                };
+                if (Nat32.toNat(i) >= size) i := 0;
+            };
+            token;
         };
 
         public func _getLegend (i : Nat) : Types.Legend {
