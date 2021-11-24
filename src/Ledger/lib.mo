@@ -70,6 +70,15 @@ module {
             return null;
         };
 
+        // Turn a principal and a subaccount into an uppercase textual account id.
+        func _accountId(
+            principal   : Principal,
+            subaccount  : ?Ext.SubAccount,
+        ) : Ext.AccountIdentifier {
+            let aid = AccountIdentifier.fromPrincipal(principal, subaccount);
+            Text.map(AccountIdentifier.toText(aid), Prim.charToUpper);
+        };
+
         // Get a random unminted token index.
         // Excludes non general sale tokens
         public func _getRandomMintIndex (
@@ -137,6 +146,27 @@ module {
                 };
                 case _ false;
             };
+        };
+
+        public func _mint (
+            tokenIndex  : Ext.TokenIndex,
+            to          : Ext.User,
+            subaccount  : ?Ext.SubAccount,
+        ) : Result.Result<(), Text> {
+            switch (ledger[Nat32.toNat(tokenIndex)]) {
+                case (?_) #err("Already minted");
+                case _ {
+                    ledger[Nat32.toNat(tokenIndex)] := ?{
+                        createdAt = Time.now();
+                        owner = switch (to) {
+                            case (#address(a)) a;
+                            case (#principal(p)) _accountId(p, subaccount)
+                        };
+                        txId = "N/A";
+                    };
+                    #ok();
+                };
+            }
         };
 
 
