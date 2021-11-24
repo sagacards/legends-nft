@@ -2,6 +2,10 @@
 
 import Admins "Admins";
 import Array "mo:base/Array";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Types "Entrepot/types";
+
 import AssetTypes "Assets/types";
 import Assets "Assets";
 import Entrepot "Entrepot";
@@ -13,9 +17,10 @@ import Http "Http";
 import HttpTypes "Http/types";
 import Ledger "Ledger";
 import LedgerTypes "Ledger/types";
-import Principal "mo:base/Principal";
-import Result "mo:base/Result";
-import Types "Entrepot/types";
+import NNSNotify "NNSNotify";
+import NNSNotifyTypes "NNSNotify/types";
+import PublicSale "PublicSale";
+import PublicSaleTypes "PublicSale/types";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
@@ -53,6 +58,17 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     private stable var stableTransactions : [(Nat, EntrepotTypes.Transaction)] = [];
     private stable var stablePendingTransactions : [(Ext.TokenIndex, EntrepotTypes.Transaction)] = [];
 
+    // Public Sale
+
+    private stable var stablePublicSaleLocks : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)] = [];
+    private stable var stablePublicSalePurchases : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
+    private stable var stablePublicSaleNextTxId : PublicSaleTypes.TxId = 0;
+    private stable var stablePublicSaleFailedPurchases : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
+
+    // NNS Notifications
+
+    private stable var stableNnsNotifications : [NNSNotifyTypes.TransactionNotification] = [];
+
     // Upgrades
 
     system func preupgrade() {
@@ -79,6 +95,24 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         stableListings := listings;
         stableTransactions := transactions;
         stablePendingTransactions := pendingTransactions;
+
+        // Preserve public sale
+        let {
+            locks;
+            purchases;
+            nextTxId;
+            failed;
+        } = publicSale.toStable();
+        stablePublicSaleLocks := locks;
+        stablePublicSalePurchases := purchases;
+        stablePublicSaleFailedPurchases := failed;
+        stablePublicSaleNextTxId := nextTxId;
+
+        // Preserve NNS Notifications
+        let {
+            notifications;
+        } = nnsNotify.toStable();
+        stableNnsNotifications := notifications;
 
     };
 
@@ -327,6 +361,60 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         confirm : Text,
     ) : async Result.Result<(), Text> {
         entrepot.purgeListings(caller, confirm);
+    };
+
+
+    //////////////////
+    // Public Sale //
+    ////////////////
+
+
+    let publicSale = PublicSale.Factory({
+        ledger;
+        locks       = stablePublicSaleLocks;
+        purchases   = stablePublicSalePurchases;
+        failed      = stablePublicSaleFailedPurchases;
+        nextTxId    = stablePublicSaleNextTxId;
+    });
+
+    public shared ({ caller }) func publicSaleLock (
+        memo : NNSNotifyTypes.Memo,
+    ) : async Result.Result<PublicSaleTypes.TxId, Text> {
+        await publicSale.lock(caller, memo);
+    };
+
+    public query ({ caller }) func publicSaleAwaitTransaction (
+        memo : NNSNotifyTypes.Memo,
+    ) : async Result.Result<Ext.TokenIndex, {
+        #pending    : Text;
+        #notFound   : Text;
+        #expired    : Text;
+    }> {
+        publicSale.awaitTransaction(caller, memo);
+    };
+
+    public query func publicSaleGetPrice () : async Nat64 {
+        publicSale.getPrice();
+    };
+
+
+    ////////////////////////
+    // NNS Notifications //
+    //////////////////////
+
+    let nnsNotify = NNSNotify.Factory({
+        admins;
+        notifications = stableNnsNotifications;
+    });
+
+    public query ({ caller }) func readNnsNotifications () : async [NNSNotifyTypes.TransactionNotification] {
+        nnsNotify.readNotifications(caller);
+    };
+
+    public shared ({ caller }) func transaction_notification (
+        args : NNSNotifyTypes.TransactionNotification,
+    ) : async () {
+        nnsNotify.transaction_notification(caller, args);
     };
 
 };
