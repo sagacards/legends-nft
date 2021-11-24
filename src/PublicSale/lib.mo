@@ -93,6 +93,23 @@ module {
         // Get lock for a user.
         public func _findLock (
             caller  : Principal,
+        ) : ?Types.Lock {
+            switch (
+                Array.find<(Types.TxId, Types.Lock)>(
+                    Iter.toArray<(Types.TxId, Types.Lock)>(locks.entries()),
+                    func (_, a) {
+                        a.buyer == caller
+                    }
+                )
+            ) {
+                case (?(_, lock)) ?lock;
+                case _ null;
+            }
+        };
+
+        // Get lock for a user and memo.
+        public func _findLockWithMemo (
+            caller  : Principal,
             memo    : NNSNotifyTypes.Memo,
         ) : ?Types.Lock {
             switch (
@@ -137,6 +154,12 @@ module {
             caller  : Principal,
             memo    : NNSNotifyTypes.Memo,
         ) : async Result.Result<Types.TxId, Text> {
+            switch (_findLock(caller)) {
+                case (?lock) {
+                    locks.delete(lock.id);
+                };
+                case _ ();
+            };
             switch (
                 await state.ledger._getRandomMintIndex(
                     ?_getValidLocks()
@@ -145,7 +168,6 @@ module {
                 case (?token) {
                     let txId = nextTxId;
                     nextTxId += 1;
-                    Debug.print("Locking token #" # Nat32.toText(token));
                     locks.put(txId, {
                         id          = txId;
                         buyer       = caller;
@@ -168,20 +190,21 @@ module {
             #notFound   : Text;
             #expired    : Text;
         }> {
-            switch (_findLock(caller, memo)) {
-                case (?lock) {
-                    switch (_findPurchase(caller, memo)) {
-                        case (?purchase) #ok(purchase.token);
-                        case _ {
+            switch (_findPurchase(caller, memo)) {
+                case (?purchase) #ok(purchase.token);
+                case _ {
+                    switch (_findLockWithMemo(caller, memo)) {
+                        case (?lock) {
                             if (Time.now() < lock.lockedAt + lockTtl) {
                                 #err(#pending("Awaiting transaction completion."));
                             } else {
                                 #err(#expired("This lock has expired."));
                             };
                         };
+                        case _ #err(#notFound("No such transaction."));
                     };
+                    
                 };
-                case _ #err(#notFound("No such transaction."));
             };
         };
 
@@ -199,9 +222,8 @@ module {
         public func _captureNotification (
             notification : NNSNotifyTypes.TransactionNotification
         ) : () {
-            switch (_findLock(notification.from, notification.memo)) {
+            switch (_findLockWithMemo(notification.from, notification.memo)) {
                 case (?lock) {
-                    Debug.print("Let's close this transaction #" # Nat32.toText(lock.id));
                     switch (notification.amount.e8s >= price) {
                         case (true) {
                             purchases.put(lock.id, {
