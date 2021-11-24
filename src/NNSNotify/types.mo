@@ -5,6 +5,7 @@ module {
     public type State = {
         admins          : Admins.Admins;
         notifications   : [TransactionNotification];
+        subscriptions   : [(TransactionNotification) -> ()];
     };
 
     // Amount of ICP tokens, measured in 10^-8 of a token.

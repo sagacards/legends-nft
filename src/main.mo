@@ -405,6 +405,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     let nnsNotify = NNSNotify.Factory({
         admins;
         notifications = stableNnsNotifications;
+        subscriptions = [publicSale._captureNotification];
     });
 
     public query ({ caller }) func readNnsNotifications () : async [NNSNotifyTypes.TransactionNotification] {

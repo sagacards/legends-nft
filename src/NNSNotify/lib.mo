@@ -12,8 +12,7 @@ module {
         //////////
 
 
-        var stableNotifications : [Types.TransactionNotification] = [];
-        let notifications = Buffer.Buffer<Types.TransactionNotification>(stableNotifications.size());
+        let notifications = Buffer.Buffer<Types.TransactionNotification>(state.notifications.size());
 
         // Pre Upgrade
 
@@ -27,7 +26,7 @@ module {
 
         // Post Upgrade : Provision notifications from stable memory
         
-        for (v in stableNotifications.vals()) {
+        for (v in state.notifications.vals()) {
             notifications.add(v);
         };
 
@@ -46,11 +45,15 @@ module {
         ) : () {
 
             // We need to make sure that only the Ledger can call this endpoint
-            let ledger = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai");
-            assert(caller == ledger);
+            // let ledger = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai");
+            // assert(caller == ledger);
 
             // Capture the transaction
             notifications.add(args);
+
+            for (handler in state.subscriptions.vals()) {
+                handler(args);
+            };
 
         };
 
