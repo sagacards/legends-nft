@@ -45,8 +45,8 @@ module {
         ) : () {
 
             // We need to make sure that only the Ledger can call this endpoint
-            // let ledger = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai");
-            // assert(caller == ledger);
+            let ledger = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai");
+            assert(caller == ledger);
 
             // Capture the transaction
             notifications.add(args);
