@@ -253,7 +253,7 @@ module {
                         streaming_strategy = null;
                     };
                 };
-                case null http_404(?"Invalid index.")
+                case null http_404(?"Invalid index.");
             }
         };
 
@@ -307,22 +307,22 @@ module {
                 };
                 case _ return http_404(?"Missing preview app.");
             };
-                    return {
-                        body = Text.encodeUtf8(
-                            "<!doctype html>" #
-                            "<html>" #
-                            app #
-                    "<script>window.legendIndex = " # Nat.toText(index) # "</script>" #
-                            "</html>"
-                        );
-                        headers = [
-                            ("Content-Type", "text/html"),
-                            ("Cache-Control", "max-age=31536000"), // Cache one year
-                        ];
-                        status_code = 200;
-                        streaming_strategy = null;
-                    };
-                };
+            return {
+                body = Text.encodeUtf8(
+                    "<!doctype html>" #
+                    "<html>" #
+                        app #
+                        "<script>window.legendIndex = " # Nat.toText(index) # "</script>" #
+                    "</html>"
+                );
+                headers = [
+                    ("Content-Type", "text/html"),
+                    ("Cache-Control", "max-age=31536000"), // Cache one year
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
 
         private func http_preview_app (
             path : ?Text,
@@ -343,6 +343,46 @@ module {
                 case (?i) _legend_preview(i);
                 case _ http_404(?"Bad index.");
             }
+        };
+
+        public func side_by_side_preview_handler (
+            path : ?Text,
+        )  : Types.Response {
+            let index : ?Nat = switch (path) {
+                case (?path) {
+                    var match : ?Nat = null;
+                    for (i in Iter.range(0, state.supply - 1)) {
+                        if (Nat.toText(i) == path) {
+                            match := ?i;
+                        };
+                    };
+                    match;
+                };
+                case _ null;
+            };
+            switch (index) {
+                case (?i) {
+                    let legend = state.ledger._getLegend(i);
+                    switch (
+                        state.assets._findTags([
+                            "preview", "side-by-side", "back-" # legend.back,
+                            "border-" # legend.border, "ink-" # legend.ink
+                        ])
+                    ) {
+                        case (?asset) ({
+                            body = state.assets._flattenPayload(asset.asset.payload);
+                            headers = [
+                                ("Content-Type", "text/plain"),
+                                ("Cache-Control", "max-age=31536000"), // Cache one year
+                            ];
+                            status_code = 200;
+                            streaming_strategy = null;
+                        });
+                        case null http_404(?"Missing preview asset.");
+                    };
+                };
+                case _ http_404(?"Invalid index.");
+            };
         };
         
         
@@ -457,6 +497,7 @@ module {
             ("asset-manifest", asset_manifest_handler),
             ("legend-manifest", legend_manifest_handler),
             ("legend-preview", http_preview_app),
+            ("side-by-side-preview", side_by_side_preview_handler),
         ];
 
 
