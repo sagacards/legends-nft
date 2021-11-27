@@ -1,19 +1,25 @@
+import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Text "mo:base/Text";
 import Debug "mo:base/Debug";
 import Ext "mo:ext/Ext";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
-import NNSNotifyTypes "../NNSNotify/types";
+import NNS "../NNS/lib";
+import NNSTypes "../NNS/types";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Types "types";
+import Hex "../NNS/Hex";
+import Prim "mo:prim";
 
 module {
 
 
-    public let price : Nat64 = 200_000_000;
+    public let price : Nat64 = 1;
     public let lockTtl = 300_000_000_000;  // Time for a transaction to complete (5 mins.)
 
     public class Factory (state : Types.State) {
@@ -110,7 +116,7 @@ module {
         // Get lock for a user and memo.
         public func _findLockWithMemo (
             caller  : Principal,
-            memo    : NNSNotifyTypes.Memo,
+            memo    : Nat64,
         ) : ?Types.Lock {
             switch (
                 Array.find<(Types.TxId, Types.Lock)>(
@@ -128,7 +134,7 @@ module {
         // Find a purchase.
         public func _findPurchase (
             caller  : Principal,
-            memo    : NNSNotifyTypes.Memo,
+            memo    : Nat64,
         ) : ?Types.Purchase {
             switch (
                 Array.find<(Types.TxId, Types.Purchase)>(
@@ -152,7 +158,7 @@ module {
         // Request a lock on a random unclaimed NFT for purchase.
         public func lock (
             caller  : Principal,
-            memo    : NNSNotifyTypes.Memo,
+            memo    : Nat64,
         ) : async Result.Result<Types.TxId, Text> {
             switch (_findLock(caller)) {
                 case (?lock) {
@@ -182,29 +188,71 @@ module {
         };
 
         // Poll for purchase completion.
-        public func awaitTransaction (
-            caller  : Principal,
-            memo    : NNSNotifyTypes.Memo,
-        ) : Result.Result<Ext.TokenIndex, {
-            #pending    : Text;
-            #notFound   : Text;
-            #expired    : Text;
-        }> {
-            switch (_findPurchase(caller, memo)) {
-                case (?purchase) #ok(purchase.token);
-                case _ {
-                    switch (_findLockWithMemo(caller, memo)) {
-                        case (?lock) {
-                            if (Time.now() < lock.lockedAt + lockTtl) {
-                                #err(#pending("Awaiting transaction completion."));
-                            } else {
-                                #err(#expired("This lock has expired."));
+        public func notify (
+            caller      : Principal,
+            blockheight : NNSTypes.BlockHeight,
+            memo        : Nat64,
+            canister    : Principal,
+        ) : async Result.Result<Ext.TokenIndex, Text> {
+            switch (await state.nns.block(blockheight)) {
+                case (#Ok(block)) {
+                    switch (block) {
+                        case (#Err(_)) return #err("Some kind of block error");
+                        case (#Ok(b)) {
+                            if (b.transaction.memo != memo) {
+                                return #err("Memo mismatch: " # Nat64.toText(memo) # ", " # Nat64.toText(b.transaction.memo));
+                            };
+                            switch (b.transaction.transfer) {
+                                case (#Send(transfer)) {
+                                    if (
+                                        Hex.encode(Blob.toArray(NNS.accountIdentifier(canister, NNS.defaultSubaccount()))) != Text.map(transfer.to, Prim.charToUpper)
+                                    ) {
+                                        return #err("Incorrect transfer recipient: " # Hex.encode(Blob.toArray(NNS.accountIdentifier(canister, NNS.defaultSubaccount()))) # ", " # Text.map(transfer.to, Prim.charToUpper));
+                                    } else if (
+                                        Hex.encode(Blob.toArray(NNS.accountIdentifier(caller, NNS.defaultSubaccount()))) != Text.map(transfer.from, Prim.charToUpper)
+                                    ) {
+                                        return #err("Incorrect transfer sender: " # Hex.encode(Blob.toArray(NNS.accountIdentifier(caller, NNS.defaultSubaccount()))) # ", " # Text.map(transfer.from, Prim.charToUpper));
+                                    } else if (transfer.amount.e8s < price) {
+                                        return #err("Incorrect transfer amount.");
+                                    };
+                                    switch (_findLockWithMemo(caller, b.transaction.memo)) {
+                                        case (?lock) {
+                                            purchases.put(lock.id, {
+                                                id          = lock.id;
+                                                buyer       = lock.buyer;
+                                                token       = lock.token;
+                                                memo        = lock.memo;
+                                                price       = transfer.amount.e8s;
+                                                lockedAt    = lock.lockedAt;
+                                                closedAt    = Time.now();
+                                            });
+                                            locks.delete(lock.id);
+                                            switch (
+                                                state.ledger._mint(
+                                                    lock.token,
+                                                    #principal(lock.buyer),
+                                                    null,
+                                                    // TODO: GET SUBACCOUNT
+                                                    // switch (notification.from_subaccount) {
+                                                    //     case (?sa) ?Blob.toArray(sa);
+                                                    //     case _ null;
+                                                    // }
+                                                )
+                                            ) {
+                                                case (#ok(_)) #ok(lock.token);
+                                                case (#err(_)) #err("Failed to mint.");
+                                            };
+                                        };
+                                        case _ return #err("No such lock.");
+                                    }
+                                };
+                                case (#Burn(_)) return #err("Incorrect transaction type.");
+                                case (#Mint(_)) return #err("Incorrect transaction type.");
                             };
                         };
-                        case _ #err(#notFound("No such transaction."));
                     };
-                    
                 };
+                case (#Err(e)) return #err("Block lookup error: (" # Nat64.toText(blockheight) # ") " # e);
             };
         };
 
@@ -217,53 +265,7 @@ module {
         // Internal API //
         /////////////////
 
-        // Capture a transaction notification from the NNS ledger.
-        // If it corresponds to a pending lock, complete the transaction.
-        public func _captureNotification (
-            notification : NNSNotifyTypes.TransactionNotification
-        ) : () {
-            switch (_findLockWithMemo(notification.from, notification.memo)) {
-                case (?lock) {
-                    switch (notification.amount.e8s >= price) {
-                        case (true) {
-                            purchases.put(lock.id, {
-                                id          = lock.id;
-                                buyer       = lock.buyer;
-                                token       = lock.token;
-                                memo        = lock.memo;
-                                price       = notification.amount.e8s;
-                                lockedAt    = lock.lockedAt;
-                                closedAt    = Time.now();
-                            });
-                            locks.delete(lock.id);
-                            switch (
-                                state.ledger._mint(
-                                    lock.token,
-                                    #principal(lock.buyer),
-                                    switch (notification.from_subaccount) {
-                                        case (?sa) ?Blob.toArray(sa);
-                                        case _ null;
-                                    }
-                                )
-                            ) {
-                                case (#ok(_)) ();
-                                case (#err(_)) ();
-                            };
-                            return ();
-                        };
-                        case (false) {
-                            // Add to failed payments
-                            // Refund
-                        };
-                    };
-                };
-                case _ {
-                    // Feels like maybe we need a way to issue a refund when receiving funds for which no lock was secured.
-                    // Difficulty is that there may be a lock in another module, so I can't make that call here.
-                    // Maybe refactor into a single module for anticipated transactions.
-                };
-            };
-        };
+        //
 
 
         ////////////////

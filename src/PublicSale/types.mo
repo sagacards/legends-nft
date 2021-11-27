@@ -1,12 +1,12 @@
-import Time "mo:base/Time";
-
 import Ledger "../Ledger";
 import LedgerTypes "../Ledger/types";
-import NNSNotifyTypes "../NNSNotify/types";
+import NNS "../NNS/lib";
+import Time "mo:base/Time";
 
 module {
 
     public type State = {
+        nns         : NNS.Factory;
         ledger      : Ledger.Ledger;
         nextTxId    : TxId;
         purchases   : [(TxId, Purchase)];
@@ -20,7 +20,7 @@ module {
         id          : TxId;
         buyer       : Principal;
         token       : LedgerTypes.TokenIndex;
-        memo        : NNSNotifyTypes.Memo;
+        memo        : Nat64;
         lockedAt    : Time.Time;
     };
 
@@ -29,7 +29,7 @@ module {
         buyer       : Principal;
         token       : LedgerTypes.TokenIndex;
         price       : Nat64;  // ICPe8
-        memo        : NNSNotifyTypes.Memo;
+        memo        : Nat64;
         lockedAt    : Time.Time;
         closedAt    : Time.Time;
     };

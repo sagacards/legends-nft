@@ -55,6 +55,73 @@ module {
             ("ink-midnight"       , 1.0000),
         ];
 
+        // 3   saxon-saxon-copper
+        // 2   saxon-saxon-silver
+        // 2   saxon-saxon-gold
+        // 2   worn-saxon-worn-saxon-canopy
+        // 2   staggered-bordered-saxon-rose
+        // 2   round-fate-spice
+        // 2   staggered-fate-midnight
+        // 6   thin-fate-copper
+        // 5   thin-fate-silver
+        // 6   bare-fate-copper
+        // 5   bare-fate-silver
+        // 4   round-fate-copper
+        // 2   staggered-bordered-saxon-gold
+        // 2   thicc-bordered-saxon-copper
+        // 2   greek-bordered-saxon-gold
+        // 3   worn-saxon-worn-saxon-copper
+        // 2   thin-fate-gold
+        // 1   thin-fate-canopy
+        // 1   thin-fate-spice
+        // 3   thin-bordered-saxon-copper
+        // 2   thin-bordered-saxon-silver
+        // 1   thin-bordered-saxon-gold
+        // 1   thin-bordered-saxon-canopy
+        // 1   bare-fate-gold
+        // 2   bare-fate-canopy
+        // 1   bare-fate-rose
+        // 3   bare-bordered-saxon-copper
+        // 2   bare-bordered-saxon-silver
+        // 1   bare-bordered-saxon-gold
+        // 1   bare-bordered-saxon-canopy
+        // 2   round-fate-silver
+        // 1   round-fate-gold
+        // 2   round-fate-canopy
+        // 1   round-fate-rose
+        // 1   round-bordered-saxon-copper
+        // 1   round-bordered-saxon-silver
+        // 1   round-bordered-saxon-gold
+        // 1   round-bordered-saxon-canopy
+        // 3   staggered-fate-copper
+        // 2   staggered-fate-silver
+        // 1   staggered-fate-gold
+        // 1   staggered-fate-canopy
+        // 1   staggered-fate-rose
+        // 1   staggered-bordered-saxon-copper
+        // 1   staggered-bordered-saxon-silver
+        // 2   thicc-fate-copper
+        // 1   thicc-fate-silver
+        // 1   thicc-fate-gold
+        // 1   thicc-fate-rose
+        // 1   thicc-bordered-saxon-silver
+        // 1   thicc-bordered-saxon-gold
+        // 1   thicc-bordered-saxon-rose
+        // 2   greek-fate-copper
+        // 1   greek-fate-silver
+        // 1   greek-fate-gold
+        // 1   greek-fate-spice
+        // 1   greek-bordered-saxon-copper
+        // 1   greek-bordered-saxon-silver
+        // 1   greek-bordered-saxon-rose
+        // 2   worn-saxon-worn-saxon-silver
+        // 2   worn-saxon-worn-saxon-gold
+        // 1   worn-saxon-worn-saxon-rose
+        // 1   worn-saxon-worn-saxon-spice
+        // 1   worn-saxon-worn-saxon-midnight
+        // 1   saxon-saxon-spice
+        // 1   saxon-saxon-midnight
+
 
         ////////////////////////
         // Utils / Internals //
