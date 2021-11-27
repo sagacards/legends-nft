@@ -193,7 +193,7 @@ module {
         ///////////////
 
 
-        // Retrieve an asset
+        // Retrieve an asset.
         public func getAssetByName (
             filename : Text,
         ) : ?Types.Record {
@@ -203,7 +203,7 @@ module {
             };
         };
 
-        // Retrieve the asset manifest
+        // Retrieve the asset manifest.
         public func getManifest () : [Types.Record] {
             assets.toArray();
         };
@@ -265,14 +265,25 @@ module {
         public func purge(
             caller  : Principal,
             confirm : Text,
+            tag     : ?Text,
         ) : Result.Result<(), Text> {
             assert(state.admins._isAdmin(caller));
             if (confirm != "DELETE ALL ASSETS") {
                 return #err("Please confirm your intention to delete all assets by typing in \"DELETE ALL ASSETS\"");
             };
-            assets.clear();
-            for ((key, value) in files.entries()) {
-                files.delete(key);
+            switch (tag) {
+                case (?t) {
+                    var i = 0;
+                    for (asset in assets.vals()) {
+                        
+                    };
+                };
+                case _ {
+                    assets.clear();
+                    for ((key, value) in files.entries()) {
+                        files.delete(key);
+                    };
+                };
             };
             #ok();
         };

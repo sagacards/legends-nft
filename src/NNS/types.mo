@@ -4,8 +4,6 @@ module {
 
     public type State = {
         admins          : Admins.Admins;
-        notifications   : [TransactionNotification];
-        subscriptions   : [(TransactionNotification) -> ()];
     };
 
     // Amount of ICP tokens, measured in 10^-8 of a token.
@@ -106,6 +104,59 @@ module {
         block_height: BlockHeight;
         amount: ICP;
         memo: Memo;
+    };
+
+    public type NNS = actor {
+        // Transfers tokens from a subaccount of the caller to the destination address.
+        // The source address is computed from the principal of the caller and the specified subaccount.
+        // When successful, returns the index of the block containing the transaction.
+        transfer : (TransferArgs) -> async TransferResult;
+
+        // Returns the amount of ICP on the specified account.
+        account_balance : (AccountBalanceArgs) -> async ICP;
+    };
+
+    // ockk2-xaaaa-aaaai-aaaua-cai
+
+    public type TimeStamp = { timestamp_nanos : Nat64 };
+
+    public type Hash = ?{ inner : [Nat8] };
+
+    public type Block = {
+        transaction : Transaction;
+        timestamp : TimeStamp;
+        parent_hash : Hash;
+    };
+
+    public type Certification = [Nat8];
+
+    public type Transaction = {
+        memo : Memo;
+        created_at_time : TimeStamp;
+        transfer : Transfer;
+    };
+
+    public type Transfer = {
+        #Burn : { from : Text; amount : ICP };
+        #Mint : { to : Text; amount : ICP };
+        #Send : {
+        to : Text;
+        from : Text;
+        amount : ICP;
+        };
+    };
+
+    public type TipOfChain = {
+        certification : ?Certification;
+        tip_index : BlockHeight;
+    };
+
+    public type BlockProxy = actor {
+        block : shared Nat64 -> async {
+            #Ok : { #Ok : Block; #Err : CanisterId };
+            #Err : Text;
+        };
+        tip_of_chain : shared () -> async { #Ok : TipOfChain; #Err : Text };
     };
 
 };
