@@ -7,7 +7,12 @@ import {
     useThree,
     useFrame,
     GroupProps,
-} from '@react-three/fiber'
+    ThreeEvent,
+} from '@react-three/fiber';
+import { useSpring, animated, useSpringRef } from "@react-spring/three";
+import { animated as animatedWeb } from '@react-spring/web';
+import { useDrag } from 'react-use-gesture';
+import create from 'zustand';
 
 
 //////////////////////////////
@@ -47,7 +52,7 @@ interface LegendManifest {
 // Fetching w/ react suspense
 export const host = window.location.host.includes('localhost')
     ? 'http://rwlgt-iiaaa-aaaaa-aaaaa-cai.localhost:8000'
-    : `https://${window.location.host}`;
+    : `https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/`;
 const index = (window as any).legendIndex || 0;
 const promise = fetch(`${host}/legend-manifest/${index}/`).then(r => r.json());
 function suspend<T>(promise: Promise<T>) {
@@ -361,6 +366,7 @@ function CardArt(props: { textures: THREE.Texture[] }) {
 
 // Renders card art onto card mesh using default camera and a portal to create the depth effect.
 function LegendCard({ rotation, ...props }: GroupProps) {
+
     // Legends traits
     const [colorBase, colorSpecular, colorEmissive] = React.useMemo(useLegendColors, []);
     const normal = React.useMemo(() => useLegendNormal(), []);
@@ -380,6 +386,57 @@ function LegendCard({ rotation, ...props }: GroupProps) {
         animOffset: 0,
         slowFrames: 0,
     });
+    const mouse = React.useRef({
+        x: 0,
+        y: 0,
+        hover: false
+    })
+
+    // State
+    const [flip, setFlip] = React.useState(false);
+
+    // Animation
+    const { accelerometer } = useStore();
+    const acceleration = accelerometer.createRef();
+    const spring = useSpringRef();
+    const rotDeviceTilt = [
+        THREE.MathUtils.clamp(acceleration.current.alpha, -10, 10) / 10 * Math.PI * .025,
+        THREE.MathUtils.clamp(acceleration.current.beta, -10, 10) / 10 * Math.PI * .1,
+        THREE.MathUtils.clamp(acceleration.current.gamma, -10, 10) / 10 * Math.PI * .01,
+    ];
+    const springProps = useSpring({
+        ref: spring,
+        rotation: [
+            THREE.MathUtils.degToRad(0 + mouse.current.y * 5),
+            (flip ? 0 : Math.PI) - THREE.MathUtils.degToRad(mouse.current.x * 5),
+            0
+        ] as unknown as THREE.Vector3,
+        position: [0, 0, mouse.current.hover ? 0.1 : 0] as unknown as THREE.Euler,
+        config: {
+            mass: 10,
+            tension: 300,
+            friction: 85
+        }
+    });
+    const hoverBox = React.useMemo(() => new THREE.Box3(), []);
+    function hoverTilt(e: ThreeEvent<PointerEvent>) {
+        hoverBox.setFromObject(e.eventObject);
+        mouse.current.x = e.point.x >= 0 ? e.point.x / hoverBox.max.x : -e.point.x / hoverBox.min.x;
+        mouse.current.y = e.point.y >= 0 ? e.point.y / hoverBox.max.y : -e.point.y / hoverBox.min.y;
+    }
+    const cardProps = {
+        ...springProps,
+        onPointerMove: hoverTilt,
+        onPointerEnter: () => mouse.current.hover = true,
+        onPointerLeave: () => {
+            mouse.current.hover = false;
+            mouse.current.x = 0;
+            mouse.current.y = 0;
+        },
+        onClick: () => {
+            setFlip(!flip);
+        },
+    };
 
     // Configure performance regression
     const { regress } = useThree(state => ({
@@ -400,7 +457,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
         const fps = 1 / (c.elapsed - c.prevElapsed);
         if (fps < 15) {
             c.slowFrames++;
-            // regress();
+            regress();
         } else {
             c.slowFrames = 0;
         }
@@ -412,9 +469,6 @@ function LegendCard({ rotation, ...props }: GroupProps) {
             state.setDpr(window.devicePixelRatio);
         }
 
-        // Rotate the card
-        mesh.current.rotation.y = state.clock.getElapsedTime() * .3;
-
         // Position camera
         const ry = mesh.current.rotation.y % Math.PI;
         const cy = THREE.MathUtils.clamp(
@@ -425,6 +479,21 @@ function LegendCard({ rotation, ...props }: GroupProps) {
         camera.current.position.x = -cy * 4 / 2;
         camera.current.lookAt(0, 0, 0);
 
+        // Animate
+        spring.start({
+            rotation: ([
+                THREE.MathUtils.degToRad(0 + mouse.current.y * 5) + rotDeviceTilt[0],
+                (flip ? 0 : Math.PI) - THREE.MathUtils.degToRad(mouse.current.x * 5) + rotDeviceTilt[1],
+                0 + rotDeviceTilt[2]
+            ] as unknown) as THREE.Vector3,
+            position: ([0, 0, mouse.current.hover ? 0.1 : 0] as unknown) as THREE.Euler,
+            config: {
+                mass: 30,
+                tension: 300,
+                friction: 100
+            }
+        });
+
         // Render
         state.gl.setRenderTarget(target.current);
         state.gl.render(scene.current, camera.current);
@@ -432,7 +501,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
     });
 
     return (
-        <group {...props} ref={mesh}>
+        <animated.group {...props} {...cardProps} ref={mesh}>
             {createPortal(<CardArt textures={useLegendLayers()} />, scene.current)}
             <Card
                 materials={<>
@@ -467,7 +536,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                     />
                 </>}
             />
-        </group>
+        </animated.group>
     );
 };
 
@@ -523,6 +592,144 @@ function Light() {
 }
 
 
+////////////////////
+// Accelerometer //
+//////////////////
+
+
+interface Acceleration {
+    // https://developers.google.com/web/fundamentals/native-hardware/device-orientation#device_motion
+    x: number,
+    y: number,
+    z: number,
+    beta: number,
+    gamma: number,
+    alpha: number,
+};
+
+interface Accelerometer {
+    isSupported: boolean;
+    permission: undefined | 'pending' | 'granted' | 'denied' | 'NA';
+    createRef: () => React.MutableRefObject<Acceleration>,
+    requestPermission: () => void,
+};
+
+interface Store {
+    accelerometer: Accelerometer;
+}
+
+interface ToastProps {
+    accept: () => void;
+    dismiss: () => void;
+    open: boolean;
+};
+
+
+///////////////////////
+// Permission Toast //
+/////////////////////
+
+
+const PermissionToast:React.FC<ToastProps> = ({accept, dismiss, open}) => {
+    const initial = { x: 0, y: 100, rotateZ: '-10deg', };
+    const current = { x: 0, y: open ? -100 : 100, rotateZ: '0deg', };
+    const springConf = { mass: 5, tension: 500, friction: 75 };
+    const [{ x, y, rotateZ }, set] = useSpring(() => ({ ...initial, config: springConf }));
+
+    set(current);
+
+    const bind = useDrag(({ down, movement: [mX, mY], velocity, direction: [dX, dY], tap }) => {
+        set({ x: down ? mX : current.x, y: down ? mY + current.y : current.y });
+        if (velocity > .25 && dY === 1) {
+            dismiss();
+        }
+        if (tap) {
+            accept();
+        }
+    });
+
+    return (
+        <div className="toast-root">
+            <animatedWeb.div className="toast" {...bind()} style={{ x, y, rotateZ, touchAction: 'none' }}>
+                <div>Tap to enhance with your phone's accelerometer</div>
+            </animatedWeb.div>
+        </div>
+    );
+}
+
+
+////////////////////////////
+// The Application Store //
+//////////////////////////
+
+
+function useStore() {
+
+    const refs = React.useRef<React.MutableRefObject<Acceleration>[]>([]);
+
+    const ingestMotion = (e: DeviceMotionEvent) => {
+        requestAnimationFrame(() => {
+            for (const ref of refs.current) {
+                ref.current.x = e.acceleration?.x || 0;
+                ref.current.y = e.acceleration?.y || 0;
+                ref.current.z = e.acceleration?.z || 0;
+                ref.current.beta = e.rotationRate?.beta || 0;
+                ref.current.gamma = e.rotationRate?.gamma || 0;
+                ref.current.alpha = e.rotationRate?.alpha || 0;
+            }
+        });
+    };
+
+    const bindMotionEvents = React.useCallback(() => window.addEventListener('devicemotion', ingestMotion, false), []);
+    const unbindMotionEvents = React.useCallback(() => window.removeEventListener('devicemotion', ingestMotion), []);
+
+    React.useEffect(() => {
+        bindMotionEvents();
+        return unbindMotionEvents;
+    }, []);
+
+    const bindRef = React.useCallback((ref: React.MutableRefObject<Acceleration>) => {
+        refs.current.push(ref);
+    }, []);
+
+    const createRef = React.useCallback(() => {
+        const ref = React.useRef<Acceleration>({
+            x: 0,
+            y: 0,
+            z: 0,
+            beta: 0,
+            gamma: 0,
+            alpha: 0,
+        });
+        bindRef(ref);
+        return ref;
+    }, []);
+
+    const store = create<Store>((set, get) => ({
+        accelerometer: {
+            createRef,
+            isSupported: false,
+            permission: undefined,
+            requestPermission: () => {
+                //@ts-ignore
+                DeviceMotionEvent.requestPermission()
+                //@ts-ignore
+                .then(response => {
+                    if (response === 'granted') {
+                        bindMotionEvents();
+                        set({ accelerometer: { ...get().accelerometer, permission: 'granted' }});
+                    } else if (response === 'denied') {
+                        set({ accelerometer: { ...get().accelerometer, permission: 'denied' }});
+                    }
+                })
+                .catch(console.error);
+            }
+        }
+    }));
+    return store();
+}
+
+
 ///////////////
 // App Root //
 /////////////
@@ -575,7 +782,7 @@ function Loader3 () {
 // Main canvas
 
 function LegendPreviewCanvas() {
-    const { views : { flat, sideBySide} } = useLegendManifest()
+    const { views : { flat, sideBySide} } = useLegendManifest();
     return (
         <div className="canvasContainer" style={{ width: '100%', height: '100%' }}>
             <div style={{ width: '100%', position: 'absolute', bottom: '1em', left: 0, display: 'flex', gap: '1em', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
@@ -599,7 +806,31 @@ function LegendPreviewCanvas() {
 // App root
 
 export default function App() {
+    const [toast, setToast] = React.useState(false);
+    const { accelerometer: { permission, requestPermission } } = useStore();
+    React.useEffect(() => {
+        // @ts-ignore
+        if (typeof window.DeviceMotionEvent?.requestPermission === 'function') {
+            // @ts-ignore
+            DeviceMotionEvent?.requestPermission()
+            // @ts-ignore
+            .then((r) => {
+                if (r !== 'granted') setToast(true);
+            })
+            // @ts-ignore
+            .catch((r) => setToast(true));
+        }
+    }, [permission]);
+    const acceptToast = () => {
+        requestPermission();
+        setToast(false);
+    };
+
+    const dismissToast = () => {
+        setToast(false);
+    }
     return <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+        <PermissionToast accept={acceptToast} dismiss={dismissToast} open={toast} />
         <React.Suspense fallback={<Loader />}>
             <div style={{ width: '100%', height: '100%' }}>
                 <LegendPreviewCanvas />
