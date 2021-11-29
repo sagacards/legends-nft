@@ -46,7 +46,13 @@ interface LegendManifest {
         sideBySide: FilePath;
         animated: FilePath;
         interactive: FilePath;
-    }
+    };
+    nri: {
+		back: number;
+		border: number;
+		ink: number;
+		avg: number;
+	};
 };
 
 // Fetching w/ react suspense
@@ -782,12 +788,19 @@ function Loader3 () {
 // Main canvas
 
 function LegendPreviewCanvas() {
-    const { views : { flat, sideBySide} } = useLegendManifest();
+    const { views : { flat, sideBySide, animated}, back, border, ink, nri } = useLegendManifest();
     return (
         <div className="canvasContainer" style={{ width: '100%', height: '100%' }}>
-            <div style={{ width: '100%', position: 'absolute', bottom: '1em', left: 0, display: 'flex', gap: '1em', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-                <a style={{ color: 'white', fontFamily: 'sans-serif', textDecoration: 'none' }} href={sideBySide}>Static View</a>
-                <a style={{ color: 'white', fontFamily: 'sans-serif', textDecoration: 'none' }} href={flat}>Card Art View</a>
+            <div className="stats-1">
+                <div>Mint: #{(window as any).legendIndex || 0}</div>
+                <div>Back: {back} (NRI {Math.floor(nri.back * 100)}%)</div>
+                <div>Border: {border} (NRI {Math.floor(nri.border * 100)}%)</div>
+                <div>Ink: {ink} (NRI {Math.floor(nri.ink * 100)}%)</div>
+                <div>Average NRI: {Math.floor(nri.avg * 100)}%</div>
+            </div>
+            <div className="stats-2">
+                <a href={sideBySide}>Static View</a>
+                <a href={animated}>Animated View</a>
             </div>
             <Canvas
                 dpr={window.devicePixelRatio}
