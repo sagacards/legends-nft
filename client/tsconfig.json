@@ -22,8 +22,7 @@
       "three/*" : ["src/three/*"],
       "ui/*" : ["src/ui/*"],
       "hooks/*" : ["src/hooks/*"],
-    },
-    "types": ["vite-plugin-svgr/client"]
+    }
   },
   "include": ["./src/"]
 }

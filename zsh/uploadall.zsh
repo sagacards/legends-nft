@@ -36,26 +36,26 @@ network=${1:-local}
 # zsh zsh/upload.zsh art/fool-flat.webp "Flat Preview" "preview flat" "A preview of the card art" $network
 
 # Upload Side-By-Side Previews
-echo "Upload side-by-side previews..."
-tags() {  # xD
-    x=$(echo $1 | sed -E "s/.+\///")
-    x=$(echo $x | sed -E "s/.webp//")
-    x=$(echo $x | sed -E "s/preview-side-by-side-//")
-    x=$(echo $x | sed -E "s/worn-saxon/worn_saxon/")
-    x=$(echo $x | sed -E "s/worn-saxon/worn_saxon/")
-    x=$(echo $x | sed -E "s/bordered-saxon/bordered_saxon/")
-    x=$(echo $x | sed -E "s/bordered-saxon/bordered_saxon/")
-    x=$(echo $x | sed -E "s/-/:/")
-    x=$(echo $x | sed -E "s/-/:/")
-    x=$(echo $x | sed -E "s/-/:/")
-    x=$(echo $x | sed -E "s/worn_saxon/worn-saxon/")
-    x=$(echo $x | sed -E "s/worn_saxon/worn-saxon/")
-    x=$(echo $x | sed -E "s/bordered_saxon/bordered-saxon/")
-    x=$(echo $x | sed -E "s/bordered_saxon/bordered-saxon/")
-    echo "preview side-by-side back-${x%%:*} border-${${x%:*}#*:} ink-${x##*:}"
-}
+# echo "Upload side-by-side previews..."
+# tags() {  # xD
+#     x=$(echo $1 | sed -E "s/.+\///")
+#     x=$(echo $x | sed -E "s/.webp//")
+#     x=$(echo $x | sed -E "s/preview-side-by-side-//")
+#     x=$(echo $x | sed -E "s/worn-saxon/worn_saxon/")
+#     x=$(echo $x | sed -E "s/worn-saxon/worn_saxon/")
+#     x=$(echo $x | sed -E "s/bordered-saxon/bordered_saxon/")
+#     x=$(echo $x | sed -E "s/bordered-saxon/bordered_saxon/")
+#     x=$(echo $x | sed -E "s/-/:/")
+#     x=$(echo $x | sed -E "s/-/:/")
+#     x=$(echo $x | sed -E "s/-/:/")
+#     x=$(echo $x | sed -E "s/worn_saxon/worn-saxon/")
+#     x=$(echo $x | sed -E "s/worn_saxon/worn-saxon/")
+#     x=$(echo $x | sed -E "s/bordered_saxon/bordered-saxon/")
+#     x=$(echo $x | sed -E "s/bordered_saxon/bordered-saxon/")
+#     echo "preview side-by-side back-${x%%:*} border-${${x%:*}#*:} ink-${x##*:}"
+# }
 
-for file in art/side-by-side/*; zsh zsh/upload.zsh $file "Side by Side Preview" "$(tags $file)" "A static preview displaying the card back and border" "image/webp" $network
+# for file in art/side-by-side/*; zsh zsh/upload.zsh $file "Side by Side Preview" "$(tags $file)" "A static preview displaying the card back and border" "image/webp" $network
 
 # Upload Animated Previews
 # echo "Upload animated previews..."
@@ -81,4 +81,4 @@ for file in art/side-by-side/*; zsh zsh/upload.zsh $file "Side by Side Preview" 
 
 # Upload Preview App
 
-# zsh zsh/upload.zsh client/dist/index.html "Animated Preview App" "preview-app" "A javascript/html client for previewing legends" "text/html; charset=utf-8"
+zsh zsh/upload.zsh client/dist/index.html "Animated Preview App" "preview-app" "A javascript/html client for previewing legends" "text/html; charset=utf-8" $network
