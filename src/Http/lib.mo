@@ -9,6 +9,7 @@ import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
+import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 
@@ -20,6 +21,9 @@ import Stoic "../Integrations/Stoic";
 // Module Imports
 
 import Types "types";
+
+
+import Debug "mo:base/Debug";
 
 
 module {
@@ -507,6 +511,33 @@ module {
         };
 
 
+        // @path: /<nat>(.web(p|m))?
+        private func httpLegendRootView (
+            tokens : [Text],
+        ) : Types.Response {
+            switch (natFromText(tokens[0])) {
+                case (?index) {
+                    let legend = state.ledger._getLegend(index);
+                    if (tokens.size() == 1) {
+                        return renderLegendPreview(index)
+                    } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {
+                        return renderAssetWithTags([
+                            "preview", "animated", "back-" # legend.back,
+                            "border-" # legend.border, "ink-" # legend.ink
+                        ]);
+                    } else if (Text.map(tokens[1], Prim.charToLower) == "webp") {
+                        return renderAssetWithTags([
+                            "preview", "side-by-side", "back-" # legend.back,
+                            "border-" # legend.border, "ink-" # legend.ink
+                        ]);
+                    }
+                };
+                case _ ();
+            };
+            http404(null);
+        };
+
+
         // A 404 response with an optional error message.
         private func http404(msg : ?Text) : Types.Response {
             {
@@ -586,8 +617,11 @@ module {
 
             switch (path.size()) {
                 case 0 return httpIndex();
-                case 1 for ((key, handler) in Iter.fromArray(paths)) {
-                    if (path[0] == key) return handler(null);
+                case 1 {
+                    for ((key, handler) in Iter.fromArray(paths)) {
+                        if (path[0] == key) return handler(null);
+                    };
+                    return httpLegendRootView(Iter.toArray(Text.tokens(path[0], #text("."))));
                 };
                 case 2 for ((key, handler) in Iter.fromArray(paths)) {
                     if (path[0] == key) return handler(?path[1]);
