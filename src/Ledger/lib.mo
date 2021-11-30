@@ -2,6 +2,7 @@
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
+import Bool "mo:base/Bool";
 import Buffer "mo:base/Buffer";
 import Ext "mo:ext/Ext";
 import Iter "mo:base/Iter";
@@ -144,6 +145,18 @@ module {
         ) : Ext.AccountIdentifier {
             let aid = AccountIdentifier.fromPrincipal(principal, subaccount);
             Text.map(AccountIdentifier.toText(aid), Prim.charToUpper);
+        };
+
+        public func _getUnminted () : [Ext.TokenIndex] {
+            let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
+            var i : Nat32 = 17;
+            while (Nat32.toNat(i) < state.supply) {
+                if (Option.isNull(ledger[Nat32.toNat(i)])) {
+                    unminted.add(i);
+                };
+                i += 1;
+            };
+            return unminted.toArray();
         };
 
         // Get a random unminted token index.

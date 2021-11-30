@@ -260,6 +260,10 @@ module {
             price;
         };
 
+        public func available () : Nat {
+            state.ledger._getUnminted().size();
+        };
+
 
         ///////////////////
         // Internal API //

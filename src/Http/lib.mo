@@ -8,6 +8,7 @@ import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 
@@ -473,6 +474,38 @@ module {
             };
         };
 
+        
+        // @path: /public-sale-price
+        // Get price of a Legend in the public sale.
+        private func httpPublicSalePrice (path : ?Text) : Types.Response {
+            {
+                body = Text.encodeUtf8(
+                    Nat64.toText(state.publicSale.getPrice())
+                );
+                headers = [
+                    ("Content-Type", "text/plain"),
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
+
+        
+        // @path: /public-sale-available
+        // Get number of NFTs remaining in public sale.
+        private func httpPublicSaleAvailable (path : ?Text) : Types.Response {
+            {
+                body = Text.encodeUtf8(
+                    Nat.toText(state.publicSale.available())
+                );
+                headers = [
+                    ("Content-Type", "text/plain"),
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
+
 
         // A 404 response with an optional error message.
         private func http404(msg : ?Text) : Types.Response {
@@ -523,6 +556,8 @@ module {
             ("legend", httpLegend),
             ("side-by-side-preview", httpSideBySidePreview),
             ("animated-preview", httpAnimatedPreview),
+            ("public-sale-price", httpPublicSalePrice),
+            ("public-sale-available", httpPublicSaleAvailable),
         ];
 
 
