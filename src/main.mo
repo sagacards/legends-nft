@@ -225,23 +225,6 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
 
-    ///////////
-    // HTTP //
-    /////////
-
-
-    let httpHandler = Http.HttpHandler({
-        assets;
-        admins;
-        ledger;
-        supply;
-    });
-
-    public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
-        httpHandler.request(request);
-    };
-
-
     //////////
     // EXT //
     ////////
@@ -404,6 +387,28 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     public query func publicSaleGetPrice () : async Nat64 {
         publicSale.getPrice();
+    };
+
+    public query func publicSaleGetAvailable () : async Nat {
+        publicSale.available();
+    };
+
+
+    ///////////
+    // HTTP //
+    /////////
+
+
+    let httpHandler = Http.HttpHandler({
+        assets;
+        admins;
+        ledger;
+        supply;
+        publicSale;
+    });
+
+    public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
+        httpHandler.request(request);
     };
 
 };

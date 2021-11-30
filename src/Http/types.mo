@@ -3,15 +3,17 @@
 import Admins "../Admins";
 import Assets "../Assets";
 import Ledger "../Ledger";
+import PublicSale "../PublicSale";
 
 
 module {
 
     public type State = {
-        admins : Admins.Admins;
-        assets : Assets.Assets;
-        ledger : Ledger.Ledger;
-        supply : Nat;
+        admins      : Admins.Admins;
+        assets      : Assets.Assets;
+        ledger      : Ledger.Ledger;
+        supply      : Nat;
+        publicSale  : PublicSale.Factory;
     };
 
     public type HeaderField = (Text, Text);
