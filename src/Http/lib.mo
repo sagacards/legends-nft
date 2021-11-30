@@ -23,9 +23,6 @@ import Stoic "../Integrations/Stoic";
 import Types "types";
 
 
-import Debug "mo:base/Debug";
-
-
 module {
 
     public class HttpHandler (state : Types.State) {
@@ -619,7 +616,7 @@ module {
                 case 0 return httpIndex();
                 case 1 {
                     for ((key, handler) in Iter.fromArray(paths)) {
-                        if (path[0] == key) return handler(null);
+                    if (path[0] == key) return handler(null);
                     };
                     return httpLegendRootView(Iter.toArray(Text.tokens(path[0], #text("."))));
                 };
