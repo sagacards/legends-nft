@@ -15,9 +15,9 @@ import Types "types";
 module {
 
 
-        ////////////
-        // Utils //
-        //////////
+    ////////////
+    // Utils //
+    //////////
 
 
     // Until Quint's account identifier method is fixed:
