@@ -18,8 +18,6 @@ module Ledger {
         supply  : Nat;
     };
 
-    public type MintingStage = { #admins; #community; #general; };
-
     public type Legend = {
         back    : Text;
         border  : Text;
