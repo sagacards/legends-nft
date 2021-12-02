@@ -193,9 +193,9 @@ module {
             i := 0;
             let random = Random.Finite(await Random.blob());
             while (Option.isNull(token)) {
-                switch (random.coin()) {
-                    case (?r) {
-                        if (r) {
+                switch ((random.coin(), random.coin())) {
+                    case ((?a, ?b)) {
+                        if (a and b) {
                             token := ?unminted.get(Nat32.toNat(i));
                         } else {
                             i += 1;
