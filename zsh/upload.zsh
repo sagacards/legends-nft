@@ -12,20 +12,20 @@ threshold=${7:-100000}
 
 
 echo "$network Emptying buffer..."
-dfx canister --network $network call legends uploadClear
+dfx canister --network $network call legends-staging uploadClear
 
 i=0
 byteSize=${#$(od -An -v -tuC $file)[@]}
 echo "$network Uploading asset \"$filename\", size: $byteSize"
 while [ $i -le $byteSize ]; do
     echo "chunk #$(($i/$threshold+1))..."
-    dfx canister --network $network call legends upload "( vec {\
+    dfx canister --network $network call legends-staging upload "( vec {\
         vec { $(for byte in ${(j:;:)$(od -An -v -tuC $file)[@]:$i:$threshold}; echo "$byte;") };\
     })"
     i=$(($i+$threshold))
 done
 echo "$network Finalizing asset \"$filename\""
-dfx canister --network $network call legends uploadFinalize "(\
+dfx canister --network $network call legends-staging uploadFinalize "(\
     \"\",\
     record {\
         \"name\" = \"$name\";\
