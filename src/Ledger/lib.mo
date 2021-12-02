@@ -255,7 +255,6 @@ module {
         //////////
 
 
-        var mintingStage : Types.MintingStage = #admins;
         var ledger : [var ?Types.Token] = Array.init(state.supply, null);
         var legends : [Types.Legend] = [];
 
@@ -280,15 +279,6 @@ module {
         // Admin API //
         //////////////
 
-
-        // @auth: admin
-        public func setMintingStage (
-            caller  : Principal,
-            stage   : Types.MintingStage,
-        ) : async () {
-            assert(state.admins._isAdmin(caller));
-            mintingStage := stage;
-        };
 
         // @auth: admin
         public func mint (
