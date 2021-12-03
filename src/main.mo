@@ -4,6 +4,7 @@ import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Nat8 "mo:base/Nat8";
+import Nat64 "mo:base/Nat64";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 
@@ -214,11 +215,11 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         ledger.reassign(caller, token, to, confirm);
     };
 
-    public query ({ caller }) func backup () : async [?LedgerTypes.Token] {
+    public query ({ caller }) func ledgerBackup () : async [?LedgerTypes.Token] {
         ledger.backup(caller);
     };
 
-    public shared ({ caller }) func restore (
+    public shared ({ caller }) func ledgerRestore (
         data : [?LedgerTypes.Token],
     ) : async Result.Result<(), Text> {
         ledger.restore(caller, data);
@@ -364,6 +365,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
 
     let publicSale = PublicSale.Factory({
+        admins;
         nns;
         ledger;
         locks       = stablePublicSaleLocks;
@@ -371,6 +373,26 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         failed      = stablePublicSaleFailedPurchases;
         nextTxId    = stablePublicSaleNextTxId;
     });
+
+    public query func publicSaleBackup () : async {
+        nextTxId    : PublicSaleTypes.TxId;
+        locks       : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
+        purchases   : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+        failed      : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+    } {
+        publicSale.toStable();
+    };
+
+    public shared ({ caller }) func publicSaleRestore (
+        backup : {
+            nextTxId    : ?PublicSaleTypes.TxId;
+            locks       : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
+            purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+            failed      : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+        }
+    ) : async () {
+        publicSale.restore(caller, backup);
+    };
 
     public shared ({ caller }) func publicSaleLock (
         memo : Nat64,
