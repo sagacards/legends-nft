@@ -16,6 +16,7 @@ import Types "types";
 import Hex "../NNS/Hex";
 import Prim "mo:prim";
 
+
 module {
 
 
@@ -64,16 +65,60 @@ module {
 
         // Post Upgrade
 
-        nextTxId := state.nextTxId;
-        for ((k, v) in Iter.fromArray(state.locks)) {
-            if (Time.now() < (v.lockedAt + lockTtl)) {
-                locks.put(k, v);
+        private func _restore (
+            backup : {
+                nextTxId    : ?Types.TxId;
+                locks       : ?[(Types.TxId, Types.Lock)];
+                purchases   : ?[(Types.TxId, Types.Purchase)];
+                failed      : ?[(Types.TxId, Types.Purchase)];
             }
-        };
-        for ((k, v) in Iter.fromArray(state.purchases)) purchases.put(k, v);
-        for ((k, v) in Iter.fromArray(state.failed)) failedPurchases.put(k, v);
+        ) : () {
+            switch (backup.nextTxId) {
+                case (?x) nextTxId := x;
+                case _ ();
+            };
 
-        // TODO: Backup and restore
+            switch (backup.locks) {
+                case (?x) {
+                    for ((k, v) in Iter.fromArray(x)) {
+                        if (Time.now() < (v.lockedAt + lockTtl)) {
+                            locks.put(k, v);
+                        }
+                    };
+                };
+                case _ ();
+            };
+
+            switch (backup.purchases) {
+                case (?x) for ((k, v) in Iter.fromArray(x)) purchases.put(k, v);
+                case _ ();
+            };
+
+            switch (backup.failed) {
+                case (?x) for ((k, v) in Iter.fromArray(x)) failedPurchases.put(k, v);
+                case _ ();
+            };
+        };
+
+        public func restore (
+            caller : Principal,
+            backup : {
+                nextTxId    : ?Types.TxId;
+                locks       : ?[(Types.TxId, Types.Lock)];
+                purchases   : ?[(Types.TxId, Types.Purchase)];
+                failed      : ?[(Types.TxId, Types.Purchase)];
+            }
+        ) : () {
+            assert(state.admins._isAdmin(caller));
+            _restore(backup);
+        };
+
+        _restore({
+            nextTxId = ?state.nextTxId;
+            locks = ?state.locks;
+            purchases = ?state.purchases;
+            failed = ?state.failed;
+        });
 
 
         ///////////////////////
@@ -225,6 +270,7 @@ module {
                                                 price       = transfer.amount.e8s;
                                                 lockedAt    = lock.lockedAt;
                                                 closedAt    = Time.now();
+                                                blockheight = blockheight;
                                             });
                                             locks.delete(lock.id);
                                             switch (

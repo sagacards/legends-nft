@@ -1,11 +1,14 @@
+import Admins "../Admins";
 import Ledger "../Ledger";
 import LedgerTypes "../Ledger/types";
 import NNS "../NNS/lib";
+import NNSTypes "../NNS/types";
 import Time "mo:base/Time";
 
 module {
 
     public type State = {
+        admins      : Admins.Admins;
         nns         : NNS.Factory;
         ledger      : Ledger.Ledger;
         nextTxId    : TxId;
@@ -32,6 +35,7 @@ module {
         memo        : Nat64;
         lockedAt    : Time.Time;
         closedAt    : Time.Time;
+        blockheight : NNSTypes.BlockHeight;
     };
 
 };
