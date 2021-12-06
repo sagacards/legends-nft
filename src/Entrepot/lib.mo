@@ -86,12 +86,26 @@ module {
 
         // Post upgrade
 
-        for ((k, v) in Iter.fromArray(state.listings)) listings.put(k, v);
-        for ((k, v) in Iter.fromArray(state.transactions)) transactions.put(k, v);
-        for ((k, v) in Iter.fromArray(state.pendingTransactions)) {
-            if (Time.now() < (v.initiated + transactionTtl)) {
-                pendingTransactions.put(k, v);
+        private func _restore (
+            backup : Types.State,
+        ) : () {
+            for ((k, v) in Iter.fromArray(backup.listings)) listings.put(k, v);
+            for ((k, v) in Iter.fromArray(backup.transactions)) transactions.put(k, v);
+            for ((k, v) in Iter.fromArray(backup.pendingTransactions)) {
+                if (Time.now() < (v.initiated + transactionTtl)) {
+                    pendingTransactions.put(k, v);
+                };
             };
+        };
+
+        _restore(state);
+
+        public func restore (
+            caller : Principal,
+            backup : Types.State,
+        ) : () {
+            assert state.admins._isAdmin(caller);
+            _restore(backup);
         };
 
 

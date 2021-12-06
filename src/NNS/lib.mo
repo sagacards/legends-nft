@@ -2,13 +2,17 @@ import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
-import Nat8 "mo:base/Nat8";
-import Nat32 "mo:base/Nat32";
-import Principal "mo:base/Principal";
-import Text "mo:base/Text";
-
 import CRC32 "CRC32";
+import Hex "hex";
+import Nat32 "mo:base/Nat32";
+import Nat8 "mo:base/Nat8";
+import Prim "mo:⛔";
+import Principal "mo:base/Principal";
 import SHA224 "SHA224";
+import Text "mo:base/Text";
+import Time "mo:base/Time";
+
+
 import Types "types";
 
 
@@ -29,6 +33,7 @@ module {
     };
     type Subaccount = Blob;
     public type AccountIdentifier = Blob;
+
     public func accountIdentifier(principal: Principal, subaccount: Subaccount) : AccountIdentifier {
         let hash = SHA224.Digest();
         hash.write([0x0A]);
@@ -42,6 +47,12 @@ module {
 
     public func defaultSubaccount() : Subaccount {
         Blob.fromArrayMut(Array.init(32, 0 : Nat8))
+    };
+
+    public func defaultAccount(
+        principal : Principal
+    ) : Text {
+        Text.map(Hex.encode(Blob.toArray(accountIdentifier(principal, defaultSubaccount()))), Prim.charToUpper);
     };
 
 
@@ -88,6 +99,30 @@ module {
         };
 
         // TODO: Transfer
+        // @auth: admin
+        public func transfer (
+            caller  : Principal,
+            amount  : Types.ICP,
+            to      : Text,
+            memo    : Types.Memo,
+        ) : async Types.TransferResult {
+            assert(state.admins._isAdmin(caller));
+            switch (AccountIdentifier.fromText(to)) {
+                case (#ok(aid)) {
+                    let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
+                    await nns.transfer({
+                        fee = { e8s = 10_000; };
+                        amount;
+                        memo;
+                        from_subaccount = null;
+                        created_at_time = null;
+                        to = Blob.fromArray(aid);
+                    })
+                };
+                // TODO This error is horrible.
+                case _ #Err(#TxCreatedInFuture(null));
+            };
+        };
 
     };
 

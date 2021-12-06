@@ -478,10 +478,10 @@ module {
         
         // @path: /public-sale-price
         // Get price of a Legend in the public sale.
-        private func httpPublicSalePrice (path : ?Text) : Types.Response {
+        private func httpPaymentsPrice (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat64.toText(state.publicSale.getPrice())
+                    Nat64.toText(state.payments.getPrice())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -494,10 +494,10 @@ module {
         
         // @path: /public-sale-available
         // Get number of NFTs remaining in public sale.
-        private func httpPublicSaleAvailable (path : ?Text) : Types.Response {
+        private func httpPaymentsAvailable (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat.toText(state.publicSale.available())
+                    Nat.toText(state.payments.available())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -584,8 +584,8 @@ module {
             ("legend", httpLegend),
             ("side-by-side-preview", httpSideBySidePreview),
             ("animated-preview", httpAnimatedPreview),
-            ("public-sale-price", httpPublicSalePrice),
-            ("public-sale-available", httpPublicSaleAvailable),
+            ("public-sale-price", httpPaymentsPrice),
+            ("public-sale-available", httpPaymentsAvailable),
         ];
 
 

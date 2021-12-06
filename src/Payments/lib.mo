@@ -2,7 +2,6 @@ import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
-import Debug "mo:base/Debug";
 import Ext "mo:ext/Ext";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
@@ -13,7 +12,6 @@ import Nat64 "mo:base/Nat64";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Types "types";
-import Hex "../NNS/Hex";
 import Prim "mo:prim";
 
 
@@ -176,7 +174,7 @@ module {
             }
         };
 
-        // Find a purchase.
+        // Find a purchase with a principal.
         public func _findPurchase (
             caller  : Principal,
             memo    : Nat64,
@@ -186,6 +184,43 @@ module {
                     Iter.toArray<(Types.TxId, Types.Purchase)>(purchases.entries()),
                     func (_, a) {
                         a.memo == memo and a.buyer == caller
+                    }
+                )
+            ) {
+                case (?(_, purchase)) ?purchase;
+                case _ null;
+            }
+        };
+
+        // Find a purchase with an account address.
+        public func _findAccountPurchase (
+            caller  : Text,
+            memo    : Nat64,
+        ) : ?Types.Purchase {
+            switch (
+                Array.find<(Types.TxId, Types.Purchase)>(
+                    Iter.toArray<(Types.TxId, Types.Purchase)>(purchases.entries()),
+                    func (_, a) {
+                        a.memo == memo and a.buyerAccount == caller
+                    }
+                )
+            ) {
+                case (?(_, purchase)) ?purchase;
+                case _ null;
+            }
+        };
+
+        // Find a failed purchase with an account address.
+        public func _findAccountFailedPurchase (
+            caller  : Text,
+            memo    : Nat64,
+        ) : ?Types.Purchase {
+            let address = Text.map(caller, Prim.charToUpper);
+            switch (
+                Array.find<(Types.TxId, Types.Purchase)>(
+                    Iter.toArray<(Types.TxId, Types.Purchase)>(failedPurchases.entries()),
+                    func (_, a) {
+                        a.memo == memo and a.buyerAccount == address;
                     }
                 )
             ) {
@@ -222,6 +257,7 @@ module {
                     locks.put(txId, {
                         id          = txId;
                         buyer       = caller;
+                        buyerAccount= NNS.defaultAccount(caller);
                         lockedAt    = Time.now();
                         token;
                         memo;
@@ -250,13 +286,13 @@ module {
                             switch (b.transaction.transfer) {
                                 case (#Send(transfer)) {
                                     if (
-                                        Hex.encode(Blob.toArray(NNS.accountIdentifier(canister, NNS.defaultSubaccount()))) != Text.map(transfer.to, Prim.charToUpper)
+                                        NNS.defaultAccount(canister) != Text.map(transfer.to, Prim.charToUpper)
                                     ) {
-                                        return #err("Incorrect transfer recipient: " # Hex.encode(Blob.toArray(NNS.accountIdentifier(canister, NNS.defaultSubaccount()))) # ", " # Text.map(transfer.to, Prim.charToUpper));
+                                        return #err("Incorrect transfer recipient: " # NNS.defaultAccount(canister) # ", " # Text.map(transfer.to, Prim.charToUpper));
                                     } else if (
-                                        Hex.encode(Blob.toArray(NNS.accountIdentifier(caller, NNS.defaultSubaccount()))) != Text.map(transfer.from, Prim.charToUpper)
+                                        NNS.defaultAccount(caller) != Text.map(transfer.from, Prim.charToUpper)
                                     ) {
-                                        return #err("Incorrect transfer sender: " # Hex.encode(Blob.toArray(NNS.accountIdentifier(caller, NNS.defaultSubaccount()))) # ", " # Text.map(transfer.from, Prim.charToUpper));
+                                        return #err("Incorrect transfer sender: " # NNS.defaultAccount(caller) # ", " # Text.map(transfer.from, Prim.charToUpper));
                                     } else if (transfer.amount.e8s < price) {
                                         return #err("Incorrect transfer amount.");
                                     };
@@ -265,6 +301,7 @@ module {
                                             purchases.put(lock.id, {
                                                 id          = lock.id;
                                                 buyer       = lock.buyer;
+                                                buyerAccount= NNS.defaultAccount(lock.buyer);
                                                 token       = lock.token;
                                                 memo        = lock.memo;
                                                 price       = transfer.amount.e8s;
@@ -310,6 +347,44 @@ module {
             state.ledger._getUnminted().size();
         };
 
+        // Bulk process a list of transactions from NNS in search of transactions that need to be refunded.
+        // This could be validated onchain against the ledger in some cases, but for now we will just limit it to admins.
+        // @auth: admin
+        public func processRefunds (
+            caller          : Principal,
+            nnsTransactions : [Types.NNSTransaction],
+        ) : () {
+            assert(state.admins._isAdmin(caller));
+            for (transaction in Iter.fromArray(nnsTransactions)) {
+                let account = Text.map(transaction.from, Prim.charToUpper);
+                switch (_findAccountPurchase(account, transaction.memo)) {
+                    case (?p) ();
+                    case _ {
+                        switch (_findAccountFailedPurchase(account, transaction.memo)) {
+                            case (?p) {};
+                            case _ {
+                                // Transaction not found in our canister. Record failure and issue a refund.
+                                let txId = nextTxId;
+                                nextTxId += 1;
+                                failedPurchases.put(txId, {
+                                    blockheight = transaction.blockheight;
+                                    buyer       = caller;  // BAD: we can't get principal, so buyer is logged as whoever called process refunds
+                                    buyerAccount= account;
+                                    closedAt    = Time.now();
+                                    id          = txId;
+                                    lockedAt    = Time.now();
+                                    memo        = transaction.memo;
+                                    price       = transaction.amount;
+                                    token       = 999_999_999;
+                                });
+                                // TODO: transfer
+                            };
+                        };
+                    };
+                };
+            };
+        };
+
 
         ///////////////////
         // Internal API //
@@ -321,10 +396,6 @@ module {
         ////////////////
         // Admin API //
         //////////////
-
-
-        // TODO: Read payments
-        // TODO: Read failed payments
 
 
     };
