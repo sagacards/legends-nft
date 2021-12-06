@@ -22,6 +22,7 @@ module {
     public type Lock = {
         id          : TxId;
         buyer       : Principal;
+        buyerAccount: Text;
         token       : LedgerTypes.TokenIndex;
         memo        : Nat64;
         lockedAt    : Time.Time;
@@ -30,12 +31,21 @@ module {
     public type Purchase = {
         id          : TxId;
         buyer       : Principal;
+        buyerAccount: Text;
         token       : LedgerTypes.TokenIndex;
         price       : Nat64;  // ICPe8
         memo        : Nat64;
         lockedAt    : Time.Time;
         closedAt    : Time.Time;
         blockheight : NNSTypes.BlockHeight;
+    };
+
+    public type NNSTransaction = {
+        from        : Text;
+        amount      : Nat64; // e8s
+        timestamp   : Time.Time;
+        memo        : Nat64;
+        blockheight : Nat64;
     };
 
 };

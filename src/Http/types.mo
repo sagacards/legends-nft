@@ -3,7 +3,7 @@
 import Admins "../Admins";
 import Assets "../Assets";
 import Ledger "../Ledger";
-import PublicSale "../PublicSale";
+import Payments "../Payments";
 
 
 module {
@@ -13,7 +13,7 @@ module {
         assets      : Assets.Assets;
         ledger      : Ledger.Ledger;
         supply      : Nat;
-        publicSale  : PublicSale.Factory;
+        payments    : Payments.Factory;
     };
 
     public type HeaderField = (Text, Text);

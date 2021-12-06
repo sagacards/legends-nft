@@ -23,8 +23,8 @@ import LedgerTypes "Ledger/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
 import Hex "NNS/Hex";
-import PublicSale "PublicSale";
-import PublicSaleTypes "PublicSale/types";
+import Payments "Payments";
+import PaymentsTypes "Payments/types";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
@@ -62,12 +62,12 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     private stable var stableTransactions : [(Nat, EntrepotTypes.Transaction)] = [];
     private stable var stablePendingTransactions : [(Ext.TokenIndex, EntrepotTypes.Transaction)] = [];
 
-    // Public Sale
+    // Payments
 
-    private stable var stablePublicSaleLocks : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)] = [];
-    private stable var stablePublicSalePurchases : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
-    private stable var stablePublicSaleNextTxId : PublicSaleTypes.TxId = 0;
-    private stable var stablePublicSaleFailedPurchases : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
+    private stable var stablePaymentsLocks : [(PaymentsTypes.TxId, PaymentsTypes.Lock)] = [];
+    private stable var stablePaymentsPurchases : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
+    private stable var stablePaymentsNextTxId : PaymentsTypes.TxId = 0;
+    private stable var stablePaymentsFailedPurchases : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
 
     // Upgrades
 
@@ -96,17 +96,17 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         stableTransactions := transactions;
         stablePendingTransactions := pendingTransactions;
 
-        // Preserve public sale
+        // Preserve Payments
         let {
             locks;
             purchases;
             nextTxId;
             failed;
-        } = publicSale.toStable();
-        stablePublicSaleLocks := locks;
-        stablePublicSalePurchases := purchases;
-        stablePublicSaleFailedPurchases := failed;
-        stablePublicSaleNextTxId := nextTxId;
+        } = payments.toStable();
+        stablePaymentsLocks := locks;
+        stablePaymentsPurchases := purchases;
+        stablePaymentsFailedPurchases := failed;
+        stablePaymentsNextTxId := nextTxId;
 
     };
 
@@ -359,60 +359,66 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
 
-    //////////////////
-    // Public Sale //
-    ////////////////
+    ///////////////
+    // Payments //
+    /////////////
 
 
-    let publicSale = PublicSale.Factory({
+    let payments = Payments.Factory({
         admins;
         nns;
         ledger;
-        locks       = stablePublicSaleLocks;
-        purchases   = stablePublicSalePurchases;
-        failed      = stablePublicSaleFailedPurchases;
-        nextTxId    = stablePublicSaleNextTxId;
+        locks       = stablePaymentsLocks;
+        purchases   = stablePaymentsPurchases;
+        failed      = stablePaymentsFailedPurchases;
+        nextTxId    = stablePaymentsNextTxId;
     });
 
-    public query func publicSaleBackup () : async {
-        nextTxId    : PublicSaleTypes.TxId;
-        locks       : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
-        purchases   : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
-        failed      : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+    public query func paymentsBackup () : async {
+        nextTxId    : PaymentsTypes.TxId;
+        locks       : [(PaymentsTypes.TxId, PaymentsTypes.Lock)];
+        purchases   : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
+        failed      : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
     } {
-        publicSale.toStable();
+        payments.toStable();
     };
 
-    public shared ({ caller }) func publicSaleRestore (
+    public shared ({ caller }) func paymentsRestore (
         backup : {
-            nextTxId    : ?PublicSaleTypes.TxId;
-            locks       : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
-            purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
-            failed      : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+            nextTxId    : ?PaymentsTypes.TxId;
+            locks       : ?[(PaymentsTypes.TxId, PaymentsTypes.Lock)];
+            purchases   : ?[(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
+            failed      : ?[(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
         }
     ) : async () {
-        publicSale.restore(caller, backup);
+        payments.restore(caller, backup);
     };
 
-    public shared ({ caller }) func publicSaleLock (
+    public shared ({ caller }) func paymentsLock (
         memo : Nat64,
-    ) : async Result.Result<PublicSaleTypes.TxId, Text> {
-        await publicSale.lock(caller, memo);
+    ) : async Result.Result<PaymentsTypes.TxId, Text> {
+        await payments.lock(caller, memo);
     };
 
-    public shared ({ caller }) func publicSaleNotify (
+    public shared ({ caller }) func paymentsNotify (
         memo        : Nat64,
         blockheight : NNSTypes.BlockHeight,
     ) : async Result.Result<Ext.TokenIndex, Text> {
-        await publicSale.notify(caller, blockheight, memo, _canisterPrincipal());
+        await payments.notify(caller, blockheight, memo, _canisterPrincipal());
     };
 
-    public query func publicSaleGetPrice () : async Nat64 {
-        publicSale.getPrice();
+    public query func paymentsGetPrice () : async Nat64 {
+        payments.getPrice();
     };
 
-    public query func publicSaleGetAvailable () : async Nat {
-        publicSale.available();
+    public query func paymentsGetAvailable () : async Nat {
+        payments.available();
+    };
+
+    public shared ({ caller }) func paymentsProcessRefunds (
+        transactions : [PaymentsTypes.NNSTransaction],
+    ) : () {
+        payments.processRefunds(caller, transactions);
     };
 
 
@@ -426,7 +432,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         admins;
         ledger;
         supply;
-        publicSale;
+        payments;
     });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
