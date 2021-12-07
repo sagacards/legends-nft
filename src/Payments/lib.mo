@@ -14,6 +14,8 @@ import Time "mo:base/Time";
 import Types "types";
 import Prim "mo:prim";
 
+import Debug "mo:base/Debug";
+
 
 module {
 
@@ -34,8 +36,8 @@ module {
             Nat32.equal,
             func (a) { a },
         );
-        let failedPurchases = HashMap.HashMap<Types.TxId, Types.Purchase>(
-            state.purchases.size(),
+        let refunds = HashMap.HashMap<Types.TxId, Types.Refund>(
+            state.refunds.size(),
             Nat32.equal,
             func (a) { a },
         );
@@ -51,13 +53,13 @@ module {
             nextTxId    : Types.TxId;
             locks       : [(Types.TxId, Types.Lock)];
             purchases   : [(Types.TxId, Types.Purchase)];
-            failed      : [(Types.TxId, Types.Purchase)];
+            refunds     : [(Types.TxId, Types.Refund)];
         } {
             {
                 nextTxId;
                 locks       = Iter.toArray(locks.entries());
                 purchases   = Iter.toArray(purchases.entries());
-                failed      = Iter.toArray(failedPurchases.entries());
+                refunds     = Iter.toArray(refunds.entries());
             }
         };
 
@@ -68,7 +70,7 @@ module {
                 nextTxId    : ?Types.TxId;
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
-                failed      : ?[(Types.TxId, Types.Purchase)];
+                refunds     : ?[(Types.TxId, Types.Refund)];
             }
         ) : () {
             switch (backup.nextTxId) {
@@ -92,8 +94,8 @@ module {
                 case _ ();
             };
 
-            switch (backup.failed) {
-                case (?x) for ((k, v) in Iter.fromArray(x)) failedPurchases.put(k, v);
+            switch (backup.refunds) {
+                case (?x) for ((k, v) in Iter.fromArray(x)) refunds.put(k, v);
                 case _ ();
             };
         };
@@ -104,7 +106,7 @@ module {
                 nextTxId    : ?Types.TxId;
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
-                failed      : ?[(Types.TxId, Types.Purchase)];
+                refunds     : ?[(Types.TxId, Types.Refund)];
             }
         ) : () {
             assert(state.admins._isAdmin(caller));
@@ -115,7 +117,7 @@ module {
             nextTxId = ?state.nextTxId;
             locks = ?state.locks;
             purchases = ?state.purchases;
-            failed = ?state.failed;
+            refunds = ?state.refunds;
         });
 
 
@@ -123,6 +125,11 @@ module {
         // Utils / Internal //
         /////////////////////
 
+
+        // Uppercase a string
+        public func _upper (
+            string : Text,
+        ) : Text { Text.map(string, Prim.charToUpper); };
 
         // Get all valid locks.
         public func _getValidLocks () : [Nat32] {
@@ -178,12 +185,13 @@ module {
         public func _findPurchase (
             caller  : Principal,
             memo    : Nat64,
+            height  : NNSTypes.BlockHeight,
         ) : ?Types.Purchase {
             switch (
                 Array.find<(Types.TxId, Types.Purchase)>(
                     Iter.toArray<(Types.TxId, Types.Purchase)>(purchases.entries()),
                     func (_, a) {
-                        a.memo == memo and a.buyer == caller
+                        a.memo == memo and a.buyer == caller and a.blockheight == height
                     }
                 )
             ) {
@@ -196,12 +204,13 @@ module {
         public func _findAccountPurchase (
             caller  : Text,
             memo    : Nat64,
+            height  : NNSTypes.BlockHeight,
         ) : ?Types.Purchase {
             switch (
                 Array.find<(Types.TxId, Types.Purchase)>(
                     Iter.toArray<(Types.TxId, Types.Purchase)>(purchases.entries()),
                     func (_, a) {
-                        a.memo == memo and a.buyerAccount == caller
+                        a.memo == memo and _upper(a.buyerAccount) == _upper(caller) and a.blockheight == height
                     }
                 )
             ) {
@@ -211,20 +220,20 @@ module {
         };
 
         // Find a failed purchase with an account address.
-        public func _findAccountFailedPurchase (
+        public func _findRefund (
             caller  : Text,
             memo    : Nat64,
-        ) : ?Types.Purchase {
-            let address = Text.map(caller, Prim.charToUpper);
+            height  : NNSTypes.BlockHeight,
+        ) : ?Types.Refund {
             switch (
-                Array.find<(Types.TxId, Types.Purchase)>(
-                    Iter.toArray<(Types.TxId, Types.Purchase)>(failedPurchases.entries()),
+                Array.find<(Types.TxId, Types.Refund)>(
+                    Iter.toArray<(Types.TxId, Types.Refund)>(refunds.entries()),
                     func (_, a) {
-                        a.memo == memo and a.buyerAccount == address;
+                        a.transactions.original.memo == memo and _upper(a.buyer) == _upper(caller) and a.transactions.original.blockheight == height;
                     }
                 )
             ) {
-                case (?(_, purchase)) ?purchase;
+                case (?(_, refund)) ?refund;
                 case _ null;
             }
         };
@@ -286,13 +295,13 @@ module {
                             switch (b.transaction.transfer) {
                                 case (#Send(transfer)) {
                                     if (
-                                        NNS.defaultAccount(canister) != Text.map(transfer.to, Prim.charToUpper)
+                                        NNS.defaultAccount(canister) != _upper(transfer.to)
                                     ) {
-                                        return #err("Incorrect transfer recipient: " # NNS.defaultAccount(canister) # ", " # Text.map(transfer.to, Prim.charToUpper));
+                                        return #err("Incorrect transfer recipient: " # NNS.defaultAccount(canister) # ", " # _upper(transfer.to));
                                     } else if (
-                                        NNS.defaultAccount(caller) != Text.map(transfer.from, Prim.charToUpper)
+                                        NNS.defaultAccount(caller) != _upper(transfer.from)
                                     ) {
-                                        return #err("Incorrect transfer sender: " # NNS.defaultAccount(caller) # ", " # Text.map(transfer.from, Prim.charToUpper));
+                                        return #err("Incorrect transfer sender: " # NNS.defaultAccount(caller) # ", " # _upper(transfer.from));
                                     } else if (transfer.amount.e8s < price) {
                                         return #err("Incorrect transfer amount.");
                                     };
@@ -352,37 +361,68 @@ module {
         // @auth: admin
         public func processRefunds (
             caller          : Principal,
+            canister        : Principal,
             nnsTransactions : [Types.NNSTransaction],
-        ) : () {
+        )  : async Result.Result<(), Text> {
             assert(state.admins._isAdmin(caller));
             for (transaction in Iter.fromArray(nnsTransactions)) {
-                let account = Text.map(transaction.from, Prim.charToUpper);
-                switch (_findAccountPurchase(account, transaction.memo)) {
+                let account = _upper(transaction.from);
+                switch (_findAccountPurchase(account, transaction.memo, transaction.blockheight)) {
                     case (?p) ();
                     case _ {
-                        switch (_findAccountFailedPurchase(account, transaction.memo)) {
+                        switch (_findRefund(account, transaction.memo, transaction.blockheight)) {
                             case (?p) {};
                             case _ {
-                                // Transaction not found in our canister. Record failure and issue a refund.
-                                let txId = nextTxId;
-                                nextTxId += 1;
-                                failedPurchases.put(txId, {
-                                    blockheight = transaction.blockheight;
-                                    buyer       = caller;  // BAD: we can't get principal, so buyer is logged as whoever called process refunds
-                                    buyerAccount= account;
-                                    closedAt    = Time.now();
-                                    id          = txId;
-                                    lockedAt    = Time.now();
-                                    memo        = transaction.memo;
-                                    price       = transaction.amount;
-                                    token       = 999_999_999;
-                                });
-                                // TODO: transfer
+                                // Transaction not found in our canister.
+
+                                // Issue refund.
+                                switch (await state.nns.transfer(
+                                    caller,
+                                    { e8s = transaction.amount; },
+                                    account,
+                                    transaction.memo,
+                                )) {
+                                    case (#Ok(refundheight)) {
+                                        // Record failure.
+                                        let txId = nextTxId;
+                                        nextTxId += 1;
+                                        refunds.put(txId, {
+                                            id           = txId;
+                                            buyer        = account;
+                                            transactions = {
+                                                original = {
+                                                    blockheight = transaction.blockheight;
+                                                    from        = _upper(transaction.from);
+                                                    amount      = transaction.amount;
+                                                    memo        = transaction.memo;
+                                                    timestamp   = transaction.timestamp;
+                                                };
+                                                refund = {
+                                                    blockheight = refundheight;
+                                                    from        = NNS.defaultAccount(canister);
+                                                    amount      = transaction.amount;
+                                                    memo        = transaction.memo;
+                                                    timestamp   = Time.now();
+                                                };
+                                            };
+                                        });
+                                    };
+                                    case (#Err(error)) {
+                                        switch (error) {
+                                            case (#BadFee(_)) return #err("Bad fee.");
+                                            case (#InsufficientFunds(_)) return #err("Insufficient funds.");
+                                            case (#TxCreatedInFuture(_)) return #err("Tx from future.");
+                                            case (#TxDuplicate(_)) return #err("Duplicate tx.");
+                                            case (#TxTooOld(_)) return #err("Tx too old.");
+                                        };
+                                    };
+                                };
                             };
                         };
                     };
                 };
             };
+            return #ok();
         };
 
 
