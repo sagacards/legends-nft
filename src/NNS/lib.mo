@@ -107,7 +107,7 @@ module {
             memo    : Types.Memo,
         ) : async Types.TransferResult {
             assert(state.admins._isAdmin(caller));
-            switch (AccountIdentifier.fromText(to)) {
+            switch (Hex.decode(to)) {
                 case (#ok(aid)) {
                     let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
                     await nns.transfer({
@@ -119,7 +119,7 @@ module {
                         to = Blob.fromArray(aid);
                     })
                 };
-                // TODO This error is horrible.
+                // TODO This error is horribly incorrect.
                 case _ #Err(#TxCreatedInFuture(null));
             };
         };

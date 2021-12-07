@@ -13,7 +13,7 @@ module {
         ledger      : Ledger.Ledger;
         nextTxId    : TxId;
         purchases   : [(TxId, Purchase)];
-        failed      : [(TxId, Purchase)];
+        refunds     : [(TxId, Refund)];
         locks       : [(TxId, Lock)];
     };
 
@@ -38,6 +38,15 @@ module {
         lockedAt    : Time.Time;
         closedAt    : Time.Time;
         blockheight : NNSTypes.BlockHeight;
+    };
+
+    public type Refund = {
+        id          : TxId;
+        buyer       : Text;
+        transactions: {
+            original    : NNSTransaction;
+            refund      : NNSTransaction;
+        };
     };
 
     public type NNSTransaction = {

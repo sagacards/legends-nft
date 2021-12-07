@@ -67,7 +67,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     private stable var stablePaymentsLocks : [(PaymentsTypes.TxId, PaymentsTypes.Lock)] = [];
     private stable var stablePaymentsPurchases : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
     private stable var stablePaymentsNextTxId : PaymentsTypes.TxId = 0;
-    private stable var stablePaymentsFailedPurchases : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
+    private stable var stablePaymentsRefunds : [(PaymentsTypes.TxId, PaymentsTypes.Refund)] = [];
 
     // Upgrades
 
@@ -92,21 +92,21 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
             transactions;
             pendingTransactions;
         } = entrepot.toStable();
-        stableListings := listings;
-        stableTransactions := transactions;
-        stablePendingTransactions := pendingTransactions;
+        stableListings              := listings;
+        stableTransactions          := transactions;
+        stablePendingTransactions   := pendingTransactions;
 
         // Preserve Payments
         let {
             locks;
             purchases;
             nextTxId;
-            failed;
+            refunds;
         } = payments.toStable();
-        stablePaymentsLocks := locks;
+        stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
-        stablePaymentsFailedPurchases := failed;
-        stablePaymentsNextTxId := nextTxId;
+        stablePaymentsRefunds   := refunds;
+        stablePaymentsNextTxId  := nextTxId;
 
     };
 
@@ -370,7 +370,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         ledger;
         locks       = stablePaymentsLocks;
         purchases   = stablePaymentsPurchases;
-        failed      = stablePaymentsFailedPurchases;
+        refunds     = stablePaymentsRefunds;
         nextTxId    = stablePaymentsNextTxId;
     });
 
@@ -378,7 +378,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         nextTxId    : PaymentsTypes.TxId;
         locks       : [(PaymentsTypes.TxId, PaymentsTypes.Lock)];
         purchases   : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
-        failed      : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
+        refunds     : [(PaymentsTypes.TxId, PaymentsTypes.Refund)];
     } {
         payments.toStable();
     };
@@ -388,7 +388,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
             nextTxId    : ?PaymentsTypes.TxId;
             locks       : ?[(PaymentsTypes.TxId, PaymentsTypes.Lock)];
             purchases   : ?[(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
-            failed      : ?[(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
+            refunds     : ?[(PaymentsTypes.TxId, PaymentsTypes.Refund)];
         }
     ) : async () {
         payments.restore(caller, backup);
@@ -417,8 +417,8 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     public shared ({ caller }) func paymentsProcessRefunds (
         transactions : [PaymentsTypes.NNSTransaction],
-    ) : () {
-        payments.processRefunds(caller, transactions);
+    ) : async Result.Result<(), Text> {
+        await payments.processRefunds(caller, Principal.fromActor(canister), transactions);
     };
 
 
