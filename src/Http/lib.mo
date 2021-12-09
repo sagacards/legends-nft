@@ -2,6 +2,7 @@
 
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Cycles "mo:base/ExperimentalCycles";
 import Ext "mo:ext/Ext";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
@@ -419,8 +420,28 @@ module {
 
         // @path: /
         private func httpIndex () : Types.Response {
+            let supply = state.ledger._getMinted().size();
+            let (
+                totalVolume,
+                highestPriceSale,
+                lowestPriceSale,
+                currentFloorPrice,
+                listingsCount,
+                _,
+                transactionsCount,
+            ) = state.entrepot.stats();
             {
-                body = "Pong!";
+                body = Text.encodeUtf8("Saga Legend #1: The Fool NFT Canister\n"
+                    # "---\n"
+                    # "# Minted NFTs: " # Nat.toText(supply) # "\n"
+                    # "Cycle Balance: " # Nat.toText(Cycles.balance() / 1_000_000_000_000) # "T\n"
+                    # "---\n"
+                    # "# Marketplace Listings: " # Nat.toText(listingsCount) # "\n"
+                    # "# Marketplace Sales: " # Nat.toText(transactionsCount) # "\n"
+                    # "Marketplace Sale Volume: " # Nat64.toText(totalVolume) # "\n"
+                    # "Marketplace Largest Sale: " # Nat64.toText(highestPriceSale) # "\n"
+                    # "Marketplace Smallest Sale: " # Nat64.toText(lowestPriceSale) # "\n"
+                    # "Marketplace Floor Price: " # Nat64.toText(currentFloorPrice) # "\n");
                 headers = [
                     ("Content-Type", "text/plain"),
                 ];

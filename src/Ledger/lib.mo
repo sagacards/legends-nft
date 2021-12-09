@@ -159,6 +159,18 @@ module {
             return unminted.toArray();
         };
 
+        public func _getMinted () : [Ext.TokenIndex] {
+            let minted = Buffer.Buffer<Ext.TokenIndex>(0);
+            var i : Nat32 = 0;
+            while (Nat32.toNat(i) < state.supply) {
+                if (not Option.isNull(ledger[Nat32.toNat(i)])) {
+                    minted.add(i);
+                };
+                i += 1;
+            };
+            return minted.toArray();
+        };
+
         // Get a random unminted token index.
         // Excludes non general sale tokens
         public func _getRandomMintIndex (

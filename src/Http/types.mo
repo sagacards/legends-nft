@@ -2,6 +2,7 @@
 
 import Admins "../Admins";
 import Assets "../Assets";
+import Entrepot "../Entrepot";
 import Ledger "../Ledger";
 import Payments "../Payments";
 
@@ -12,6 +13,7 @@ module {
         admins      : Admins.Admins;
         assets      : Assets.Assets;
         ledger      : Ledger.Ledger;
+        entrepot    : Entrepot.Factory;
         supply      : Nat;
         payments    : Payments.Factory;
     };
