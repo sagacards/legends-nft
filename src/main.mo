@@ -430,6 +430,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     let httpHandler = Http.HttpHandler({
         assets;
         admins;
+        entrepot;
         ledger;
         supply;
         payments;
