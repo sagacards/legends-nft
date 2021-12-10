@@ -95,7 +95,7 @@ module {
                 account = accountIdentifier(p, defaultSubaccount());
             });        };
 
-        // TODO: Transfer
+        // Transfer funds on nns ledger
         // @auth: admin
         public func transfer (
             caller  : Principal,

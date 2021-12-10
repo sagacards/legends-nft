@@ -20,7 +20,7 @@ import Debug "mo:base/Debug";
 module {
 
 
-    public let price : Nat64 = 1;
+    public let price : Nat64 = 200_000_000;
     public let lockTtl = 300_000_000_000;  // Time for a transaction to complete (5 mins.)
 
     public class Factory (state : Types.State) {
