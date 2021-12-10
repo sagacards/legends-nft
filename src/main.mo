@@ -1,30 +1,32 @@
 // 3rd Party Imports
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
-import Array "mo:base/Array";
-import Blob "mo:base/Blob";
-import Nat8 "mo:base/Nat8";
-import Nat64 "mo:base/Nat64";
-import Principal "mo:base/Principal";
-import Result "mo:base/Result";
-
 import Admins "Admins";
+import Array "mo:base/Array";
 import AssetTypes "Assets/types";
 import Assets "Assets";
+import Blob "mo:base/Blob";
 import Entrepot "Entrepot";
 import EntrepotTypes "Entrepot/types";
 import Ext "mo:ext/Ext";
 import ExtFactory "Ext";
 import ExtTypes "Ext/types";
+import Hex "NNS/Hex";
 import Http "Http";
 import HttpTypes "Http/types";
 import Ledger "Ledger";
 import LedgerTypes "Ledger/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
-import Hex "NNS/Hex";
+import Nat64 "mo:base/Nat64";
+import Nat8 "mo:base/Nat8";
 import Payments "Payments";
 import PaymentsTypes "Payments/types";
+import PayoutTypes "Payouts/types";
+import Payouts "Payouts";
+import PayoutsTypes "Payouts/types";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 
 
 shared ({ caller = creator }) actor class LegendsNFT() = canister {
@@ -134,6 +136,16 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         p : Principal,
     ) : async Bool {
         admins.isAdmin(caller, p);
+    };
+
+    public shared ({ caller }) func removeAdmin (
+        p : Principal,
+    ) : async () {
+        admins.removeAdmin(caller, p);
+    };
+
+    public query func getAdmins () : async [Principal] {
+        admins.getAdmins();
     };
 
     
@@ -355,7 +367,15 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
     public shared ({ caller }) func balance () : async NNSTypes.ICP {
-        await nns.balance(caller, _canisterPrincipal());
+        await nns.balance(_canisterPrincipal());
+    };
+
+    public shared ({ caller }) func nnsTransfer (
+        amount  : NNSTypes.ICP,
+        to      : Text,
+        memo    : NNSTypes.Memo,
+    ) : async NNSTypes.TransferResult {
+        await nns.transfer(caller, amount, to, memo);
     };
 
 
@@ -420,6 +440,23 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     ) : async Result.Result<(), Text> {
         await payments.processRefunds(caller, Principal.fromActor(canister), transactions);
     };
+
+
+    //////////////
+    // Payouts //
+    ////////////
+
+
+    // let payouts = Payouts.Factory({
+    //     admins;
+    //     ledger;
+    //     nns;
+    //     payments;
+    // });
+
+    // public shared ({ caller }) func payout () : async PayoutTypes.Manifest {
+    //     await payouts.payout(caller, _canisterPrincipal());
+    // };
 
 
     ///////////

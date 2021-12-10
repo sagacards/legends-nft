@@ -31,17 +31,17 @@ module {
         //////////
 
         var nextTxId : Types.TxId = 0;
-        let purchases = HashMap.HashMap<Types.TxId, Types.Purchase>(
+        public let purchases = HashMap.HashMap<Types.TxId, Types.Purchase>(
             state.purchases.size(),
             Nat32.equal,
             func (a) { a },
         );
-        let refunds = HashMap.HashMap<Types.TxId, Types.Refund>(
+        public let refunds = HashMap.HashMap<Types.TxId, Types.Refund>(
             state.refunds.size(),
             Nat32.equal,
             func (a) { a },
         );
-        let locks = HashMap.HashMap<Types.TxId, Types.Lock>(
+        public let locks = HashMap.HashMap<Types.TxId, Types.Lock>(
             state.purchases.size(),
             Nat32.equal,
             func (a) { a },
