@@ -88,15 +88,12 @@ module {
         // Check the balance of this canister on the NNS ledger
         // @auth: admin
         public func balance(
-            caller  : Principal,
             p       : Principal,
         ) : async Types.ICP {
-            assert(state.admins._isAdmin(caller));
             let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
             await nns.account_balance({
                 account = accountIdentifier(p, defaultSubaccount());
-            })
-        };
+            });        };
 
         // TODO: Transfer
         // @auth: admin
