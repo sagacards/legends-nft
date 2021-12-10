@@ -50,15 +50,19 @@ module {
         };
 
         // Removes the given principal from the list of admins.
-        // public func removeAdmin(caller : Principal, p : Principal) : () {
-        //     assert(_isAdmin(caller));
-        //     admins := Array.filter(
-        //         admins,
-        //         func (a : Principal) : Bool {
-        //             a != p;
-        //         },
-        //     );
-        // };
+        public func removeAdmin(caller : Principal, p : Principal) : () {
+            assert(_isAdmin(caller));
+            let newAdmins =  Array.filter(
+                admins.toArray(),
+                func (a : Principal) : Bool {
+                    a != p;
+                },
+            );
+            admins.clear();
+            for (admin in newAdmins.vals()) {
+                admins.add(admin);
+            };
+        };
 
         // Check whether the given principal is an admin.
         public func isAdmin(caller : Principal, p : Principal) : Bool {
@@ -67,6 +71,10 @@ module {
                 if (a == p) return true;
             };
             return false;
+        };
+
+        public func getAdmins() : [Principal] {
+            admins.toArray();
         };
     }
 };
