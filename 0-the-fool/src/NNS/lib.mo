@@ -3,7 +3,7 @@ import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
 import CRC32 "CRC32";
-import Hex "hex";
+import Hex "Hex";
 import Nat32 "mo:base/Nat32";
 import Nat8 "mo:base/Nat8";
 import Prim "mo:⛔";
@@ -14,6 +14,8 @@ import Time "mo:base/Time";
 
 
 import Types "types";
+
+import Debug "mo:base/Debug";
 
 
 module {
@@ -117,7 +119,10 @@ module {
                     })
                 };
                 // TODO This error is horribly incorrect.
-                case _ #Err(#TxCreatedInFuture(null));
+                case (#err(#msg(e))) {
+                    Debug.print(e);
+                    #Err(#TxCreatedInFuture(null));
+                };
             };
         };
 

@@ -39,7 +39,7 @@ fetch(API, {
     return r.transactions
         .filter(x => x.transaction.operations[1].account.address === CanisterAccount
             && x.transaction.operations[1].status === 'COMPLETED'
-            && x.transaction.metadata.block_height > 1_545_131 /* Last known test transaction block */)
+            && x.transaction.metadata.block_height > 1_646_947 /* Last known test transaction block */)
         .map(x => ({
             from: x.transaction.operations[0].account.address,
             amount: x.transaction.operations[1].amount.value,

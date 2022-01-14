@@ -3,6 +3,10 @@
     "legends": {
       "main": "src/main.mo",
       "type": "motoko"
+    },
+    "legends-staging": {
+      "main": "src/main.mo",
+      "type": "motoko"
     }
   },
   "defaults": {
