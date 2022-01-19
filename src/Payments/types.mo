@@ -19,6 +19,9 @@ module {
 
     public type TxId = Nat32;
 
+    // WARNING: Do not expose a complete lock entity through public canister calls!
+    // A lock contains the associated mint. Exposing that would allow
+    // users to know which token they are minting before minting it!
     public type Lock = {
         id          : TxId;
         buyer       : Principal;
