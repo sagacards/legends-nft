@@ -1,6 +1,6 @@
 {
   "canisters": {
-    "legends": {
+    "the-magician": {
       "main": "src/main.mo",
       "type": "motoko"
     }
@@ -10,7 +10,7 @@
       "packtool": "vessel sources"
     }
   },
-  "dfx": "0.8.3",
+  "dfx": "0.8.4",
   "networks": {
     "local": {
       "bind": "127.0.0.1:8000",

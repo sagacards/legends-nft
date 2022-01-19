@@ -21,9 +21,9 @@ module {
     public class Assets (state : Types.State) {
 
 
-        /////////////////
-        //  Internals //
-        ///////////////
+        ////////////////
+        // Internals //
+        //////////////
 
 
         // Writes a new asset to state, including the denormalized index

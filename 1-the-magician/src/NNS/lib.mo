@@ -1,18 +1,19 @@
-import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
-import CRC32 "CRC32";
-import Hex "hex";
+import Debug "mo:base/Debug";
 import Nat32 "mo:base/Nat32";
 import Nat8 "mo:base/Nat8";
-import Prim "mo:⛔";
 import Principal "mo:base/Principal";
-import SHA224 "SHA224";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
+import AccountIdentifier "mo:principal/AccountIdentifier";
+import Prim "mo:⛔";
 
+import CRC32 "CRC32";
+import Hex "Hex";
+import SHA224 "SHA224";
 import Types "types";
 
 
@@ -58,16 +59,13 @@ module {
 
     public class Factory (state : Types.State) {
 
-        ////////////
-        // State //
-        //////////
+        /////////////////////
+        // NNS Ledger API //
+        ///////////////////
 
 
-        /////////////////
-        // Blocks API //
-        ///////////////
-
-
+        // Jan 14: Dfinity yet to update the ledger candid interface 😡
+        // Still can't verify a transaction onchain without slow/dangerous workaround
         let blockProxy : Types.BlockProxy = actor("ockk2-xaaaa-aaaai-aaaua-cai");
 
         public func block (
@@ -78,22 +76,23 @@ module {
         } {
             await blockProxy.block(blockheight);
         };
-
-
-        ////////////////
-        // Admin API //
-        //////////////
         
 
         // Check the balance of this canister on the NNS ledger
         // @auth: admin
         public func balance(
-            p       : Principal,
+            account : AccountIdentifier,
         ) : async Types.ICP {
             let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
             await nns.account_balance({
-                account = accountIdentifier(p, defaultSubaccount());
-            });        };
+                account;
+            });
+        };
+
+
+        ////////////////
+        // Admin API //
+        //////////////
 
         // Transfer funds on nns ledger
         // @auth: admin
@@ -117,7 +116,10 @@ module {
                     })
                 };
                 // TODO This error is horribly incorrect.
-                case _ #Err(#TxCreatedInFuture(null));
+                case (#err(#msg(e))) {
+                    Debug.print(e);
+                    #Err(#TxCreatedInFuture(null));
+                };
             };
         };
 
