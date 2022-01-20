@@ -34,17 +34,42 @@ module {
         //////////////////////
 
 
+        // Attempt to parse char to digit.
+        private func digitFromChar(c: Char): ?Nat {
+            switch(c) {
+                case '0' ?0;
+                case '1' ?1;
+                case '2' ?2;
+                case '3' ?3;
+                case '4' ?4;
+                case '5' ?5;
+                case '6' ?6;
+                case '7' ?7;
+                case '8' ?8;
+                case '9' ?9;
+                case _ null;
+            }
+        };
+
+
         // Attempts to parse a nat from a path string.
         private func natFromText (
             text : Text
         ) : ?Nat {
-            var match : ?Nat = null;
-            for (i in Iter.range(0, state.supply - 1)) {
-                if (Nat.toText(i) == text) {
-                    match := ?i;
-                };
+            var exponent : Nat = text.size();
+            var number : Nat = 0;
+            for (char in text.chars()){
+                switch (digitFromChar(char)) {
+                    case (?digit) {
+                        exponent -= 1;
+                        number += digit * (10**exponent);
+                    };
+                    case (_) {
+                        return null
+                    }
+                }
             };
-            match;
+            ?number
         };
 
 
