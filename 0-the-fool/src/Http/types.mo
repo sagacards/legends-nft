@@ -14,6 +14,7 @@ module {
         entrepot    : Entrepot.Factory;
         supply      : Nat16;
         payments    : Payments.Factory;
+        nri         : [(Text, Float)];
     };
 
     public type HeaderField = (Text, Text);

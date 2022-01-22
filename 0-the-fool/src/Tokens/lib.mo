@@ -24,14 +24,6 @@ module {
     public class Factory (state : Types.State) {
 
 
-        /////////////
-        // Config //
-        ///////////
-
-
-        public let NRI = [];
-
-
         ////////////////////////
         // Utils / Internals //
         //////////////////////
