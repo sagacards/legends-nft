@@ -8,7 +8,7 @@ module {
     public type State = {
         cap     : Cap.Cap;
         tokens  : Tokens.Factory;
-        _canisterPrincipal  : () -> Principal;
+        cid     : Principal;
     };
 
     // DAB...

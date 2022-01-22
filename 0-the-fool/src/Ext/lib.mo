@@ -77,7 +77,7 @@ module {
                 caller = caller;
                 operation = "transfer";
                 details = [
-                    ("token", #Text(tokenId(state._canisterPrincipal(), index))),
+                    ("token", #Text(tokenId(state.cid, index))),
                     ("to", #Text(to)),
                     ("from", #Text(from)),
                     ("memo", #Slice(Blob.toArray(request.memo))),
