@@ -1,10 +1,14 @@
+import Cap "mo:cap/Cap";
 import Ext "mo:ext/Ext";
-import Ledger "../Ledger";
+
+import Tokens "../Tokens";
 
 module {
 
     public type State = {
-        ledger : Ledger.Ledger;
+        cap     : Cap.Cap;
+        tokens  : Tokens.Factory;
+        _canisterPrincipal  : () -> Principal;
     };
 
     // DAB...
@@ -13,7 +17,5 @@ module {
         seller : Principal;
         price  : Nat64;
     };
-
-    public type TokenExt = (Ext.TokenIndex, ?[Listing], ?[Nat8]);
 
 };

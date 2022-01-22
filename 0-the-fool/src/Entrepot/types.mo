@@ -1,21 +1,29 @@
-import Ext "mo:ext/Ext";
+import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
 
+import Cap "mo:cap/Cap";
+import Ext "mo:ext/Ext";
+
 import Admins "../Admins";
-import Ledger "../Ledger";
+import Tokens "../Tokens";
+import NNS "../NNS";
 
 module {
 
     public type SubAccount = [Nat8];
 
     public type State = {
-        admins              : Admins.Admins;
-        supply              : Nat;
-        ledger              : Ledger.Ledger;
-        listings            : [(Ext.TokenIndex, Listing)];
-        transactions        : [(Nat, Transaction)];
-        pendingTransactions : [(Ext.TokenIndex, Transaction)];
+        admins                  : Admins.Admins;
+        cap                     : Cap.Cap;
+        supply                  : Nat;
+        tokens                  : Tokens.Factory;
+        nns                     : NNS.Factory;
+        listings                : [(Ext.TokenIndex, Listing)];
+        transactions            : [(Nat, Transaction)];
+        pendingTransactions     : [(Ext.TokenIndex, Transaction)];
+        _usedPaymentAddresses   : [(Ext.AccountIdentifier, Principal, Ext.SubAccount)];
+        _canisterPrincipal  : () -> Principal;
     };
 
     public type Listing = {
@@ -26,6 +34,12 @@ module {
         price       : Nat64;  // ICPe8
         seller      : Principal;
         subaccount  : ?Ext.SubAccount;
+    };
+
+    public type ExtListing = {
+        locked      : ?Time.Time;
+        price       : Nat64;  // ICPe8
+        seller      : Principal;
     };
 
     public type Metadata = {
@@ -42,7 +56,7 @@ module {
 
     public type ListingsResponse = [(
         Ext.TokenIndex,
-        Listing,
+        ExtListing,
         Metadata,
     )];
 
@@ -76,9 +90,11 @@ module {
         memo        : ?Blob;
         from        : Ext.AccountIdentifier;
         to          : Ext.AccountIdentifier;
+        seller      : Principal;
         price       : Nat64;        // e8s
         initiated   : Time.Time;    // when it was locked lock
         closed      : ?Time.Time;    // when it was settled
+        bytes       : [Nat8];
     };
 
     public type LockRequest = (

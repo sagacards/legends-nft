@@ -1,20 +1,21 @@
-import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
-import Text "mo:base/Text";
-import Ext "mo:ext/Ext";
+import Debug "mo:base/Debug";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
-import NNS "../NNS/lib";
-import NNSTypes "../NNS/types";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Result "mo:base/Result";
+import Text "mo:base/Text";
 import Time "mo:base/Time";
-import Types "types";
+
+import AccountIdentifier "mo:principal/AccountIdentifier";
+import Ext "mo:ext/Ext";
 import Prim "mo:prim";
 
-import Debug "mo:base/Debug";
+import NNS "../NNS/lib";
+import NNSTypes "../NNS/types";
+import Types "types";
 
 
 module {
@@ -256,7 +257,7 @@ module {
                 case _ ();
             };
             switch (
-                await state.ledger._getRandomMintIndex(
+                await state.tokens._getRandomMintIndex(
                     ?_getValidLocks()
                 )
             ) {
@@ -320,7 +321,7 @@ module {
                                             });
                                             locks.delete(lock.id);
                                             switch (
-                                                state.ledger._mint(
+                                                state.tokens._mint(
                                                     lock.token,
                                                     #principal(lock.buyer),
                                                     null,
@@ -331,7 +332,19 @@ module {
                                                     // }
                                                 )
                                             ) {
-                                                case (#ok(_)) #ok(lock.token);
+                                                case (#ok(_)) {
+                                                    // Insert transaction history event.
+                                                    ignore await state.cap.insert({
+                                                        caller;
+                                                        operation = "mint";
+                                                        details = [
+                                                            ("token", #Text(state.tokens.tokenId(state._canisterPrincipal(), lock.token))),
+                                                            ("to", #Text(lock.buyerAccount)),
+                                                            // TODO: Add price
+                                                        ];
+                                                    });
+                                                    #ok(lock.token);
+                                                };
                                                 case (#err(_)) #err("Failed to mint.");
                                             };
                                         };
@@ -353,7 +366,7 @@ module {
         };
 
         public func available () : Nat {
-            state.ledger._getUnminted().size();
+            state.tokens._getUnminted().size();
         };
 
         // Bulk process a list of transactions from NNS in search of transactions that need to be refunded.

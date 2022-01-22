@@ -1,32 +1,34 @@
+import Time "mo:base/Time";
+
+import Cap "mo:cap/Cap";
+
 import Admins "../Admins";
-import Ledger "../Ledger";
-import LedgerTypes "../Ledger/types";
+import TokenTypes "../Tokens/types";
 import NNS "../NNS/lib";
 import NNSTypes "../NNS/types";
-import Time "mo:base/Time";
+import Tokens "../Tokens";
 
 module {
 
     public type State = {
         admins      : Admins.Admins;
+        cap         : Cap.Cap;
         nns         : NNS.Factory;
-        ledger      : Ledger.Ledger;
+        tokens      : Tokens.Factory;
         nextTxId    : TxId;
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];
         locks       : [(TxId, Lock)];
+        _canisterPrincipal  : () -> Principal;
     };
 
     public type TxId = Nat32;
 
-    // WARNING: Do not expose a complete lock entity through public canister calls!
-    // A lock contains the associated mint. Exposing that would allow
-    // users to know which token they are minting before minting it!
     public type Lock = {
         id          : TxId;
         buyer       : Principal;
         buyerAccount: Text;
-        token       : LedgerTypes.TokenIndex;
+        token       : TokenTypes.TokenIndex;
         memo        : Nat64;
         lockedAt    : Time.Time;
     };
@@ -35,7 +37,7 @@ module {
         id          : TxId;
         buyer       : Principal;
         buyerAccount: Text;
-        token       : LedgerTypes.TokenIndex;
+        token       : TokenTypes.TokenIndex;
         price       : Nat64;  // ICPe8
         memo        : Nat64;
         lockedAt    : Time.Time;

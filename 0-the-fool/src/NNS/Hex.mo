@@ -9,10 +9,11 @@
 
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
-import Option "mo:base/Option";
-import Prim "mo:prim";
 import Nat8 "mo:base/Nat8";
+import Option "mo:base/Option";
 import Result "mo:base/Result";
+
+import Prim "mo:prim";
 
 module {
 

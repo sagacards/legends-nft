@@ -1,21 +1,21 @@
-// 3rd Party Imports
 import Ext "mo:ext/Ext";
 
-// Project Imports
+import Cap "mo:cap/Cap";
 
 import Admins "../Admins";
 import Assets "../Assets";
 
-// Module Imports
 
 module Ledger {
 
     public type State = {
         admins  : Admins.Admins;
         assets  : Assets.Assets;
-        ledger  : [?Token];
+        cap     : Cap.Cap;
+        tokens  : [?Token];
         legends : [Legend];
         supply  : Nat;
+        _canisterPrincipal  : () -> Principal;
     };
 
     public type Legend = {
