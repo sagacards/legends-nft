@@ -1,5 +1,3 @@
-// 3rd Party Imports
-
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
@@ -7,12 +5,7 @@ import HashMap "mo:base/HashMap";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
-// Project Imports
-
 import Admins "../Admins";
-
-// Module Imports
-
 import Types "types";
 
 

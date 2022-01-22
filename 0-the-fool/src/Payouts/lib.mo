@@ -1,27 +1,23 @@
-// 3rd Party
 import AccountIdentifier "mo:base/Array";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-import Ext "mo:ext/Ext";
-import EvictingQueue "mo:queue/EvictingQueue";
+import Debug "mo:base/Debug";
 import Float "mo:base/Float";
 import HashMap "mo:base/HashMap";
-import Int64 "mo:base/Int64";
 import Int "mo:base/Int";
+import Int64 "mo:base/Int64";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Nat64 "mo:base/Nat64";
 import Time "mo:base/Time";
 
-// Project
+import EvictingQueue "mo:queue/EvictingQueue";
+import Ext "mo:ext/Ext";
+
 import EntrepotTypes "../Entrepot/types";
 import NNSTypes "../NNS/types";
 import PaymentTypes "../Payments/types";
-
-// Module
 import Types "types";
-
-import Debug "mo:base/Debug";
 
 
 module {

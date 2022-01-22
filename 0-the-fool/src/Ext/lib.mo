@@ -1,16 +1,16 @@
-import AccountIdentifier "mo:principal/AccountIdentifier";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
-import Ext "mo:ext/Ext";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Principal "mo:base/Principal";
-import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
-import LedgerTypes "../Ledger/types";
+import AccountIdentifier "mo:principal/AccountIdentifier";
+import Ext "mo:ext/Ext";
+import Prim "mo:prim";
 
+import TokenTypes "../Tokens/types";
 import Types "types";
 
 module {
@@ -36,7 +36,7 @@ module {
             };
 
             let userId = Ext.User.toAccountIdentifier(request.user);
-            switch (state.ledger._getOwner(Nat32.toNat(index))) {
+            switch (state.tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #err(#InvalidToken(request.token)); };
                 case (? token) {
                     if (Ext.AccountIdentifier.equal(userId, token.owner)) {
@@ -55,12 +55,12 @@ module {
         public func transfer(
             caller : Principal,
             request : Ext.Core.TransferRequest,
-        ) : Ext.Core.TransferResponse {
+        ) : async Ext.Core.TransferResponse {
             let index = switch (Ext.TokenIdentifier.decode(request.token)) {
                 case (#err(_)) { return #err(#InvalidToken(request.token)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            let token = switch (state.ledger._getOwner(Nat32.toNat(index))) {
+            let token = switch (state.tokens._getOwner(Nat32.toNat(index))) {
                 case (?t) t;
                 case _ return #err(#Other("Token owner doesn't exist."));
             };
@@ -70,7 +70,21 @@ module {
             let owner = Text.map(token.owner, Prim.charToUpper);
             if (owner != from) return #err(#Unauthorized("Owner \"" # owner # "\" is not caller \"" # from # "\""));
             if (from != callerAccount) return #err(#Unauthorized("Only the owner can do that."));
-            state.ledger.transfer(index,callerAccount, to);
+            state.tokens.transfer(index, callerAccount, to);
+
+            // Insert transaction history event.
+            ignore await state.cap.insert({
+                caller = caller;
+                operation = "transfer";
+                details = [
+                    ("token", #Text(tokenId(state._canisterPrincipal(), index))),
+                    ("to", #Text(to)),
+                    ("from", #Text(from)),
+                    ("memo", #Slice(Blob.toArray(request.memo))),
+                    ("balance", #U64(1)),
+                    // TODO: Add price
+                ];
+            });
             #ok(Nat32.toNat(index));
         };
 
@@ -86,7 +100,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.ledger._getOwner(Nat32.toNat(index))) {
+            switch (state.tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #err(#InvalidToken(tokenId)); };
                 case (?token) { #ok(#nonfungible({metadata = ?Text.encodeUtf8("The Fool")})); };
             };
@@ -99,7 +113,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.ledger._getOwner(Nat32.toNat(index))) {
+            switch (state.tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #ok(0); };
                 case (? _)  { #ok(1); };
             };
@@ -116,7 +130,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.ledger._getOwner(Nat32.toNat(index))) {
+            switch (state.tokens._getOwner(Nat32.toNat(index))) {
                 case (null)    { #err(#InvalidToken(tokenId)); };
                 case (? token) { #ok(token.owner); };
             };
@@ -152,7 +166,7 @@ module {
         // public shared({ caller }) func mintNFT (
         //     request : Ext.NonFungible.MintRequest,
         // ) : Ext.NonFungible.MintResponse {
-        //     state.ledger.mint(caller, request.to);
+        //     state.tokens.mint(caller, request.to);
         // };
 
         /////////////////////
@@ -181,35 +195,11 @@ module {
         ) : Result.Result<[Ext.TokenIndex], Ext.CommonError> {
             var tokens : [Ext.TokenIndex] = [];
             var i : Nat32 = 0;
-            for (token in Iter.fromArray(state.ledger.read(null))) {
+            for (token in Iter.fromArray(state.tokens.read(null))) {
                 switch (token) {
                     case (?t) {
                         if (Ext.AccountIdentifier.equal(accountId, t.owner)) {
                             tokens := Array.append(tokens, [i]);
-                        };
-                    };
-                    case _ ();
-                };
-                i += 1;
-            };
-            #ok(tokens);
-        };
-        
-        public func tokens_ext(
-            caller  : Principal,
-            accountId : Ext.AccountIdentifier,
-        ) : Result.Result<[Types.TokenExt], Ext.CommonError> {
-            var tokens : [Types.TokenExt] = [];
-            var i : Nat32 = 0;
-            for (token in Iter.fromArray(state.ledger.read(null))) {
-                switch (token) {
-                    case (?t) {
-                        if (Ext.AccountIdentifier.equal(accountId, t.owner)) {
-                            tokens := Array.append(tokens, [(
-                                i,
-                                null,
-                                null,
-                            )]);
                         };
                     };
                     case _ ();

@@ -1,9 +1,5 @@
-// 3rd Party Imports
-
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-
-// Module Imports
 
 import Types "types";
 

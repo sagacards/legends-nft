@@ -1,10 +1,8 @@
-// Project Imports
-
 import Admins "../Admins";
 import Assets "../Assets";
 import Entrepot "../Entrepot";
-import Ledger "../Ledger";
 import Payments "../Payments";
+import Tokens "../Tokens";
 
 
 module {
@@ -12,7 +10,7 @@ module {
     public type State = {
         admins      : Admins.Admins;
         assets      : Assets.Assets;
-        ledger      : Ledger.Ledger;
+        tokens      : Tokens.Factory;
         entrepot    : Entrepot.Factory;
         supply      : Nat;
         payments    : Payments.Factory;

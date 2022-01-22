@@ -1,26 +1,20 @@
-// 3rd Party Imports
-
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Cycles "mo:base/ExperimentalCycles";
-import Ext "mo:ext/Ext";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
-import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
-import Prim "mo:prim";
+import Nat8 "mo:base/Nat8";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 
-// Project Imports
+import Ext "mo:ext/Ext";
+import Prim "mo:prim";
 
 import AssetTypes "../Assets/types";
 import Stoic "../Integrations/Stoic";
-
-// Module Imports
-
 import Types "types";
 
 
@@ -65,9 +59,9 @@ module {
                         number += digit * (10**exponent);
                     };
                     case (_) {
-                        return null
-                    }
-                }
+                        return null;
+                    };
+                };
             };
             ?number
         };
@@ -77,7 +71,7 @@ module {
         private func mintedOr404 (
             index : Nat
         ) : ?Types.Response {
-            switch (state.ledger._getOwner(index)) {
+            switch (state.tokens._getOwner(index)) {
                 case (?_) null;
                 case _ ?http404(?"Token not yet minted.");
             };
@@ -157,16 +151,16 @@ module {
             index : Nat,
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(index));
-            let { back; border; ink; } = state.ledger.nfts(?index)[0];
-            let nriBack = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "back-" # back })) {
+            let { back; border; ink; } = state.tokens.nfts(?index)[0];
+            let nriBack = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriBorder = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "border-" # border })) {
+            let nriBorder = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "border-" # border })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriInk = switch (Array.find<(Text, Float)>(state.ledger.NRI, func ((a, b)) { a == "ink-" # ink })) {
+            let nriInk = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "ink-" # ink })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
@@ -410,7 +404,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state.ledger._getLegend(i);
+                    let legend = state.tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -432,7 +426,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state.ledger._getLegend(i);
+                    let legend = state.tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "animated", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -445,7 +439,7 @@ module {
 
         // @path: /
         private func httpIndex () : Types.Response {
-            let supply = state.ledger._getMinted().size();
+            let supply = state.tokens._getMinted().size();
             let (
                 totalVolume,
                 highestPriceSale,
@@ -488,7 +482,7 @@ module {
             if (Text.contains(request.url, #text("type=card-art"))) {
                 return renderAssetWithTags(["preview", "flat"]);
             };
-            let legend = state.ledger._getLegend(Nat32.toNat(index));
+            let legend = state.tokens._getLegend(Nat32.toNat(index));
             if (Text.contains(request.url, #text("type=animated"))) {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
@@ -511,7 +505,7 @@ module {
             let index = Iter.toArray(Text.tokens(request.url, #text("tokenindex=")))[1];
             switch (natFromText(index)) {
                 case (?i) {
-                    let legend = state.ledger._getLegend(i);
+                    let legend = state.tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -560,7 +554,7 @@ module {
         ) : Types.Response {
             switch (natFromText(tokens[0])) {
                 case (?index) {
-                    let legend = state.ledger._getLegend(index);
+                    let legend = state.tokens._getLegend(index);
                     if (tokens.size() == 1) {
                         return renderLegendPreview(index)
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {

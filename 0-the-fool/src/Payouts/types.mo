@@ -1,16 +1,18 @@
-import Admin "../Admins/lib";
+import Time "mo:base/Time";
+
 import Ext "mo:ext/Ext";
-import Ledger "../Ledger";
+
+import Admin "../Admins/lib";
 import NNS "../NNS";
 import NNSTypes "../NNS/types";
 import Payments "../Payments";
-import Time "mo:base/Time";
+import Tokens "../Tokens";
 
 module {
 
     public type State = { 
         admins      : Admin.Admins;
-        ledger      : Ledger.Ledger;
+        ledger      : Tokens.Factory;
         nns         : NNS.Factory;
         payments    : Payments.Factory;
     };

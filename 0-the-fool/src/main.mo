@@ -1,35 +1,40 @@
-// 3rd Party Imports
+import Array "mo:base/Array";
+import Blob "mo:base/Blob";
+import Nat64 "mo:base/Nat64";
+import Nat8 "mo:base/Nat8";
+import Option "mo:base/Option";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
+import Cap "mo:cap/Cap";
+import CapRouter "mo:cap/Router";
+import EXT "mo:ext/Ext";
+
 import Admins "Admins";
-import Array "mo:base/Array";
 import AssetTypes "Assets/types";
 import Assets "Assets";
-import Blob "mo:base/Blob";
 import Entrepot "Entrepot";
 import EntrepotTypes "Entrepot/types";
-import Ext "mo:ext/Ext";
-import ExtFactory "Ext";
+import Ext "Ext";
 import ExtTypes "Ext/types";
 import Hex "NNS/Hex";
 import Http "Http";
 import HttpTypes "Http/types";
-import Ledger "Ledger";
-import LedgerTypes "Ledger/types";
+import TokenTypes "Tokens/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
-import Nat64 "mo:base/Nat64";
-import Nat8 "mo:base/Nat8";
 import Payments "Payments";
 import PaymentsTypes "Payments/types";
-import PayoutTypes "Payouts/types";
 import Payouts "Payouts";
 import PayoutsTypes "Payouts/types";
-import Principal "mo:base/Principal";
-import Result "mo:base/Result";
+import Tokens "Tokens";
 
 
-shared ({ caller = creator }) actor class LegendsNFT() = canister {
+shared ({ caller = creator }) actor class LegendsNFT(
+    self                : Principal,
+    capRouterCanister   : ?Text,
+) = canister {
 
 
     /////////////
@@ -55,14 +60,15 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
 
     // Ledger
 
-    private stable var stableLedger : [?LedgerTypes.Token] = Array.tabulate<?LedgerTypes.Token>(supply, func (i) { null });
-    private stable var stableLegends : [LedgerTypes.Legend] = [];
+    private stable var stableTokens : [?TokenTypes.Token] = Array.tabulate<?TokenTypes.Token>(supply, func (i) { null });
+    private stable var stableLegends : [TokenTypes.Legend] = [];
 
     // Entrepot
 
-    private stable var stableListings : [(Ext.TokenIndex, EntrepotTypes.Listing)] = [];
+    private stable var stableListings : [(EXT.TokenIndex, EntrepotTypes.Listing)] = [];
     private stable var stableTransactions : [(Nat, EntrepotTypes.Transaction)] = [];
-    private stable var stablePendingTransactions : [(Ext.TokenIndex, EntrepotTypes.Transaction)] = [];
+    private stable var stablePendingTransactions : [(EXT.TokenIndex, EntrepotTypes.Transaction)] = [];
+    private stable var stableUsedPaymentAddress : [(EXT.AccountIdentifier, Principal, EXT.SubAccount)] = [];
 
     // Payments
 
@@ -76,14 +82,14 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     system func preupgrade() {
 
         // Preserve assets
-        stableAssets := assets.toStable();
+        stableAssets := _Assets.toStable();
 
         // Preserve admins
-        stableAdmins := admins.toStable();
+        stableAdmins := _Admins.toStable();
 
-        // Preserve ledger
-        let { ledger = x; legends } = ledger.toStable();
-        stableLedger := x;
+        // Preserve token ledger
+        let { tokens = x; legends } = _Tokens.toStable();
+        stableTokens := x;
 
         // Preserve legends
         stableLegends := legends;
@@ -93,10 +99,12 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
             listings;
             transactions;
             pendingTransactions;
-        } = entrepot.toStable();
+            _usedPaymentAddresses
+        } = _Entrepot.toStable();
         stableListings              := listings;
         stableTransactions          := transactions;
         stablePendingTransactions   := pendingTransactions;
+        stableUsedPaymentAddress    := _usedPaymentAddresses;
 
         // Preserve Payments
         let {
@@ -104,7 +112,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
             purchases;
             nextTxId;
             refunds;
-        } = payments.toStable();
+        } = _Payments.toStable();
         stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
         stablePaymentsRefunds   := refunds;
@@ -116,36 +124,40 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         // Yeet
     };
 
+    func _canisterPrincipal () : Principal {
+        self;
+    };
+
 
     /////////////
     // Admins //
     ///////////
 
 
-    let admins = Admins.Admins({
+    let _Admins = Admins.Admins({
         admins = stableAdmins;
     });
 
     public shared ({ caller }) func addAdmin (
         p : Principal,
     ) : async () {
-        admins.addAdmin(caller, p);
+        _Admins.addAdmin(caller, p);
     };
 
     public query ({ caller }) func isAdmin (
         p : Principal,
     ) : async Bool {
-        admins.isAdmin(caller, p);
+        _Admins.isAdmin(caller, p);
     };
 
     public shared ({ caller }) func removeAdmin (
         p : Principal,
     ) : async () {
-        admins.removeAdmin(caller, p);
+        _Admins.removeAdmin(caller, p);
     };
 
     public query func getAdmins () : async [Principal] {
-        admins.getAdmins();
+        _Admins.getAdmins();
     };
 
     
@@ -154,8 +166,8 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     ///////////
 
 
-    let assets = Assets.Assets({
-        admins;
+    let _Assets = Assets.Assets({
+        admins = _Admins;
         assets = stableAssets;
     });
 
@@ -164,14 +176,14 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     public shared ({ caller }) func upload (
         bytes : [Blob],
     ) : async () {
-        assets.upload(caller, bytes);
+        _Assets.upload(caller, bytes);
     };
 
     public shared ({ caller }) func uploadFinalize (
         contentType : Text,
         meta        : AssetTypes.Meta,
     ) : async Result.Result<(), Text> {
-        assets.uploadFinalize(
+        _Assets.uploadFinalize(
             caller,
             contentType,
             meta,
@@ -179,62 +191,77 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     };
 
     public shared ({ caller }) func uploadClear () : async () {
-        assets.uploadClear(caller);
+        _Assets.uploadClear(caller);
     };
 
     public shared ({ caller }) func purgeAssets (
         confirm : Text,
         tag     : ?Text,
     ) : async Result.Result<(), Text> {
-        assets.purge(caller, confirm, tag);
+        _Assets.purge(caller, confirm, tag);
+    };
+
+
+    //////////
+    // CAP //
+    ////////
+
+
+    let capRouterId = Option.get(capRouterCanister, CapRouter.mainnet_id);
+    let _Cap = Cap.Cap(?capRouterId);
+
+    public shared ({ caller }) func init () : async Result.Result<(), Text> {
+        let pid = _canisterPrincipal();
+        let tokenContractId = Principal.toText(pid);
+
+        let handshake = await _Cap.handshake(
+            tokenContractId,
+            1_000_000_000_000,
+        );
+
+        #ok();
     };
 
 
     /////////////
-    // Ledger //
+    // Tokens //
     ///////////
 
 
-    let ledger = Ledger.Ledger({
-        supply;
-        admins;
-        assets;
-        ledger = stableLedger;
+    let _Tokens = Tokens.Factory({
+        admins  = _Admins;
+        assets  = _Assets;
+        cap     = _Cap;
+        tokens  = stableTokens;
         legends = stableLegends;
+        supply;
+        _canisterPrincipal;
     });
 
-    public shared func readLedger () : async [?LedgerTypes.Token] {
-        ledger.read(null);
+    public shared func readLedger () : async [?TokenTypes.Token] {
+        _Tokens.read(null);
     };
 
     public shared ({ caller }) func mint (
-        to : Ext.User,
+        to : EXT.User,
     ) : async Result.Result<Nat, Text> {
-        ledger.mint(caller, to);
+        await _Tokens.mint(caller, to);
     };
 
     public shared ({ caller }) func configureLegends (
-        conf : [LedgerTypes.Legend],
+        conf : [TokenTypes.Legend],
     ) : async Result.Result<(), Text> {
-        ledger.configureLegends(caller, conf);
+        _Tokens.configureLegends(caller, conf);
     };
 
-    public shared ({ caller }) func ledgerReassign (
-        token   : Ext.TokenIdentifier,
-        to      : Ext.User,
-        confirm : Text,
-    ) : async Result.Result<(), Text> {
-        ledger.reassign(caller, token, to, confirm);
+    public query ({ caller }) func tokensBackup () : async [?TokenTypes.Token] {
+        _Tokens.backup(caller);
     };
 
-    public query ({ caller }) func ledgerBackup () : async [?LedgerTypes.Token] {
-        ledger.backup(caller);
-    };
-
-    public shared ({ caller }) func ledgerRestore (
-        data : [?LedgerTypes.Token],
+    public shared ({ caller }) func tokensRestore (
+        data : [?TokenTypes.Token],
     ) : async Result.Result<(), Text> {
-        ledger.restore(caller, data);
+        _Tokens.restore(caller, data);
     };
 
 
@@ -242,54 +269,79 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     // EXT //
     ////////
 
-    func _canisterPrincipal () : Principal {
-        Principal.fromActor(canister);
-    };
-
-    let ext = ExtFactory.make({
-        ledger;
+    let _Ext = Ext.make({
+        tokens  = _Tokens;
+        cap     = _Cap;
+        _canisterPrincipal;
     });
 
     public shared ({ caller }) func allowance(
-        request : Ext.Allowance.Request,
-    ) : async Ext.Allowance.Response {
-        ext.allowance(caller, request);
+        request : EXT.Allowance.Request,
+    ) : async EXT.Allowance.Response {
+        _Ext.allowance(caller, request);
     };
     
     public query ({ caller }) func metadata(
-        tokenId : Ext.TokenIdentifier,
-    ) : async Ext.Common.MetadataResponse {
-        ext.metadata(caller, tokenId);
+        tokenId : EXT.TokenIdentifier,
+    ) : async EXT.Common.MetadataResponse {
+        _Ext.metadata(caller, tokenId);
     };
 
     public shared ({ caller }) func approve(
-        request : Ext.Allowance.ApproveRequest,
+        request : EXT.Allowance.ApproveRequest,
     ) : async () {
-        ext.approve(caller, request);
+        _Ext.approve(caller, request);
     };
 
     public shared ({ caller }) func transfer(
-        request : Ext.Core.TransferRequest,
-    ) : async Ext.Core.TransferResponse {
-        ext.transfer(caller, request);
+        request : EXT.Core.TransferRequest,
+    ) : async EXT.Core.TransferResponse {
+        await _Ext.transfer(caller, request);
     };
 
     public query ({ caller }) func tokens(
-        accountId : Ext.AccountIdentifier
-    ) : async Result.Result<[Ext.TokenIndex], Ext.CommonError> {
-        ext.tokens(caller, accountId);
+        accountId : EXT.AccountIdentifier
+    ) : async Result.Result<[EXT.TokenIndex], EXT.CommonError> {
+        _Ext.tokens(caller, accountId);
     };
     
     public query ({ caller }) func tokens_ext(
-        accountId : Ext.AccountIdentifier
-    ) : async Result.Result<[ExtTypes.TokenExt], Ext.CommonError> {
-        ext.tokens_ext(caller, accountId)
+        accountId : EXT.AccountIdentifier
+    ) : async Result.Result<[(EXT.TokenIndex, ?EntrepotTypes.Listing, ?[Nat8])], EXT.CommonError> {
+        _Entrepot.tokens_ext(caller, accountId)
     };
 
     public query func tokenId(
-        index : Ext.TokenIndex,
-    ) : async Ext.TokenIdentifier {
-        ext.tokenId(_canisterPrincipal(), index);
+        index : EXT.TokenIndex,
+    ) : async EXT.TokenIdentifier {
+        _Ext.tokenId(_canisterPrincipal(), index);
+    };
+
+
+    //////////
+    // NNS //
+    ////////
+
+
+    let _Nns = NNS.Factory({
+        admins = _Admins;
+    });
+    
+    public query func address () : async (Blob, Text) {
+        let a = NNS.accountIdentifier(Principal.fromActor(canister), NNS.defaultSubaccount());
+        (a, Hex.encode(Blob.toArray(a)));
+    };
+
+    public shared ({ caller }) func balance () : async NNSTypes.ICP {
+        await _Nns.balance(NNS.accountIdentifier(_canisterPrincipal(), NNS.defaultSubaccount()));
+    };
+
+    public shared ({ caller }) func nnsTransfer (
+        amount  : NNSTypes.ICP,
+        to      : Text,
+        memo    : NNSTypes.Memo,
+    ) : async NNSTypes.TransferResult {
+        await _Nns.transfer(caller, amount, to, memo);
     };
 
 
@@ -297,27 +349,31 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     // Entrepot //
     /////////////
 
-    let entrepot = Entrepot.Factory({
-        admins;
-        supply;
-        ledger;
+    let _Entrepot = Entrepot.Factory({
+        admins              = _Admins;
+        cap                 = _Cap;
+        tokens              = _Tokens;
+        nns                 = _Nns;
         listings            = stableListings;
         transactions        = stableTransactions;
         pendingTransactions = stablePendingTransactions;
+        supply;
+        _canisterPrincipal;
+        _usedPaymentAddresses = stableUsedPaymentAddress;
     });
 
-    public query func details (token : Ext.TokenIdentifier) : async EntrepotTypes.DetailsResponse {
-        entrepot.details(token);
+    public query func details (token : EXT.TokenIdentifier) : async EntrepotTypes.DetailsResponse {
+        _Entrepot.details(token);
     };
 
     public query func listings () : async EntrepotTypes.ListingsResponse {
-        entrepot.getListings();
+        _Entrepot.getListings();
     };
 
     public shared ({ caller }) func list (
         request : EntrepotTypes.ListRequest,
     ) : async EntrepotTypes.ListResponse {
-        entrepot.list(caller, request);
+        await _Entrepot.list(caller, request);
     };
 
     public query func stats () : async (
@@ -329,54 +385,31 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         Nat,    // # Supply
         Nat,    // #Sales
     ) {
-        entrepot.stats();
+        _Entrepot.stats();
     };
 
     public shared ({ caller }) func lock (
-        token : Ext.TokenIdentifier,
+        token : EXT.TokenIdentifier,
         price : Nat64,
-        buyer : Ext.AccountIdentifier,
+        buyer : EXT.AccountIdentifier,
         bytes : [Nat8],
     ) : async EntrepotTypes.LockResponse {
-        entrepot.lock(caller, token, price, buyer, bytes);
+        await _Entrepot.lock(caller, token, price, buyer, bytes);
     };
 
     public shared func settle (
-        token : Ext.TokenIdentifier,
-    ) : async Result.Result<(), Ext.CommonError> {
-        entrepot.settle(token);
+        token : EXT.TokenIdentifier,
+    ) : async Result.Result<(), EXT.CommonError> {
+        await _Entrepot.settle(token);
     };
 
-    public shared ({ caller }) func purgeListings (
-        confirm : Text,
-    ) : async Result.Result<(), Text> {
-        entrepot.purgeListings(caller, confirm);
+    public query ({ caller }) func payments () : async ?[EXT.SubAccount] {
+        _Entrepot.payments(caller);
     };
 
-
-    //////////
-    // NNS //
-    ////////
-
-
-    let nns = NNS.Factory({ admins; });
-    
-    public query func address () : async (Blob, Text) {
-        let a = NNS.accountIdentifier(Principal.fromActor(canister), NNS.defaultSubaccount());
-        (a, Hex.encode(Blob.toArray(a)));
-    };
-
-    public shared ({ caller }) func balance () : async NNSTypes.ICP {
-        await nns.balance(_canisterPrincipal());
-    };
-
-    public shared ({ caller }) func nnsTransfer (
-        amount  : NNSTypes.ICP,
-        to      : Text,
-        memo    : NNSTypes.Memo,
-    ) : async NNSTypes.TransferResult {
-        await nns.transfer(caller, amount, to, memo);
-    };
+    // public shared ({ caller }) func readPending () : async [(EXT.TokenIndex, EntrepotTypes.Transaction)] {
+    //     _Entrepot.readPending(caller);
+    // };
 
 
     ///////////////
@@ -384,14 +417,16 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     /////////////
 
 
-    let payments = Payments.Factory({
-        admins;
-        nns;
-        ledger;
+    let _Payments = Payments.Factory({
+        admins      = _Admins;
+        cap         = _Cap;
+        nns         = _Nns;
+        tokens      = _Tokens;
         locks       = stablePaymentsLocks;
         purchases   = stablePaymentsPurchases;
         refunds     = stablePaymentsRefunds;
         nextTxId    = stablePaymentsNextTxId;
+        _canisterPrincipal;
     });
 
     public query func paymentsBackup () : async {
@@ -400,7 +435,7 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
         purchases   : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
         refunds     : [(PaymentsTypes.TxId, PaymentsTypes.Refund)];
     } {
-        payments.toStable();
+        _Payments.toStable();
     };
 
     public shared ({ caller }) func paymentsRestore (
@@ -411,34 +446,34 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
             refunds     : ?[(PaymentsTypes.TxId, PaymentsTypes.Refund)];
         }
     ) : async () {
-        payments.restore(caller, backup);
+        _Payments.restore(caller, backup);
     };
 
     public shared ({ caller }) func paymentsLock (
         memo : Nat64,
     ) : async Result.Result<PaymentsTypes.TxId, Text> {
-        await payments.lock(caller, memo);
+        await _Payments.lock(caller, memo);
     };
 
     public shared ({ caller }) func paymentsNotify (
         memo        : Nat64,
         blockheight : NNSTypes.BlockHeight,
-    ) : async Result.Result<Ext.TokenIndex, Text> {
-        await payments.notify(caller, blockheight, memo, _canisterPrincipal());
+    ) : async Result.Result<EXT.TokenIndex, Text> {
+        await _Payments.notify(caller, blockheight, memo, _canisterPrincipal());
     };
 
     public query func paymentsGetPrice () : async Nat64 {
-        payments.getPrice();
+        _Payments.getPrice();
     };
 
     public query func paymentsGetAvailable () : async Nat {
-        payments.available();
+        _Payments.available();
     };
 
     public shared ({ caller }) func paymentsProcessRefunds (
         transactions : [PaymentsTypes.NNSTransaction],
     ) : async Result.Result<(), Text> {
-        await payments.processRefunds(caller, Principal.fromActor(canister), transactions);
+        await _Payments.processRefunds(caller, Principal.fromActor(canister), transactions);
     };
 
 
@@ -447,9 +482,9 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     ////////////
 
 
-    // let payouts = Payouts.Factory({
+    // let _Payouts = Payouts.Factory({
     //     admins;
-    //     ledger;
+    //     tokens;
     //     nns;
     //     payments;
     // });
@@ -464,17 +499,17 @@ shared ({ caller = creator }) actor class LegendsNFT() = canister {
     /////////
 
 
-    let httpHandler = Http.HttpHandler({
-        assets;
-        admins;
-        entrepot;
-        ledger;
+    let _HttpHandler = Http.HttpHandler({
+        assets      = _Assets;
+        admins      = _Admins;
+        entrepot    = _Entrepot;
+        tokens      = _Tokens;
+        payments    = _Payments;
         supply;
-        payments;
     });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
-        httpHandler.request(request);
+        _HttpHandler.request(request);
     };
 
 };

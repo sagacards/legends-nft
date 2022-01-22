@@ -1,10 +1,10 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Iter "mo:base/Iter";
-import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
-import Text "mo:base/Text";
+import Nat8 "mo:base/Nat8";
 import Principal "mo:base/Principal";
+import Text "mo:base/Text";
 
 import Types "types";
 
