@@ -22,6 +22,14 @@ module {
 
     public class HttpHandler (state : Types.State) {
 
+        var nri = state.nri;
+
+        public func updateNri (
+            data : [(Text, Float)]
+        ) : () {
+            nri := data;
+        };
+
 
         ////////////////////////
         // Internals / Utils //
@@ -152,15 +160,15 @@ module {
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(index));
             let { back; border; ink; } = state.tokens.nfts(?index)[0];
-            let nriBack = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "back-" # back })) {
+            let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriBorder = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "border-" # border })) {
+            let nriBorder = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "border-" # border })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriInk = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "ink-" # ink })) {
+            let nriInk = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "ink-" # ink })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };

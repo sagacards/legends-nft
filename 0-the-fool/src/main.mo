@@ -34,7 +34,15 @@ import Tokens "Tokens";
 
 shared ({ caller = creator }) actor class LegendsNFT(
     // This must be the canister's own principal. It sucks having to do this, but I don't know a better way to enable passing a self reference to a submodule in Motoko.
-    cid : Principal,
+    cid         : Principal,
+    capRouter   : ?Text,
+    canisterMeta: {
+        supply      : Nat16;
+        name        : Text;
+        flavour     : Text;
+        description : Text;
+        artists     : [Text];
+    },
 ) = {
 
 
@@ -43,21 +51,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
     /////////////////
 
 
-    // Config (default values shown, configure in init())
+    // Config
 
-    stable var canisterMeta = {
-        supply      : Nat16 = 100;
-        name        : Text  = "UNNAMED Legends NFT";
-        flavour     : Text  = "";
-        description : Text  = "";
-        artists     : [Text]= [];
-    };
-    stable var initialized : Bool = false;
-    
+    private stable var nri : [(Text, Float)] = [];
+
     // CAP
 
-    private stable var capBucketId : ?Text = null;
-    private stable var capRouterCanisterOverride : ?Text = null;
+    private stable var capRoot : ?Text = null;
 
     // Assets
 
@@ -139,8 +139,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
     ////////
 
 
-    let capRouterId = Option.get(capRouterCanisterOverride, CapRouter.mainnet_id);
-    let _Cap = Cap.Cap(?capRouterId, capBucketId);
+    let capRouterId = Option.get(capRouter, CapRouter.mainnet_id);
+    let _Cap = Cap.Cap(?capRouterId, capRoot);
 
 
     /////////////
@@ -153,27 +153,22 @@ shared ({ caller = creator }) actor class LegendsNFT(
     });
 
     // This needs to be manually called once after canister creation.
-    public shared ({ caller }) func init (
-        capOverride : ?Text,
-        supply      : Nat16,
-        name        : Text,
-        description : Text,
-        flavour     : Text,
-        artists     : [Text],
-    ) : async Result.Result<(), Text> {
+    public shared ({ caller }) func init () : async Result.Result<(), Text> {
         assert(_Admins._isAdmin(caller));
-
-        capRouterCanisterOverride := capOverride;
-        canisterMeta := { supply; name; description; flavour; artists; };
-
         // Initialize CAP and store root bucket id
-        capBucketId := await _Cap.handshake(
+        capRoot := await _Cap.handshake(
             Principal.toText(cid),
             1_000_000_000_000,
         );
-
-        initialized := true;
         #ok();
+    };
+
+    public shared ({ caller }) func configureNri (
+        data : [(Text, Float)],
+    ) : async () {
+        assert(_Admins._isAdmin(caller));
+        nri := data;
+        _HttpHandler.updateNri(data);
     };
 
     public shared ({ caller }) func addAdmin (
@@ -518,6 +513,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         tokens      = _Tokens;
         payments    = _Payments;
         supply      = canisterMeta.supply;
+        nri;
     });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
