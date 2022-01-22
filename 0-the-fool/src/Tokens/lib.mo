@@ -3,6 +3,7 @@ import Bool "mo:base/Bool";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
+import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
 import Random "mo:base/Random";
@@ -57,7 +58,7 @@ module {
         public func _getUnminted () : [Ext.TokenIndex] {
             let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
             var i : Nat32 = 17;
-            while (Nat32.toNat(i) < state.supply) {
+            while (Nat32.toNat(i) < Nat16.toNat(state.supply)) {
                 if (Option.isNull(ledger[Nat32.toNat(i)])) {
                     unminted.add(i);
                 };
@@ -69,7 +70,7 @@ module {
         public func _getMinted () : [Ext.TokenIndex] {
             let minted = Buffer.Buffer<Ext.TokenIndex>(0);
             var i : Nat32 = 0;
-            while (Nat32.toNat(i) < state.supply) {
+            while (Nat32.toNat(i) < Nat16.toNat(state.supply)) {
                 if (not Option.isNull(ledger[Nat32.toNat(i)])) {
                     minted.add(i);
                 };
@@ -85,7 +86,7 @@ module {
         ) : async ?Ext.TokenIndex {
             var i : Nat32 = 17;
             let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
-            label l while (Nat32.toNat(i) < state.supply) {
+            label l while (Nat32.toNat(i) < Nat16.toNat(state.supply)) {
                 switch (exclude) {
                     case (?ex) {
                         var msg = "Ignoring vals: ";
@@ -174,7 +175,7 @@ module {
         //////////
 
 
-        var ledger : [var ?Types.Token] = Array.init(state.supply, null);
+        var ledger : [var ?Types.Token] = Array.init(Nat16.toNat(state.supply), null);
         var legends : [Types.Legend] = [];
 
         // Provision ledger from stable state
@@ -220,7 +221,7 @@ module {
                         caller;
                         operation = "mint";
                         details = [
-                            ("token", #Text(tokenId(state._canisterPrincipal(), Nat32.fromNat(i)))),
+                            ("token", #Text(tokenId(state.cid, Nat32.fromNat(i)))),
                             ("to", #Text(Ext.User.toAccountIdentifier(to))),
                             // TODO: Add price
                         ];
@@ -237,10 +238,10 @@ module {
             conf    : [Types.Legend],
         ) : Result.Result<(), Text> {
             assert(state.admins._isAdmin(caller));
-            if (conf.size() != state.supply) {
+            if (conf.size() != Nat16.toNat(state.supply)) {
                 return #err(
                     "Must include configuration for " #
-                    Nat.toText(state.supply) #
+                    Nat.toText(Nat16.toNat(state.supply)) #
                     " legends. Received " #
                     Nat.toText(conf.size())
                 );
