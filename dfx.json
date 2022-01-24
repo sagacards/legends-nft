@@ -1,14 +1,14 @@
 {
   "canisters": {
-    "test": {
+    "0-the-fool": {
       "main": "src/main.mo",
       "type": "motoko"
     },
-    "the-magician": {
+    "1-the-magician": {
       "main": "src/main.mo",
       "type": "motoko"
     },
-    "the-fool" : {
+    "legends-test": {
       "main": "src/main.mo",
       "type": "motoko"
     }
@@ -21,7 +21,7 @@
   "dfx": "0.8.4",
   "networks": {
     "local": {
-      "bind": "127.0.0.1:8000",
+      "bind": "127.0.0.1:5050",
       "type": "ephemeral"
     }
   },
