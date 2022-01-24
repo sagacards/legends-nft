@@ -14,8 +14,8 @@ module Ledger {
         cap     : Cap.Cap;
         tokens  : [?Token];
         legends : [Legend];
-        supply  : Nat;
-        _canisterPrincipal  : () -> Principal;
+        supply  : Nat16;
+        cid     : Principal;
     };
 
     public type Legend = {

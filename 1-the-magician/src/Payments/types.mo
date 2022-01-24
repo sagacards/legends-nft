@@ -19,7 +19,7 @@ module {
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];
         locks       : [(TxId, Lock)];
-        _canisterPrincipal  : () -> Principal;
+        cid         : Principal;
     };
 
     public type TxId = Nat32;

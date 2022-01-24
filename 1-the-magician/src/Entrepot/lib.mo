@@ -5,6 +5,7 @@ import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
+import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
 import Prim "mo:prim";
@@ -202,7 +203,7 @@ module {
             switch (Ext.TokenIdentifier.decode(token)) {
                 case (#ok(principal, tokenIndex)) {
                     // Validate token identifier's canister.
-                    if (principal != state._canisterPrincipal()) {
+                    if (principal != state.cid) {
                         #err(#InvalidToken(token));
                     } else {
                         #ok(tokenIndex);
@@ -315,7 +316,7 @@ module {
                 lowestPriceSale,
                 currentFloorPrice,
                 listings.size(),
-                state.supply,
+                Nat16.toNat(state.supply),
                 transactions.size(),
             );
         };
@@ -487,10 +488,10 @@ module {
 
             // Insert transaction history event.
             ignore await state.cap.insert({
-                caller = state._canisterPrincipal();
+                caller = state.cid;
                 operation = "transfer";
                 details = [
-                    ("token", #Text(state.tokens.tokenId(state._canisterPrincipal(), index))),
+                    ("token", #Text(state.tokens.tokenId(state.cid, index))),
                     ("to", #Text(transaction.to)),
                     ("from", #Text(transaction.from)),
                     ("memo", #Slice(
