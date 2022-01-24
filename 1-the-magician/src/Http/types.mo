@@ -12,8 +12,9 @@ module {
         assets      : Assets.Assets;
         tokens      : Tokens.Factory;
         entrepot    : Entrepot.Factory;
-        supply      : Nat;
+        supply      : Nat16;
         payments    : Payments.Factory;
+        nri         : [(Text, Float)];
     };
 
     public type HeaderField = (Text, Text);

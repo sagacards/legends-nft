@@ -16,14 +16,14 @@ module {
     public type State = {
         admins                  : Admins.Admins;
         cap                     : Cap.Cap;
-        supply                  : Nat;
+        supply                  : Nat16;
         tokens                  : Tokens.Factory;
         nns                     : NNS.Factory;
         listings                : [(Ext.TokenIndex, Listing)];
         transactions            : [(Nat, Transaction)];
         pendingTransactions     : [(Ext.TokenIndex, Transaction)];
         _usedPaymentAddresses   : [(Ext.AccountIdentifier, Principal, Ext.SubAccount)];
-        _canisterPrincipal  : () -> Principal;
+        cid                     : Principal;
     };
 
     public type Listing = {

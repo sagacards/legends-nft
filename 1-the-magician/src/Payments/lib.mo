@@ -338,7 +338,7 @@ module {
                                                         caller;
                                                         operation = "mint";
                                                         details = [
-                                                            ("token", #Text(state.tokens.tokenId(state._canisterPrincipal(), lock.token))),
+                                                            ("token", #Text(state.tokens.tokenId(state.cid, lock.token))),
                                                             ("to", #Text(lock.buyerAccount)),
                                                             // TODO: Add price
                                                         ];

@@ -22,23 +22,56 @@ module {
 
     public class HttpHandler (state : Types.State) {
 
+        var nri = state.nri;
+
+        public func updateNri (
+            data : [(Text, Float)]
+        ) : () {
+            nri := data;
+        };
+
 
         ////////////////////////
         // Internals / Utils //
         //////////////////////
 
 
+        // Attempt to parse char to digit.
+        private func digitFromChar(c: Char): ?Nat {
+            switch(c) {
+                case '0' ?0;
+                case '1' ?1;
+                case '2' ?2;
+                case '3' ?3;
+                case '4' ?4;
+                case '5' ?5;
+                case '6' ?6;
+                case '7' ?7;
+                case '8' ?8;
+                case '9' ?9;
+                case _ null;
+            }
+        };
+
+
         // Attempts to parse a nat from a path string.
         private func natFromText (
             text : Text
         ) : ?Nat {
-            var match : ?Nat = null;
-            for (i in Iter.range(0, state.supply - 1)) {
-                if (Nat.toText(i) == text) {
-                    match := ?i;
+            var exponent : Nat = text.size();
+            var number : Nat = 0;
+            for (char in text.chars()){
+                switch (digitFromChar(char)) {
+                    case (?digit) {
+                        exponent -= 1;
+                        number += digit * (10**exponent);
+                    };
+                    case (_) {
+                        return null;
+                    };
                 };
             };
-            match;
+            ?number
         };
 
 
@@ -127,15 +160,15 @@ module {
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(index));
             let { back; border; ink; } = state.tokens.nfts(?index)[0];
-            let nriBack = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "back-" # back })) {
+            let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriBorder = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "border-" # border })) {
+            let nriBorder = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "border-" # border })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            let nriInk = switch (Array.find<(Text, Float)>(state.tokens.NRI, func ((a, b)) { a == "ink-" # ink })) {
+            let nriInk = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "ink-" # ink })) {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
