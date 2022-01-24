@@ -489,11 +489,11 @@ module {
             // Insert transaction history event.
             ignore await state.cap.insert({
                 caller = state.cid;
-                operation = "transfer";
+                operation = "sale";
                 details = [
-                    ("token", #Text(state.tokens.tokenId(state.cid, index))),
                     ("to", #Text(transaction.to)),
                     ("from", #Text(transaction.from)),
+                    ("token", #Text(state.tokens.tokenId(state.cid, index))),
                     ("memo", #Slice(
                         switch (transaction.memo) {
                             case (?x) Blob.toArray(x);
@@ -501,7 +501,9 @@ module {
                         }
                     )),
                     ("balance", #U64(1)),
-                    // TODO: Add price
+                    ("price_decimals", #U64(8)),
+                    ("price_currency", #Text("ICP")),
+                    ("price", #U64(transaction.price)),
                 ];
             });
 

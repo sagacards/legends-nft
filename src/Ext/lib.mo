@@ -82,7 +82,6 @@ module {
                     ("from", #Text(from)),
                     ("memo", #Slice(Blob.toArray(request.memo))),
                     ("balance", #U64(1)),
-                    // TODO: Add price
                 ];
             });
             #ok(Nat32.toNat(index));
