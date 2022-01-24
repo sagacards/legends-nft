@@ -340,7 +340,9 @@ module {
                                                         details = [
                                                             ("token", #Text(state.tokens.tokenId(state.cid, lock.token))),
                                                             ("to", #Text(lock.buyerAccount)),
-                                                            // TODO: Add price
+                                                            ("price_decimals", #U64(8)),
+                                                            ("price_currency", #Text("ICP")),
+                                                            ("price", #U64(price)),
                                                         ];
                                                     });
                                                     #ok(lock.token);

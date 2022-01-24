@@ -72,7 +72,7 @@ module {
     // Perhaps distinct from Listing.seller as a destination wallet for proceeds?
     public type DetailsResponse = Result.Result<(Ext.AccountIdentifier, ?Listing), Ext.CommonError>;
 
-    // WARNING: Oddly, using this type as a return ype will give a function a different return signature
+    // WARNING: Oddly, using this type as a return type will give a function a different return signature
     // than if you were to use the same value inline (i.e. copy-paste-this.) Entrepot expects the signature
     // which results from the inline usage of this interface, so do that.
     public type StatsResponse = (
