@@ -1,3 +1,4 @@
+#!/bin/zsh
 canister=${1:-legends-staging}
 network=${2:-local}
 
