@@ -1,6 +1,14 @@
 {
   "canisters": {
+    "test": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
     "the-magician": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "the-fool" : {
       "main": "src/main.mo",
       "type": "motoko"
     }
