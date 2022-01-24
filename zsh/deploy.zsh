@@ -1,8 +1,10 @@
-canister=${1:-legends-staging}
+#!/bin/zsh
+canister=${1:-legends-test}
 network=${2:-local}
 
-caprouter="null" && [[ $network == local ]] && caprouter="rwlgt-iiaaa-aaaaa-aaaaa-cai"
+wallet="" && [[ $network == local ]] && wallet=--no-wallet
 
+# Confirm before deploying to mainnet
 if [[ $network != "local" ]]
 then
     echo "Confirm mainnet launch"
@@ -14,19 +16,40 @@ then
     done
 fi
 
-if [[ $canister = "legends-staging" ]]
+# Override cap router canister locally
+caprouter="null"
+if [[ $network == local ]]
 then
-    dfx deploy --network $network $canister --argument "(
-        principal \"dklxm-nyaaa-aaaaj-qajza-cai\",
-        $caprouter,
-        record {
-            \"supply\" = 117 : nat16;
-            \"name\" = \"Legends Test Canister\";
-            \"flavour\" = \"For testing only.\";
-            \"description\" = \"...\";
-            \"artists\" = vec { \"Jorgen\" };
-        }
-    )"
-else
-    echo "Unrecognized canister."
+    caprouter="opt $(jq '."ic-history-router"."local"' ~/Projects/cap/.dfx/local/canister_ids.json)"
 fi
+
+# Get or create canister ID
+canister_id=
+canisters_json="./canister_ids.json" && [[ $network == local ]] && canisters_json=".dfx/local/canister_ids.json"
+while [ ! $canister_id ];
+do
+    # Find canister ID in local json files
+    [ -f $canisters_json ] && canister_id=$(jq ".\"$canister\".\"$network\"" $canisters_json);
+    if [[ ! $canister_id ]]
+    then
+        # Create the canister
+        dfx canister --network $network $wallet create $canister;
+    fi
+done
+
+# Deploy using config manifest as arguments
+config="./config/canisters/$canister.json"
+[ ! -f $config ] && { echo "$config file not found"; exit 99; }
+IFS=$'\n'
+read -r -d$'\1' supply name flavour description artists <<< $(jq -r '.supply, .name, .flavour, .description, .artists' $config)
+dfx deploy $wallet --network $network $canister --argument "(
+    principal $canister_id,
+    $caprouter,
+    record {
+        \"supply\" = $supply : nat16;
+        \"name\" = \"$name\";
+        \"flavour\" = \"$flavour\";
+        \"description\" = \"$description\";
+        \"artists\" = $artists;
+    }
+)"

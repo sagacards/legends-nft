@@ -14,4 +14,6 @@
 
 # Complete a market listing and transaction (nns ledger? 🤮)
 
-# 
+# Public sales work
+
+# Entrepot works
