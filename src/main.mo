@@ -70,21 +70,24 @@ shared ({ caller = creator }) actor class LegendsNFT(
     // Ledger
 
     private stable var stableTokens : [?TokenTypes.Token] = Array.tabulate<?TokenTypes.Token>(Nat16.toNat(canisterMeta.supply), func (i) { null });
-    private stable var stableLegends : [TokenTypes.Legend] = [];
+    private stable var stableLegends: [TokenTypes.Legend] = [];
 
     // Entrepot
 
-    private stable var stableListings : [(EXT.TokenIndex, EntrepotTypes.Listing)] = [];
-    private stable var stableTransactions : [(Nat, EntrepotTypes.Transaction)] = [];
-    private stable var stablePendingTransactions : [(EXT.TokenIndex, EntrepotTypes.Transaction)] = [];
-    private stable var stableUsedPaymentAddress : [(EXT.AccountIdentifier, Principal, EXT.SubAccount)] = [];
+    private stable var stableListings               : [(EXT.TokenIndex, EntrepotTypes.Listing)] = [];
+    private stable var stableTransactions           : [(Nat, EntrepotTypes.Transaction)] = [];
+    private stable var stablePendingTransactions    : [(EXT.TokenIndex, EntrepotTypes.Transaction)] = [];
+    private stable var stableUsedPaymentAddress     : [(EXT.AccountIdentifier, Principal, EXT.SubAccount)] = [];
+    private stable var stableTotalVolume      : Nat64 = 0;
+    private stable var stableLowestPriceSale  : Nat64 = 0;
+    private stable var stableHighestPriceSale : Nat64 = 0;
 
     // Payments
 
-    private stable var stablePaymentsLocks : [(PaymentsTypes.TxId, PaymentsTypes.Lock)] = [];
-    private stable var stablePaymentsPurchases : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
-    private stable var stablePaymentsNextTxId : PaymentsTypes.TxId = 0;
-    private stable var stablePaymentsRefunds : [(PaymentsTypes.TxId, PaymentsTypes.Refund)] = [];
+    private stable var stablePaymentsLocks      : [(PaymentsTypes.TxId, PaymentsTypes.Lock)] = [];
+    private stable var stablePaymentsPurchases  : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
+    private stable var stablePaymentsNextTxId   : PaymentsTypes.TxId = 0;
+    private stable var stablePaymentsRefunds    : [(PaymentsTypes.TxId, PaymentsTypes.Refund)] = [];
 
     // Upgrades
 
@@ -108,12 +111,18 @@ shared ({ caller = creator }) actor class LegendsNFT(
             listings;
             transactions;
             pendingTransactions;
-            _usedPaymentAddresses
+            _usedPaymentAddresses;
+            totalVolume;
+            lowestPriceSale;
+            highestPriceSale;
         } = _Entrepot.toStable();
         stableListings              := listings;
         stableTransactions          := transactions;
         stablePendingTransactions   := pendingTransactions;
         stableUsedPaymentAddress    := _usedPaymentAddresses;
+        stableTotalVolume           := totalVolume;
+        stableLowestPriceSale       := lowestPriceSale;
+        stableHighestPriceSale      := highestPriceSale;
 
         // Preserve Payments
         let {
@@ -365,12 +374,15 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Cap;
         _Tokens;
         _Nns;
+        cid;
         listings            = stableListings;
         transactions        = stableTransactions;
         pendingTransactions = stablePendingTransactions;
         supply              = canisterMeta.supply;
-        cid;
         _usedPaymentAddresses = stableUsedPaymentAddress;
+        totalVolume         = stableTotalVolume;
+        lowestPriceSale     = stableLowestPriceSale;
+        highestPriceSale    = stableHighestPriceSale;
     });
 
     public query func details (token : EXT.TokenIdentifier) : async EntrepotTypes.DetailsResponse {

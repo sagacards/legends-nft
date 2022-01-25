@@ -62,10 +62,9 @@ module {
         )> = Buffer.Buffer(0);
 
         // Marketplace stats
-        var totalVolume         : Nat64 = 0;
-        var lowestPriceSale     : Nat64 = 0;
-        var highestPriceSale    : Nat64 = 0;
-        var currentFloorPrice   : Nat64 = 0;
+        var totalVolume         : Nat64 = state.totalVolume;
+        var lowestPriceSale     : Nat64 = state.lowestPriceSale;
+        var highestPriceSale    : Nat64 = state.highestPriceSale;
 
         // Pre upgrade
 
@@ -74,12 +73,18 @@ module {
             transactions            : [(Nat, Types.Transaction)];
             pendingTransactions     : [(Ext.TokenIndex, Types.Transaction)];
             _usedPaymentAddresses   : [(Ext.AccountIdentifier, Principal, Ext.SubAccount)];
+            totalVolume             : Nat64;
+            lowestPriceSale         : Nat64;
+            highestPriceSale        : Nat64;
         } {
             {
                 listings = Iter.toArray(listings.entries());
                 transactions = Iter.toArray(transactions.entries());
                 pendingTransactions = Iter.toArray(pendingTransactions.entries());
                 _usedPaymentAddresses = _usedPaymentAddresses.toArray();
+                totalVolume;
+                lowestPriceSale;
+                highestPriceSale;
             }
         };
 
@@ -96,6 +101,9 @@ module {
                 };
             };
             for (x in backup._usedPaymentAddresses.vals()) _usedPaymentAddresses.add(x);
+            totalVolume := backup.totalVolume;
+            lowestPriceSale := backup.lowestPriceSale;
+            highestPriceSale := backup.highestPriceSale;
         };
 
         _restore(state);
@@ -293,6 +301,7 @@ module {
                     listings.delete(index);
                 };
             };
+
             #ok();
         };
 
@@ -310,11 +319,15 @@ module {
 
         // Get market stats for this collection
         public func stats () : Types.StatsResponse {
+            var floor : Nat64 = 0;
+            for (a in listings.entries()){
+                if (floor == 0 or a.1.price < floor) floor := a.1.price;
+            };
             (
                 totalVolume,
                 highestPriceSale,
                 lowestPriceSale,
-                currentFloorPrice,
+                floor,
                 listings.size(),
                 Nat16.toNat(state.supply),
                 transactions.size(),
@@ -479,6 +492,17 @@ module {
                 token       = transaction.token;
             });
             pendingTransactions.delete(index);
+
+            // Increment sales stats.
+            totalVolume += transaction.price;
+            lowestPriceSale := switch (transaction.price < lowestPriceSale) {
+                case (true) transaction.price;
+                case (false) lowestPriceSale;
+            };
+            highestPriceSale := switch (transaction.price > highestPriceSale) {
+                case (true) transaction.price;
+                case (false) highestPriceSale;
+            };
 
             // Transfer the NFT.
             state._Tokens.transfer(

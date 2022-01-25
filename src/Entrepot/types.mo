@@ -24,6 +24,9 @@ module {
         pendingTransactions     : [(Ext.TokenIndex, Transaction)];
         _usedPaymentAddresses   : [(Ext.AccountIdentifier, Principal, Ext.SubAccount)];
         cid                     : Principal;
+        totalVolume             : Nat64;
+        lowestPriceSale         : Nat64;
+        highestPriceSale        : Nat64;
     };
 
     public type Listing = {
