@@ -5,10 +5,21 @@
 >    Collectible Major Arcana for Early Saga Adopters.    
 >    https://legends.saga.cards.
 
-This canister generally follows the EXT standard. It may vary from other canisters using the EXT standard for lack of complete standards documentation, but it is interoperable with Stoic Wallet, Plug Wallet, Earth Wallet, and the Entrepot Marketplace.
+This canister is a fairly complete NFT solution which generally follows the EXT standard. It may vary from other canisters using the EXT standard for lack of complete standards documentation. No guarantees that it matches your specific NFT use case.
 
-- [x] Manages assets in this canister
-- [x] Integrates [CAP](https://cap.ooo) for provinance and transaction history
+**A Legends NFT example: [The Fool Mint #1](https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0)**
+
+- [x] Maintains **ownership** ledger
+- [x] Manages **assets** in this canister
+- [x] Integrates [**CAP**](https://cap.ooo) for provinance and transaction history
+- [x] Provides **public sale** functionality, with some support scripts
+- [x] Interfaces with the **entrepot marketplace**
+- [x] Works with **plug**, **stoic** and **earth** wallets
+- [x] Provides functionality to **drain and restore** stable state
+- [ ] Provide **payouts** from primary and secondary sales based on a per-canister configurable distribution map
+- [ ] Integrate **covercode.ooo**
+
+This single repository powers all of the legends NFTs, where each release is individually deployed to the IC (i.e. the fool is one canister, the magician is another, and so on.) This repo contains the source code of these canisters, as well as some scripts to help manage the deployment and configuration of the fleet of canisters that make up the legends series of NFTs.
 
 ## Development & Deployment
 
@@ -48,6 +59,9 @@ zsh/configure.zsh my-new-canister somenet
 ```
 
 - [ ] Add metadata shuffling
+- [ ] Improve metadata solution in general
+
+Once the NFT canister is deployed, it should be submitted to [DAB](https://dab.ooo) so that it can be discovered by other wallets an dApps.
 
 ## Uploading Assets
 
@@ -60,8 +74,8 @@ If you are creating a new set of art assets for a canister, after you've created
 To begin the upload process, run the following command:
 
 ```zsh
-# zsh/manifest_upload.zsh <CANISTER> <MANIFEST_FILEPATH> <NETWORK>
-zsh/manifest_upload.zsh legends-test ./art/manifest-0-the-fool.csv ic
+# zsh/manifest_upload.zsh <CANISTER> <NETWORK>
+zsh/manifest_upload.zsh legends-test ic
 ```
 
 You may run into errors when using the upload script, if your shell cannot handle the chunk sizes. In that case, you should tweak the threshold parameter in [`zsh/upload.zsh`](zsh/upload.zsh#L13).
