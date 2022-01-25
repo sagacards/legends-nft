@@ -16,6 +16,7 @@ This canister is a fairly complete NFT solution which generally follows the EXT 
 - [x] Interfaces with the **entrepot marketplace**
 - [x] Works with **plug**, **stoic** and **earth** wallets
 - [x] Provides functionality to **drain and restore** stable state
+- [x] Flexible **HTTP Interface**
 - [ ] Provide **payouts** from primary and secondary sales based on a per-canister configurable distribution map
 - [ ] Integrate **covercode.ooo**
 
@@ -80,9 +81,32 @@ zsh/manifest_upload.zsh legends-test ic
 
 You may run into errors when using the upload script, if your shell cannot handle the chunk sizes. In that case, you should tweak the threshold parameter in [`zsh/upload.zsh`](zsh/upload.zsh#L13).
 
+## Validating Assets
+
+Run the following to ensure that all of the tokens have their assets.
+
+```zsh
+zsh/manifest_validate.zsh
+```
+
 ## Generating a Manifest
 
 Many of the common assets you can simply copy from another manifest file. For batches of assets, you can use [`zsh/manifest_generate.zsh`](./zsh/manifest_generate.zsh) to help generate your manifest rows.
 
 - [ ] node.js uploads and utility scripts (that's enough of zsh)
 
+## Legend Metadata
+
+Each token exponses a JSON HTTP endpoint that describes all of the metadata required to display that token in an arbitrary rendering context. [Example: /0.json](https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.json).
+
+## HTTP Interface
+
+```
+View                    Path
+Interactive (primary)   https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0
+Static                  https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.webp
+Animated                https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.webm
+Metadata (developers)   https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.json
+```
+
+A number of other paths are also supported to interoperate with various wallets and dApps.

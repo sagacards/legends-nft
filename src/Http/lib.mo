@@ -100,6 +100,7 @@ module {
                 headers = [
                     ("Content-Type", asset.asset.contentType),
                     ("Access-Control-Allow-Origin", "*"),
+                    ("legends-filename", asset.meta.filename),
                 ];
                 status_code = 200;
                 streaming_strategy = null;
