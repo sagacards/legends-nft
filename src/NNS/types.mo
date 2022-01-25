@@ -3,7 +3,7 @@ import Admins "../Admins";
 module {
 
     public type State = {
-        admins          : Admins.Admins;
+        _Admins : Admins.Admins;
     };
 
     // Amount of ICP tokens, measured in 10^-8 of a token.

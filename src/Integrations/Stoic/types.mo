@@ -4,7 +4,7 @@ import Assets "../../Assets";
 module Stoic {
 
     public type State = {
-        assets : Assets.Assets;
+        _Assets : Assets.Assets;
     };
 
     public type Token = {

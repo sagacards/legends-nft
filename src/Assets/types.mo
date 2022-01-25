@@ -10,8 +10,8 @@ module Assets {
     public type Color = Text;
 
     public type State = {
-        assets : [Record];
-        admins : Admins.Admins;
+        assets  : [Record];
+        _Admins : Admins.Admins;
     };
 
     public type Asset = {

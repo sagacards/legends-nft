@@ -104,7 +104,7 @@ module {
             caller : Principal,
             backup : Types.State,
         ) : () {
-            assert state.admins._isAdmin(caller);
+            assert state._Admins._isAdmin(caller);
             _restore(backup);
         };
 
@@ -262,7 +262,7 @@ module {
             };
             
             // Verify token owner.
-            if (not state.tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
+            if (not state._Tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
                 return #err(#Other("Unauthorized"));
             };
 
@@ -442,8 +442,8 @@ module {
             };
 
             // Verify token owner.
-            if (not state.tokens._isOwner(transaction.from, index)) {
-                let v = switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            if (not state._Tokens._isOwner(transaction.from, index)) {
+                let v = switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                     case (?t) t.owner;
                     case _ "undefined";
                 };
@@ -451,7 +451,7 @@ module {
             };
 
             // Check the transaction account on the nns ledger canister.
-            let balance = await state.nns.balance(
+            let balance = await state._Nns.balance(
                 NNS.accountIdentifier(
                     transaction.seller,
                     Blob.fromArray(transaction.bytes),
@@ -477,7 +477,7 @@ module {
             pendingTransactions.delete(index);
 
             // Transfer the NFT.
-            state.tokens.transfer(
+            state._Tokens.transfer(
                 index,
                 transaction.from,
                 transaction.to
@@ -487,13 +487,13 @@ module {
             listings.delete(index);
 
             // Insert transaction history event.
-            ignore await state.cap.insert({
+            ignore await state._Cap.insert({
                 caller = state.cid;
                 operation = "sale";
                 details = [
                     ("to", #Text(transaction.to)),
                     ("from", #Text(transaction.from)),
-                    ("token", #Text(state.tokens.tokenId(state.cid, index))),
+                    ("token", #Text(state._Tokens.tokenId(state.cid, index))),
                     ("memo", #Slice(
                         switch (transaction.memo) {
                             case (?x) Blob.toArray(x);
@@ -528,7 +528,7 @@ module {
         ) : Result.Result<[(Ext.TokenIndex, ?Types.Listing, ?[Nat8])], Ext.CommonError> {
             let tokens = Buffer.Buffer<(Ext.TokenIndex, ?Types.Listing, ?[Nat8])>(0);
             var i : Nat32 = 0;
-            for (token in Iter.fromArray(state.tokens.read(null))) {
+            for (token in Iter.fromArray(state._Tokens.read(null))) {
                 switch (token) {
                     case (?t) {
                         if (Ext.AccountIdentifier.equal(accountId, t.owner)) {

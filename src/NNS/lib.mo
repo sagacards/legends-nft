@@ -102,7 +102,7 @@ module {
             to      : Text,
             memo    : Types.Memo,
         ) : async Types.TransferResult {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             switch (Hex.decode(to)) {
                 case (#ok(aid)) {
                     let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");

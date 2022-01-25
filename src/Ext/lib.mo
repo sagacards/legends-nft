@@ -36,7 +36,7 @@ module {
             };
 
             let userId = Ext.User.toAccountIdentifier(request.user);
-            switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #err(#InvalidToken(request.token)); };
                 case (? token) {
                     if (Ext.AccountIdentifier.equal(userId, token.owner)) {
@@ -60,7 +60,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(request.token)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            let token = switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            let token = switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                 case (?t) t;
                 case _ return #err(#Other("Token owner doesn't exist."));
             };
@@ -70,10 +70,10 @@ module {
             let owner = Text.map(token.owner, Prim.charToUpper);
             if (owner != from) return #err(#Unauthorized("Owner \"" # owner # "\" is not caller \"" # from # "\""));
             if (from != callerAccount) return #err(#Unauthorized("Only the owner can do that."));
-            state.tokens.transfer(index, callerAccount, to);
+            state._Tokens.transfer(index, callerAccount, to);
 
             // Insert transaction history event.
-            ignore await state.cap.insert({
+            ignore await state._Cap.insert({
                 caller = caller;
                 operation = "transfer";
                 details = [
@@ -99,7 +99,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #err(#InvalidToken(tokenId)); };
                 case (?token) { #ok(#nonfungible({metadata = ?Text.encodeUtf8("The Fool")})); };
             };
@@ -112,7 +112,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                 case (null) { #ok(0); };
                 case (? _)  { #ok(1); };
             };
@@ -129,7 +129,7 @@ module {
                 case (#err(_)) { return #err(#InvalidToken(tokenId)); };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
-            switch (state.tokens._getOwner(Nat32.toNat(index))) {
+            switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                 case (null)    { #err(#InvalidToken(tokenId)); };
                 case (? token) { #ok(token.owner); };
             };
@@ -165,7 +165,7 @@ module {
         // public shared({ caller }) func mintNFT (
         //     request : Ext.NonFungible.MintRequest,
         // ) : Ext.NonFungible.MintResponse {
-        //     state.tokens.mint(caller, request.to);
+        //     state._Tokens.mint(caller, request.to);
         // };
 
         /////////////////////
@@ -194,7 +194,7 @@ module {
         ) : Result.Result<[Ext.TokenIndex], Ext.CommonError> {
             var tokens : [Ext.TokenIndex] = [];
             var i : Nat32 = 0;
-            for (token in Iter.fromArray(state.tokens.read(null))) {
+            for (token in Iter.fromArray(state._Tokens.read(null))) {
                 switch (token) {
                     case (?t) {
                         if (Ext.AccountIdentifier.equal(accountId, t.owner)) {

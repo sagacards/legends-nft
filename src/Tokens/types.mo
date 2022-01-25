@@ -9,10 +9,10 @@ import Assets "../Assets";
 module Ledger {
 
     public type State = {
-        admins  : Admins.Admins;
-        assets  : Assets.Assets;
-        cap     : Cap.Cap;
-        tokens  : [?Token];
+        _Admins : Admins.Admins;
+        _Assets : Assets.Assets;
+        _Cap    : Cap.Cap;
+        tokens : [?Token];
         legends : [Legend];
         supply  : Nat16;
         cid     : Principal;

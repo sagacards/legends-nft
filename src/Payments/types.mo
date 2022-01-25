@@ -11,10 +11,10 @@ import Tokens "../Tokens";
 module {
 
     public type State = {
-        admins      : Admins.Admins;
-        cap         : Cap.Cap;
-        nns         : NNS.Factory;
-        tokens      : Tokens.Factory;
+        _Admins     : Admins.Admins;
+        _Cap        : Cap.Cap;
+        _Nns        : NNS.Factory;
+        _Tokens     : Tokens.Factory;
         nextTxId    : TxId;
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];

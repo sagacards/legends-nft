@@ -79,7 +79,7 @@ module {
         private func mintedOr404 (
             index : Nat
         ) : ?Types.Response {
-            switch (state.tokens._getOwner(index)) {
+            switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
                 case _ ?http404(?"Token not yet minted.");
             };
@@ -96,7 +96,7 @@ module {
             asset : AssetTypes.Record,
         ) : Types.Response {
             {
-                body = state.assets._flattenPayload(asset.asset.payload);
+                body = state._Assets._flattenPayload(asset.asset.payload);
                 headers = [
                     ("Content-Type", asset.asset.contentType),
                     ("Access-Control-Allow-Origin", "*"),
@@ -111,7 +111,7 @@ module {
         private func renderAssetWithTags (
             tags : [Text]
         ) : Types.Response {
-            switch (state.assets._findTags(tags)) {
+            switch (state._Assets._findTags(tags)) {
                 case (?asset) renderAsset(asset);
                 case null http404(?"Missing preview asset.");
             };
@@ -126,9 +126,9 @@ module {
                 case (?err) return err;
                 case _ ();
             };
-            let app = switch (state.assets._findTag("preview-app")) {
+            let app = switch (state._Assets._findTag("preview-app")) {
                 case (?a) {
-                    switch (Text.decodeUtf8(state.assets._flattenPayload(a.asset.payload))) {
+                    switch (Text.decodeUtf8(state._Assets._flattenPayload(a.asset.payload))) {
                         case (?t) t;
                         case _ "";
                     }
@@ -159,7 +159,7 @@ module {
             index : Nat,
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(index));
-            let { back; border; ink; } = state.tokens.nfts(?index)[0];
+            let { back; border; ink; } = state._Tokens.nfts(?index)[0];
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
@@ -184,33 +184,33 @@ module {
                 };
                 maps = {
                     normal = do {
-                        switch (state.assets._findTag("normal")) {
+                        switch (state._Assets._findTag("normal")) {
                             case (?a) a.meta.filename;
                             case _ "";
                         };
                     };
                     layers = do {
                         Array.map<AssetTypes.Record, AssetTypes.FilePath>(
-                            state.assets._findAllTag("layer"),
+                            state._Assets._findAllTag("layer"),
                             func (record) {
                                 record.meta.filename;
                             },
                         );
                     };
                     back = do {
-                        switch (state.assets._findTags(["back", back])) {
+                        switch (state._Assets._findTags(["back", back])) {
                             case (?a) a.meta.filename;
                             case _ "";
                         };
                     };
                     border = do {
-                        switch (state.assets._findTags(["border", border])) {
+                        switch (state._Assets._findTags(["border", border])) {
                             case (?a) a.meta.filename;
                             case _ "";
                         };
                     };
                     background = do {
-                        switch (state.assets._findTag("background")) {
+                        switch (state._Assets._findTag("background")) {
                             case (?a) a.meta.filename;
                             case _ "";
                         };
@@ -222,21 +222,21 @@ module {
                         specular = "#000000";
                         emissive = "#000000";
                     };
-                    for ((name, colors) in state.assets.inkColors.vals()) {
+                    for ((name, colors) in state._Assets.inkColors.vals()) {
                         if (name == ink) map := colors;
                     };
                     map;
                 };
                 views = {
                     flat = do {
-                        switch (state.assets._findTags(["preview", "flat"])) {
+                        switch (state._Assets._findTags(["preview", "flat"])) {
                             case (?a) "?type=card-art&tokenid=" # tokenId;
                             case _ "";
                         };
                     };
                     sideBySide = do {
                         switch (
-                            state.assets._findTags([
+                            state._Assets._findTags([
                                 "preview", "side-by-side", "back-" # back,
                                 "border-" # border, "ink-" # ink
                             ])
@@ -246,7 +246,7 @@ module {
                         };
                     };
                     animated = do {
-                        switch (state.assets._findTags(["preview", "animated"])) {
+                        switch (state._Assets._findTags(["preview", "animated"])) {
                             case (?a) "?type=animated&tokenid=" # tokenId;
                             case _ "";
                         };
@@ -269,7 +269,7 @@ module {
         private func httpAssetFilename (path : ?Text) : Types.Response {
             switch (path) {
                 case (?path) {
-                    switch (state.assets.getAssetByName(path)) {
+                    switch (state._Assets.getAssetByName(path)) {
                         case (?asset) renderAsset(asset);
                         case _ http404(?"Asset not found.");
                     };
@@ -285,7 +285,7 @@ module {
             {
                 body = Text.encodeUtf8(
                     "[\n" #
-                    Array.foldLeft<AssetTypes.Record, Text>(state.assets.getManifest(), "", func (a, b) {
+                    Array.foldLeft<AssetTypes.Record, Text>(state._Assets.getManifest(), "", func (a, b) {
                         let comma = switch (a == "") {
                             case true "\t";
                             case false ", ";
@@ -412,7 +412,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state.tokens._getLegend(i);
+                    let legend = state._Tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -434,7 +434,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state.tokens._getLegend(i);
+                    let legend = state._Tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "animated", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -447,7 +447,7 @@ module {
 
         // @path: /
         private func httpIndex () : Types.Response {
-            let supply = state.tokens._getMinted().size();
+            let supply = state._Tokens._getMinted().size();
             let (
                 totalVolume,
                 highestPriceSale,
@@ -456,7 +456,7 @@ module {
                 listingsCount,
                 _,
                 transactionsCount,
-            ) = state.entrepot.stats();
+            ) = state._Entrepot.stats();
             {
                 body = Text.encodeUtf8("Saga Legend #1: The Fool NFT Canister\n"
                     # "---\n"
@@ -490,7 +490,7 @@ module {
             if (Text.contains(request.url, #text("type=card-art"))) {
                 return renderAssetWithTags(["preview", "flat"]);
             };
-            let legend = state.tokens._getLegend(Nat32.toNat(index));
+            let legend = state._Tokens._getLegend(Nat32.toNat(index));
             if (Text.contains(request.url, #text("type=animated"))) {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
@@ -513,7 +513,7 @@ module {
             let index = Iter.toArray(Text.tokens(request.url, #text("tokenindex=")))[1];
             switch (natFromText(index)) {
                 case (?i) {
-                    let legend = state.tokens._getLegend(i);
+                    let legend = state._Tokens._getLegend(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -529,7 +529,7 @@ module {
         private func httpPaymentsPrice (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat64.toText(state.payments.getPrice())
+                    Nat64.toText(state._Payments.getPrice())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -545,7 +545,7 @@ module {
         private func httpPaymentsAvailable (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat.toText(state.payments.available())
+                    Nat.toText(state._Payments.available())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -562,7 +562,7 @@ module {
         ) : Types.Response {
             switch (natFromText(tokens[0])) {
                 case (?index) {
-                    let legend = state.tokens._getLegend(index);
+                    let legend = state._Tokens._getLegend(index);
                     if (tokens.size() == 1) {
                         return renderLegendPreview(index)
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {
