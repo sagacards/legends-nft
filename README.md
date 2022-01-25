@@ -32,7 +32,9 @@ To create a new legend canister, perform the following initial setup:
 - create a manifest for the art, and a config json for the canister
 - make sure you use the same name string from `dfx.json` as the name of the config files
 
-Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while—benchmarked with the fool at 29m on mainnet and 12m on local replica.)
+Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while—benchmarked with the fool at ~2hr on mainnet and slightly less on local replica.)
+
+- [ ] Add process pool to upload bash script and multiple upload buffers to canister to enable parallel uploads in order to cut upload times
 
 ```zsh
 zsh/deploy.zsh my-new-canister somenet
