@@ -133,6 +133,7 @@ module {
         //////////////////////////
 
 
+        // TODO: Make configurable
         public let inkColors : [
             (
                 Text,
