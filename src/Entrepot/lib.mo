@@ -214,6 +214,23 @@ module {
         };
 
 
+        // Return completed transactions.
+        func readTransactions () : [Types.EntrepotTransaction] {
+            Array.map<(Nat, Types.Transaction), Types.EntrepotTransaction>(Iter.toArray(transactions.entries()), func ((k, v)) {
+                {
+                    buyer   = v.to;
+                    price   = v.price;
+                    seller  = v.seller;
+                    time    = switch(v.closed) {
+                        case (?t) t;
+                        case _ v.initiated;
+                    };
+                    token   = v.token;
+                }
+            });
+        };
+
+
         ////////////////
         // Admin API //
         //////////////
@@ -406,8 +423,10 @@ module {
                     _usedPaymentAddresses.add((paymentAddress, listing.seller, bytes));
 
                     // Create a pending transaction
+                    // NOTE: Keys in this map are TOKEN INDECES. Upon settlement, a transaction is moved to the "finalized transactions" map, which used a generic transaction ID as a key. Effectively, the key type changes during a settlement. This is at best an unclear thing to do, so perhaps worthy of a refactor.
                     pendingTransactions.put(index, {
-                        id          = nextTxId;  // TODO: Why do I have this
+                        id          = nextTxId;
+                        token       = token;
                         memo        = null;
                         seller      = listing.seller;
                         from        = _accountId(listing.seller, listing.subaccount);
@@ -463,6 +482,7 @@ module {
             };
 
             // Update the transaction.
+            // NOTE: We use the id of the pending transaction as the key. The pending transaction map uses TOKEN INDECES for keys, but this is an intentional change.
             transactions.put(transaction.id, {
                 id          = transaction.id;
                 memo        = transaction.memo;
@@ -473,6 +493,7 @@ module {
                 closed      = ?Time.now();
                 bytes       = transaction.bytes;
                 seller      = transaction.seller;
+                token       = transaction.token;
             });
             pendingTransactions.delete(index);
 

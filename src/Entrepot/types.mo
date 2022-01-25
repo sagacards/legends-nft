@@ -87,6 +87,7 @@ module {
 
     public type Transaction = {
         id          : Nat;
+        token       : Ext.TokenIdentifier;
         memo        : ?Blob;
         from        : Ext.AccountIdentifier;
         to          : Ext.AccountIdentifier;
@@ -95,6 +96,14 @@ module {
         initiated   : Time.Time;    // when it was locked lock
         closed      : ?Time.Time;    // when it was settled
         bytes       : [Nat8];
+    };
+
+    public type EntrepotTransaction = {
+        token   : Ext.TokenIdentifier;
+        seller  : Principal;
+        price   : Nat64;
+        buyer   : Ext.AccountIdentifier;
+        time    : Time.Time;
     };
 
     public type LockRequest = (
