@@ -1,5 +1,5 @@
 #!/bin/zsh
-canister=${1:-legends-staging}
+canister=${1:-legends-test}
 network=${2:-local}
 
 dfx canister --network $network call $canister configureNri\
