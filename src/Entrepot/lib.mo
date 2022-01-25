@@ -214,23 +214,6 @@ module {
         };
 
 
-        // Return completed transactions.
-        func readTransactions () : [Types.EntrepotTransaction] {
-            Array.map<(Nat, Types.Transaction), Types.EntrepotTransaction>(Iter.toArray(transactions.entries()), func ((k, v)) {
-                {
-                    buyer   = v.to;
-                    price   = v.price;
-                    seller  = v.seller;
-                    time    = switch(v.closed) {
-                        case (?t) t;
-                        case _ v.initiated;
-                    };
-                    token   = v.token;
-                }
-            });
-        };
-
-
         ////////////////
         // Admin API //
         //////////////
@@ -543,6 +526,7 @@ module {
             });
         };
 
+        // Used by stoic wallet
         public func tokens_ext(
             caller  : Principal,
             accountId : Ext.AccountIdentifier,
@@ -565,6 +549,23 @@ module {
                 i += 1;
             };
             #ok(tokens.toArray());
+        };
+
+
+        // Return completed transactions.
+        public func readTransactions () : [Types.EntrepotTransaction] {
+            Array.map<(Nat, Types.Transaction), Types.EntrepotTransaction>(Iter.toArray(transactions.entries()), func ((k, v)) {
+                {
+                    buyer   = v.to;
+                    price   = v.price;
+                    seller  = v.seller;
+                    time    = switch(v.closed) {
+                        case (?t) t;
+                        case _ v.initiated;
+                    };
+                    token   = v.token;
+                }
+            });
         };
 
     };
