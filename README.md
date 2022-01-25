@@ -14,14 +14,15 @@ This canister generally follows the EXT standard. It may vary from other caniste
 
 ```zsh
 dfx start --clean --background
-zsh ./zsh/deploy.zsh
+zsh/deploy.zsh
+zsh/configure.zsh
 ```
 
 You can specify network as well as which legend you would like to deploy using command line arguments like so:
 
 ```zsh
-# zsh ./zsh/deploy.zsh <CANISTER_NAME:legends-test> <NETWORK:local>
-zsh ./zsh/deploy.zsh legends-test local
+# zsh/deploy.zsh <CANISTER_NAME:legends-test> <NETWORK:local>
+zsh/deploy.zsh legends-test local
 ```
 
 To create a new legend canister, perform the following initial setup:
@@ -31,12 +32,20 @@ To create a new legend canister, perform the following initial setup:
 - create a manifest for the art, and a config json for the canister
 - make sure you use the same name string from `dfx.json` as the name of the config files
 
-Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while.)
+Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while—benchmarked with the fool at 29m on mainnet and 12m on local replica.)
 
 ```zsh
-zsh ./zsh/deploy.zsh my-new-canister somenet
-zsh ./zsh/manifest_upload.zsh my-new-canister somenet
+zsh/deploy.zsh my-new-canister somenet
+zsh/manifest_upload.zsh my-new-canister somenet
 ```
+
+Finally, the metadata for each legend needs to be configured:
+
+```zsh
+zsh/configure.zsh my-new-canister somenet
+```
+
+- [ ] Add metadata shuffling
 
 ## Uploading Assets
 
@@ -49,8 +58,8 @@ If you are creating a new set of art assets for a canister, after you've created
 To begin the upload process, run the following command:
 
 ```zsh
-# zsh ./zsh/manifest_upload.zsh <CANISTER> <MANIFEST_FILEPATH> <NETWORK>
-zsh ./zsh/manifest_upload.zsh legends-test ./art/manifest-0-the-fool.csv ic
+# zsh/manifest_upload.zsh <CANISTER> <MANIFEST_FILEPATH> <NETWORK>
+zsh/manifest_upload.zsh legends-test ./art/manifest-0-the-fool.csv ic
 ```
 
 You may run into errors when using the upload script, if your shell cannot handle the chunk sizes. In that case, you should tweak the threshold parameter in [`zsh/upload.zsh`](zsh/upload.zsh#L13).
