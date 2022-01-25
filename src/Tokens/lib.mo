@@ -197,7 +197,7 @@ module {
             caller  : Principal,
             to      : Ext.User,
         ) : async Result.Result<(Nat), Text> {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             switch (_getNextMintIndex()) {
                 case (?i) {
 
@@ -209,7 +209,7 @@ module {
                     };
 
                     // Insert transaction history event.
-                    ignore await state.cap.insert({
+                    ignore await state._Cap.insert({
                         caller;
                         operation = "mint";
                         details = [
@@ -229,7 +229,7 @@ module {
             caller  : Principal,
             conf    : [Types.Legend],
         ) : Result.Result<(), Text> {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             if (conf.size() != Nat16.toNat(state.supply)) {
                 return #err(
                     "Must include configuration for " #
@@ -247,7 +247,7 @@ module {
         public func backup (
             caller : Principal,
         ) : [?Types.Token] {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             Array.freeze(ledger);
         };
 

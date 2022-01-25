@@ -11,10 +11,10 @@ import Tokens "../Tokens";
 module {
 
     public type State = { 
-        admins      : Admin.Admins;
-        ledger      : Tokens.Factory;
-        nns         : NNS.Factory;
-        payments    : Payments.Factory;
+        _Admins     : Admin.Admins;
+        _Tokens     : Tokens.Factory;
+        _Nns        : NNS.Factory;
+        _Payments   : Payments.Factory;
     };
 
     public type Manifest = {

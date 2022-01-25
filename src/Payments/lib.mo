@@ -110,7 +110,7 @@ module {
                 refunds     : ?[(Types.TxId, Types.Refund)];
             }
         ) : () {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             _restore(backup);
         };
 
@@ -257,7 +257,7 @@ module {
                 case _ ();
             };
             switch (
-                await state.tokens._getRandomMintIndex(
+                await state._Tokens._getRandomMintIndex(
                     ?_getValidLocks()
                 )
             ) {
@@ -285,7 +285,7 @@ module {
             memo        : Nat64,
             canister    : Principal,
         ) : async Result.Result<Ext.TokenIndex, Text> {
-            switch (await state.nns.block(blockheight)) {
+            switch (await state._Nns.block(blockheight)) {
                 case (#Ok(block)) {
                     switch (block) {
                         case (#Err(_)) return #err("Some kind of block error");
@@ -321,7 +321,7 @@ module {
                                             });
                                             locks.delete(lock.id);
                                             switch (
-                                                state.tokens._mint(
+                                                state._Tokens._mint(
                                                     lock.token,
                                                     #principal(lock.buyer),
                                                     null,
@@ -334,11 +334,11 @@ module {
                                             ) {
                                                 case (#ok(_)) {
                                                     // Insert transaction history event.
-                                                    ignore await state.cap.insert({
+                                                    ignore await state._Cap.insert({
                                                         caller;
                                                         operation = "mint";
                                                         details = [
-                                                            ("token", #Text(state.tokens.tokenId(state.cid, lock.token))),
+                                                            ("token", #Text(state._Tokens.tokenId(state.cid, lock.token))),
                                                             ("to", #Text(lock.buyerAccount)),
                                                             ("price_decimals", #U64(8)),
                                                             ("price_currency", #Text("ICP")),
@@ -368,7 +368,7 @@ module {
         };
 
         public func available () : Nat {
-            state.tokens._getUnminted().size();
+            state._Tokens._getUnminted().size();
         };
 
         // Bulk process a list of transactions from NNS in search of transactions that need to be refunded.
@@ -379,7 +379,7 @@ module {
             canister        : Principal,
             nnsTransactions : [Types.NNSTransaction],
         )  : async Result.Result<(), Text> {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             for (transaction in Iter.fromArray(nnsTransactions)) {
                 let account = _upper(transaction.from);
                 switch (_findAccountPurchase(account, transaction.memo, transaction.blockheight)) {
@@ -391,7 +391,7 @@ module {
                                 // Transaction not found in our canister.
 
                                 // Issue refund.
-                                switch (await state.nns.transfer(
+                                switch (await state._Nns.transfer(
                                     caller,
                                     { e8s = transaction.amount; },
                                     account,

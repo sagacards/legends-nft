@@ -54,7 +54,7 @@ module {
         // Find all holders and the number of NFTs they hold.
         public func _getHolders () : [(Ext.AccountIdentifier, Nat)] {
             let holders = HashMap.HashMap<Ext.AccountIdentifier, Nat>(0, Ext.AccountIdentifier.equal, Ext.AccountIdentifier.hash);
-            for (holder in state.ledger.read(null).vals()) {
+            for (holder in state._Tokens.read(null).vals()) {
                 switch (holder) {
                     case (?h) {
                         switch (holders.get(h.owner)) {
@@ -107,9 +107,9 @@ module {
             };
             let timestamp = Time.now();
             let holders = _getHolders();
-            let minted = state.ledger._getMinted();
+            let minted = state._Tokens._getMinted();
             let developers = _getDevelopers();
-            let balance : NNSTypes.ICP = { e8s = 500_000_000 }; // await state.nns.balance(canister);
+            let balance : NNSTypes.ICP = { e8s = 500_000_000 }; // await state._Nns.balance(canister);
             let amount : Nat64 = Nat64.max(balance.e8s - float, 0);
             
             let payouts : Buffer.Buffer<Types.Payout> = Buffer.Buffer(0);
@@ -159,7 +159,7 @@ module {
             caller      : Principal,
             canister    : Principal,
         ) : async Types.Manifest {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             await _prepareManifest(canister);
         };
 

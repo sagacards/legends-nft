@@ -8,12 +8,12 @@ import Tokens "../Tokens";
 module {
 
     public type State = {
-        admins      : Admins.Admins;
-        assets      : Assets.Assets;
-        tokens      : Tokens.Factory;
-        entrepot    : Entrepot.Factory;
+        _Admins     : Admins.Admins;
+        _Assets     : Assets.Assets;
+        _Tokens     : Tokens.Factory;
+        _Entrepot   : Entrepot.Factory;
+        _Payments   : Payments.Factory;
         supply      : Nat16;
-        payments    : Payments.Factory;
         nri         : [(Text, Float)];
     };
 

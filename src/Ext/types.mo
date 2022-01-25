@@ -6,8 +6,8 @@ import Tokens "../Tokens";
 module {
 
     public type State = {
-        cap     : Cap.Cap;
-        tokens  : Tokens.Factory;
+        _Cap    : Cap.Cap;
+        _Tokens : Tokens.Factory;
         cid     : Principal;
     };
 

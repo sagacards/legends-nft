@@ -213,7 +213,7 @@ module {
             caller  : Principal,
             bytes   : [Blob],
         ) : () {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             for (byte in bytes.vals()) {
                 buffer.add(byte);
             }
@@ -226,7 +226,7 @@ module {
             contentType : Text,
             meta        : Types.Meta,
         ) : Result.Result<(), Text> {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             switch (
                 _addAsset({
                     asset = {
@@ -249,7 +249,7 @@ module {
         public func uploadClear(
             caller : Principal,
         ) : () {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             buffer.clear();
         };
 
@@ -260,7 +260,7 @@ module {
             confirm : Text,
             tag     : ?Text,
         ) : Result.Result<(), Text> {
-            assert(state.admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller));
             if (confirm != "DELETE ALL ASSETS") {
                 return #err("Please confirm your intention to delete all assets by typing in \"DELETE ALL ASSETS\"");
             };

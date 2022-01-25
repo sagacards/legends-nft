@@ -200,7 +200,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _Assets = Assets.Assets({
-        admins = _Admins;
+        _Admins;
         assets = stableAssets;
     });
 
@@ -239,9 +239,9 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _Tokens = Tokens.Factory({
-        admins  = _Admins;
-        assets  = _Assets;
-        cap     = _Cap;
+        _Admins;
+        _Assets;
+        _Cap;
         tokens  = stableTokens;
         legends = stableLegends;
         supply  = canisterMeta.supply;
@@ -281,8 +281,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _Ext = Ext.make({
-        tokens  = _Tokens;
-        cap     = _Cap;
+        _Tokens;
+        _Cap;
         cid;
     });
 
@@ -335,7 +335,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _Nns = NNS.Factory({
-        admins = _Admins;
+        _Admins;
     });
     
     public query func address () : async (Blob, Text) {
@@ -361,10 +361,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
     /////////////
 
     let _Entrepot = Entrepot.Factory({
-        admins              = _Admins;
-        cap                 = _Cap;
-        tokens              = _Tokens;
-        nns                 = _Nns;
+        _Admins;
+        _Cap;
+        _Tokens;
+        _Nns;
         listings            = stableListings;
         transactions        = stableTransactions;
         pendingTransactions = stablePendingTransactions;
@@ -425,10 +425,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _Payments = Payments.Factory({
-        admins      = _Admins;
-        cap         = _Cap;
-        nns         = _Nns;
-        tokens      = _Tokens;
+        _Admins;
+        _Cap;
+        _Nns;
+        _Tokens;
         locks       = stablePaymentsLocks;
         purchases   = stablePaymentsPurchases;
         refunds     = stablePaymentsRefunds;
@@ -507,12 +507,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     let _HttpHandler = Http.HttpHandler({
-        assets      = _Assets;
-        admins      = _Admins;
-        entrepot    = _Entrepot;
-        tokens      = _Tokens;
-        payments    = _Payments;
-        supply      = canisterMeta.supply;
+        _Assets;
+        _Admins;
+        _Entrepot;
+        _Tokens;
+        _Payments;
+        supply = canisterMeta.supply;
         nri;
     });
 

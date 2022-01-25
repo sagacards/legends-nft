@@ -1,7 +1,7 @@
 module Admins {
 
     public type State = {
-        admins : [Principal];
+        admins  : [Principal];
     };
 
 };

@@ -14,11 +14,11 @@ module {
     public type SubAccount = [Nat8];
 
     public type State = {
-        admins                  : Admins.Admins;
-        cap                     : Cap.Cap;
+        _Admins                 : Admins.Admins;
+        _Cap                    : Cap.Cap;
+        _Tokens                 : Tokens.Factory;
+        _Nns                    : NNS.Factory;
         supply                  : Nat16;
-        tokens                  : Tokens.Factory;
-        nns                     : NNS.Factory;
         listings                : [(Ext.TokenIndex, Listing)];
         transactions            : [(Nat, Transaction)];
         pendingTransactions     : [(Ext.TokenIndex, Transaction)];
