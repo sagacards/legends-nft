@@ -10,29 +10,29 @@ description=${4}
 mime=${5:-image/$fileextension}
 canister=${6:-legends-test}
 network=${7:-local}
-threshold=${8:-10000000}
+threshold=${8:-250000}
 
 byteSize=${#$(od -An -v -tuC $file)[@]}
 
 b="\e[1A\e[K"
-log_line="Uploading $name $filename ($(( $byteSize / 1024 ))kb)"
+log_line="Uploading $name $filename ($(( $byteSize / 1024 ))kb ($mime))"
 
-echo -e "$log_line"
+echo "$log_line"
 
-echo -e "$b$log_line ...Emptying buffer"
+echo "$log_line ...Emptying buffer"
 dfx canister --network $network call $canister uploadClear >> ./zsh/upload_log.txt
 
-echo -e "$b$log_line ...Uploading"
+echo "$log_line ...Uploading"
 i=0
 while [ $i -le $byteSize ]; do
-    echo -e "$b$log_line ...Uploading #$(($i/$threshold+1))/$(($byteSize/$threshold+1))"
+    echo "$log_line ...Uploading #$(($i/$threshold+1))/$(($byteSize/$threshold+1))"
     dfx canister --network $network call $canister upload "( vec {\
         vec { $(for byte in ${(j:;:)$(od -An -v -tuC $file)[@]:$i:$threshold}; echo "$byte;") };\
     })" >> ./zsh/upload_log.txt
     i=$(($i+$threshold))
 done
 
-echo -e "$b$log_line ...Finalizing"
+echo "$log_line ...Finalizing"
 tags=$(echo $tags | sed -e 's/^"//' -e 's/"$//')
 tags=(${(@s/ /)tags})
 dfx canister --network $network call $canister uploadFinalize "(\
@@ -45,4 +45,4 @@ dfx canister --network $network call $canister uploadFinalize "(\
     }\
 )" >> ./zsh/upload_log.txt
 
-echo -e "$b$log_line ...OK"
+echo "$log_line ...OK"
