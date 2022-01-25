@@ -5,10 +5,22 @@
 >    Collectible Major Arcana for Early Saga Adopters.    
 >    https://legends.saga.cards.
 
-This canister generally follows the EXT standard. It may vary from other canisters using the EXT standard for lack of complete standards documentation, but it is interoperable with Stoic Wallet, Plug Wallet, Earth Wallet, and the Entrepot Marketplace.
+This canister is a fairly complete NFT solution which generally follows the EXT standard. It may vary from other canisters using the EXT standard for lack of complete standards documentation. No guarantees that it matches your specific NFT use case.
 
-- [x] Manages assets in this canister
-- [x] Integrates [CAP](https://cap.ooo) for provinance and transaction history
+**A Legends NFT example: [The Fool Mint #1](https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0)**
+
+- [x] Maintains **ownership** ledger
+- [x] Manages **assets** in this canister
+- [x] Integrates [**CAP**](https://cap.ooo) for provinance and transaction history
+- [x] Provides **public sale** functionality, with some support scripts
+- [x] Interfaces with the **entrepot marketplace**
+- [x] Works with **plug**, **stoic** and **earth** wallets
+- [x] Provides functionality to **drain and restore** stable state
+- [x] Flexible **HTTP Interface**
+- [ ] Provide **payouts** from primary and secondary sales based on a per-canister configurable distribution map
+- [ ] Integrate **covercode.ooo**
+
+This single repository powers all of the legends NFTs, where each release is individually deployed to the IC (i.e. the fool is one canister, the magician is another, and so on.) This repo contains the source code of these canisters, as well as some scripts to help manage the deployment and configuration of the fleet of canisters that make up the legends series of NFTs.
 
 ## Development & Deployment
 
@@ -32,7 +44,9 @@ To create a new legend canister, perform the following initial setup:
 - create a manifest for the art, and a config json for the canister
 - make sure you use the same name string from `dfx.json` as the name of the config files
 
-Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while—benchmarked with the fool at 29m on mainnet and 12m on local replica.)
+Then you can deploy your new canister (this will use the canisters config) followed by uploading all of the assets from your manifest (this will take a while—benchmarked with the fool at ~2hr on mainnet and slightly less on local replica.)
+
+- [ ] Add process pool to upload bash script and multiple upload buffers to canister to enable parallel uploads in order to cut upload times
 
 ```zsh
 zsh/deploy.zsh my-new-canister somenet
@@ -46,6 +60,9 @@ zsh/configure.zsh my-new-canister somenet
 ```
 
 - [ ] Add metadata shuffling
+- [ ] Improve metadata solution in general
+
+Once the NFT canister is deployed, it should be submitted to [DAB](https://dab.ooo) so that it can be discovered by other wallets an dApps.
 
 ## Uploading Assets
 
@@ -58,11 +75,19 @@ If you are creating a new set of art assets for a canister, after you've created
 To begin the upload process, run the following command:
 
 ```zsh
-# zsh/manifest_upload.zsh <CANISTER> <MANIFEST_FILEPATH> <NETWORK>
-zsh/manifest_upload.zsh legends-test ./art/manifest-0-the-fool.csv ic
+# zsh/manifest_upload.zsh <CANISTER> <NETWORK>
+zsh/manifest_upload.zsh legends-test ic
 ```
 
 You may run into errors when using the upload script, if your shell cannot handle the chunk sizes. In that case, you should tweak the threshold parameter in [`zsh/upload.zsh`](zsh/upload.zsh#L13).
+
+## Validating Assets
+
+Run the following to ensure that all of the tokens have their assets.
+
+```zsh
+zsh/manifest_validate.zsh
+```
 
 ## Generating a Manifest
 
@@ -70,3 +95,18 @@ Many of the common assets you can simply copy from another manifest file. For ba
 
 - [ ] node.js uploads and utility scripts (that's enough of zsh)
 
+## Legend Metadata
+
+Each token exponses a JSON HTTP endpoint that describes all of the metadata required to display that token in an arbitrary rendering context. [Example: /0.json](https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.json).
+
+## HTTP Interface
+
+```
+View                    Path
+Interactive (primary)   https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0
+Static                  https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.webp
+Animated                https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.webm
+Metadata (developers)   https://nges7-giaaa-aaaaj-qaiya-cai.raw.ic0.app/0.json
+```
+
+A number of other paths are also supported to interoperate with various wallets and dApps.

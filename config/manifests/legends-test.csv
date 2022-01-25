@@ -4,6 +4,8 @@ client/dist/index.html,Animated Preview App,preview-app,A javascript/html client
 
 art/common/normal.webp,Normal Map,normal,A noise based normal map for a gold foil like texture,image/webp
 
+art/common/icon.png,Favicon,favicon,A favicon,image/png
+
 art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
 art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
 art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back bordered-saxon,An alpha map for the Bordered Saxon card back,image/webp

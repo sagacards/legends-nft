@@ -20,7 +20,6 @@ tags() {  # xD
 
 for file in art/0-the-fool/side-by-side/*; echo $file, Side by Side Preview, $(tags $file), A static preview displaying the card back and border, image/webp
 
-Upload Animated Previews
 echo "---- animated previews... ----"
 tags() {  # xD
     x=$(echo $1 | sed -E "s/.+\///")

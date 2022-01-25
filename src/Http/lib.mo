@@ -100,6 +100,7 @@ module {
                 headers = [
                     ("Content-Type", asset.asset.contentType),
                     ("Access-Control-Allow-Origin", "*"),
+                    ("legends-filename", asset.meta.filename),
                 ];
                 status_code = 200;
                 streaming_strategy = null;
@@ -258,6 +259,53 @@ module {
         };
 
 
+        private func manifestAsJson(
+            manifest: AssetTypes.LegendManifest,
+        ) : Text {
+            "{\n" #
+                "\t\"back\"     : \"" # manifest.back # "\",\n" #
+                "\t\"border\"   : \"" # manifest.border # "\",\n" #
+                "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
+                "\t\"nri\"      : {\n" #
+                    "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
+                    "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
+                    "\t\t\"ink\"        : " # Float.toText(manifest.nri.ink) # ",\n" #
+                    "\t\t\"avg\"        : " # Float.toText(manifest.nri.avg) # "\n" #
+                "\t},\n" #
+                "\t\"maps\"     : {\n" #
+                    "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
+                    "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
+                    "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
+                    "\t\t\"background\" : \"/assets/" # manifest.maps.background # "\",\n" #
+                    "\t\t\"layers\"     : [\n" #
+                        Array.foldLeft<AssetTypes.FilePath, Text>(
+                            manifest.maps.layers,
+                            "",
+                            func (a, b) {
+                                let comma = switch (a == "") {
+                                    case true "\t\t\t";
+                                    case false ",\n\t\t\t";
+                                };
+                                return a # comma # "\"/assets/" # b # "\""
+                            },
+                        ) # "\n" #
+                    "\t\t]\n" #
+                "\t},\n" #
+                "\t\"colors\": {\n" #
+                    "\t\t\"base\"       : \"" # manifest.colors.base # "\",\n" #
+                    "\t\t\"specular\"   : \"" # manifest.colors.specular # "\",\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\"\n" #
+                "\t},\n" #
+                "\t\"views\": {\n" #
+                    "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
+                    "\t\t\"sideBySide\" : \"" # manifest.views.sideBySide # "\",\n" #
+                    "\t\t\"animated\"   : \"" # manifest.views.animated # "\",\n" #
+                    "\t\t\"interactive\": \"" # manifest.views.interactive # "\"\n" #
+                "\t}\n" #
+            "\n}";
+        };
+
+
         ////////////////////
         // Path Handlers //
         //////////////////
@@ -330,47 +378,7 @@ module {
                     let manifest = renderManifest(i);
                     // No Motoko JSON lib supporting record types.
                     return {
-                        body = Text.encodeUtf8("{\n" #
-                            "\t\"back\"     : \"" # manifest.back # "\",\n" #
-                            "\t\"border\"   : \"" # manifest.border # "\",\n" #
-                            "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
-                            "\t\"nri\"      : {\n" #
-                                "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
-                                "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
-                                "\t\t\"ink\"        : " # Float.toText(manifest.nri.ink) # ",\n" #
-                                "\t\t\"avg\"        : " # Float.toText(manifest.nri.avg) # "\n" #
-                            "\t},\n" #
-                            "\t\"maps\"     : {\n" #
-                                "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
-                                "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
-                                "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
-                                "\t\t\"background\" : \"/assets/" # manifest.maps.background # "\",\n" #
-                                "\t\t\"layers\"     : [\n" #
-                                    Array.foldLeft<AssetTypes.FilePath, Text>(
-                                        manifest.maps.layers,
-                                        "",
-                                        func (a, b) {
-                                            let comma = switch (a == "") {
-                                                case true "\t\t\t";
-                                                case false ",\n\t\t\t";
-                                            };
-                                            return a # comma # "\"/assets/" # b # "\""
-                                        },
-                                    ) # "\n" #
-                                "\t\t]\n" #
-                            "\t},\n" #
-                            "\t\"colors\": {\n" #
-                                "\t\t\"base\"       : \"" # manifest.colors.base # "\",\n" #
-                                "\t\t\"specular\"   : \"" # manifest.colors.specular # "\",\n" #
-                                "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\"\n" #
-                            "\t},\n" #
-                            "\t\"views\": {\n" #
-                                "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
-                                "\t\t\"sideBySide\" : \"" # manifest.views.sideBySide # "\",\n" #
-                                "\t\t\"animated\"   : \"" # manifest.views.animated # "\",\n" #
-                                "\t\t\"interactive\": \"" # manifest.views.interactive # "\"\n" #
-                            "\t}\n" #
-                        "\n}");
+                        body = Text.encodeUtf8(manifestAsJson(manifest));
                         headers = [
                             ("Content-Type", "application/json"),
                             ("Access-Control-Allow-Origin", "*"),
@@ -556,7 +564,7 @@ module {
         };
 
 
-        // @path: /<nat>(.web(p|m))?
+        // @path: /<nat>(.(web(p|m)|json))?
         private func httpLegendRootView (
             tokens : [Text],
         ) : Types.Response {
@@ -575,6 +583,16 @@ module {
                             "preview", "side-by-side", "back-" # legend.back,
                             "border-" # legend.border, "ink-" # legend.ink
                         ]);
+                    } else if (Text.map(tokens[1], Prim.charToLower) == "json") {
+                        return {
+                            body = Text.encodeUtf8(manifestAsJson(renderManifest(index)));
+                            headers = [
+                                ("Content-Type", "application/json"),
+                                ("Access-Control-Allow-Origin", "*"),
+                            ];
+                            status_code = 200;
+                            streaming_strategy = null;
+                        };
                     }
                 };
                 case _ ();
