@@ -1,0 +1,29 @@
+{
+  "canisters": {
+    "0-the-fool": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "1-the-magician": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "legends-test": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "vessel sources"
+    }
+  },
+  "dfx": "0.8.4",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:5050",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

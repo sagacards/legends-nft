@@ -1,0 +1,160 @@
+path,title,tags,description,mime
+
+client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
+
+art/common/normal.webp,Normal Map,normal,A noise based normal map for a gold foil like texture,image/webp
+
+art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
+art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
+art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back bordered-saxon,An alpha map for the Bordered Saxon card back,image/webp
+art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon,An alpha map for the Worn Saxon card back,image/webp
+
+art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
+art/common/border-line.webp,Line Card Border,border thin,An alpha map for the Line card border,image/webp
+art/common/border-naked.webp,Nake Card Border,border bare,An alpha map for the Nake card border,image/webp
+art/common/border-round.webp,Round Card Border,border round,An alpha map for the Round card border,image/webp
+art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon,An alpha map for the Worn Saxon card border,image/webp
+art/common/border-saxon.webp,Saxon Card Border,border saxon,An alpha map for the Saxon card border,image/webp
+art/common/border-staggered.webp,Staggered Card Border,border staggered,An alpha map for the Staggered card border,image/webp
+art/common/border-thicc.webp,Thicc Card Border,border thicc,An alpha map for the Thicc card border,image/webp
+
+art/0-the-fool/fool-layer-a.webp,Fool Layer A,layer,The first layer in the parallax,image/webp
+art/0-the-fool/fool-layer-b.webp,Fool Layer B,layer,The second layer in the parallax,image/webp
+art/0-the-fool/fool-layer-c.webp,Fool Layer C,layer,The third layer in the parallax,image/webp
+art/0-the-fool/fool-layer-d.webp,Fool Layer D,layer,The fourth layer in the parallax,image/webp
+art/0-the-fool/fool-layer-e.webp,Fool Layer E,layer,The fifth layer in the parallax,image/webp
+art/0-the-fool/fool-bg.webp,Fool Background,background,A flat background to be used in simplified parallax,image/webp
+
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-bare-canopy.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-bare ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-bare-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-bare ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-bare-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-bare ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-bare-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-bare ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-greek-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-greek ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-greek-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-greek ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-greek-rose.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-greek ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-greek-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-greek ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-round-canopy.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-round ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-round-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-round ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-round-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-round ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-round-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-round ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-staggered-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-staggered ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-staggered-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-staggered ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-staggered-rose.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-staggered ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-staggered-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-staggered ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thicc-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thicc ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thicc-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thicc ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thicc-rose.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thicc ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thicc-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thicc ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thin-canopy.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thin ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thin-copper.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thin ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thin-gold.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thin ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-bordered-saxon-thin-silver.webp,Side by Side Preview,preview side-by-side back-bordered-saxon border-thin ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-bare-canopy.webp,Side by Side Preview,preview side-by-side back-fate border-bare ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-bare-copper.webp,Side by Side Preview,preview side-by-side back-fate border-bare ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-bare-gold.webp,Side by Side Preview,preview side-by-side back-fate border-bare ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-bare-rose.webp,Side by Side Preview,preview side-by-side back-fate border-bare ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-bare-silver.webp,Side by Side Preview,preview side-by-side back-fate border-bare ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-greek-copper.webp,Side by Side Preview,preview side-by-side back-fate border-greek ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-greek-gold.webp,Side by Side Preview,preview side-by-side back-fate border-greek ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-greek-silver.webp,Side by Side Preview,preview side-by-side back-fate border-greek ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-greek-spice.webp,Side by Side Preview,preview side-by-side back-fate border-greek ink-spice,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-canopy.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-copper.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-gold.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-rose.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-silver.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-round-spice.webp,Side by Side Preview,preview side-by-side back-fate border-round ink-spice,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-canopy.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-copper.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-gold.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-midnight.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-midnight,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-rose.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-staggered-silver.webp,Side by Side Preview,preview side-by-side back-fate border-staggered ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thicc-copper.webp,Side by Side Preview,preview side-by-side back-fate border-thicc ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thicc-gold.webp,Side by Side Preview,preview side-by-side back-fate border-thicc ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thicc-rose.webp,Side by Side Preview,preview side-by-side back-fate border-thicc ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thicc-silver.webp,Side by Side Preview,preview side-by-side back-fate border-thicc ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thin-canopy.webp,Side by Side Preview,preview side-by-side back-fate border-thin ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thin-copper.webp,Side by Side Preview,preview side-by-side back-fate border-thin ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thin-gold.webp,Side by Side Preview,preview side-by-side back-fate border-thin ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thin-silver.webp,Side by Side Preview,preview side-by-side back-fate border-thin ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-fate-thin-spice.webp,Side by Side Preview,preview side-by-side back-fate border-thin ink-spice,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-saxon-saxon-copper.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-saxon-saxon-gold.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-saxon-saxon-midnight.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-midnight,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-saxon-saxon-silver.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-saxon-saxon-spice.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-spice,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-canopy.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-canopy,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-copper.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-copper,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-gold.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-gold,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-midnight.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-midnight,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-rose.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-rose,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-silver.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-silver,A static preview displaying the card back and border,image/webp
+art/0-the-fool/side-by-side/preview-side-by-side-worn-saxon-worn-saxon-spice.webp,Side by Side Preview,preview side-by-side back-worn-saxon border-worn-saxon ink-spice,A static preview displaying the card back and border,image/webp
+
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-bare-canopy.webm,Animated Preview,preview animated back-bordered-saxon border-bare ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-bare-copper.webm,Animated Preview,preview animated back-bordered-saxon border-bare ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-bare-gold.webm,Animated Preview,preview animated back-bordered-saxon border-bare ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-bare-silver.webm,Animated Preview,preview animated back-bordered-saxon border-bare ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-greek-copper.webm,Animated Preview,preview animated back-bordered-saxon border-greek ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-greek-gold.webm,Animated Preview,preview animated back-bordered-saxon border-greek ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-greek-rose.webm,Animated Preview,preview animated back-bordered-saxon border-greek ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-greek-silver.webm,Animated Preview,preview animated back-bordered-saxon border-greek ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-round-canopy.webm,Animated Preview,preview animated back-bordered-saxon border-round ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-round-copper.webm,Animated Preview,preview animated back-bordered-saxon border-round ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-round-gold.webm,Animated Preview,preview animated back-bordered-saxon border-round ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-round-silver.webm,Animated Preview,preview animated back-bordered-saxon border-round ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-staggered-copper.webm,Animated Preview,preview animated back-bordered-saxon border-staggered ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-staggered-gold.webm,Animated Preview,preview animated back-bordered-saxon border-staggered ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-staggered-rose.webm,Animated Preview,preview animated back-bordered-saxon border-staggered ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-staggered-silver.webm,Animated Preview,preview animated back-bordered-saxon border-staggered ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thicc-copper.webm,Animated Preview,preview animated back-bordered-saxon border-thicc ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thicc-gold.webm,Animated Preview,preview animated back-bordered-saxon border-thicc ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thicc-rose.webm,Animated Preview,preview animated back-bordered-saxon border-thicc ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thicc-silver.webm,Animated Preview,preview animated back-bordered-saxon border-thicc ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thin-canopy.webm,Animated Preview,preview animated back-bordered-saxon border-thin ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thin-copper.webm,Animated Preview,preview animated back-bordered-saxon border-thin ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thin-gold.webm,Animated Preview,preview animated back-bordered-saxon border-thin ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-bordered-saxon-thin-silver.webm,Animated Preview,preview animated back-bordered-saxon border-thin ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-bare-canopy.webm,Animated Preview,preview animated back-fate border-bare ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-bare-copper.webm,Animated Preview,preview animated back-fate border-bare ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-bare-gold.webm,Animated Preview,preview animated back-fate border-bare ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-bare-rose.webm,Animated Preview,preview animated back-fate border-bare ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-bare-silver.webm,Animated Preview,preview animated back-fate border-bare ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-greek-copper.webm,Animated Preview,preview animated back-fate border-greek ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-greek-gold.webm,Animated Preview,preview animated back-fate border-greek ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-greek-silver.webm,Animated Preview,preview animated back-fate border-greek ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-greek-spice.webm,Animated Preview,preview animated back-fate border-greek ink-spice,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-canopy.webm,Animated Preview,preview animated back-fate border-round ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-copper.webm,Animated Preview,preview animated back-fate border-round ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-gold.webm,Animated Preview,preview animated back-fate border-round ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-rose.webm,Animated Preview,preview animated back-fate border-round ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-silver.webm,Animated Preview,preview animated back-fate border-round ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-round-spice.webm,Animated Preview,preview animated back-fate border-round ink-spice,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-canopy.webm,Animated Preview,preview animated back-fate border-staggered ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-copper.webm,Animated Preview,preview animated back-fate border-staggered ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-gold.webm,Animated Preview,preview animated back-fate border-staggered ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-midnight.webm,Animated Preview,preview animated back-fate border-staggered ink-midnight,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-rose.webm,Animated Preview,preview animated back-fate border-staggered ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-staggered-silver.webm,Animated Preview,preview animated back-fate border-staggered ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thicc-copper.webm,Animated Preview,preview animated back-fate border-thicc ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thicc-gold.webm,Animated Preview,preview animated back-fate border-thicc ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thicc-rose.webm,Animated Preview,preview animated back-fate border-thicc ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thicc-silver.webm,Animated Preview,preview animated back-fate border-thicc ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thin-canopy.webm,Animated Preview,preview animated back-fate border-thin ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thin-copper.webm,Animated Preview,preview animated back-fate border-thin ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thin-gold.webm,Animated Preview,preview animated back-fate border-thin ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thin-silver.webm,Animated Preview,preview animated back-fate border-thin ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-fate-thin-spice.webm,Animated Preview,preview animated back-fate border-thin ink-spice,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-saxon-saxon-copper.webm,Animated Preview,preview animated back-saxon border-saxon ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-saxon-saxon-gold.webm,Animated Preview,preview animated back-saxon border-saxon ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-saxon-saxon-midnight.webm,Animated Preview,preview animated back-saxon border-saxon ink-midnight,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-saxon-saxon-silver.webm,Animated Preview,preview animated back-saxon border-saxon ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-saxon-saxon-spice.webm,Animated Preview,preview animated back-saxon border-saxon ink-spice,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-canopy.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-canopy,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-copper.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-copper,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-gold.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-gold,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-midnight.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-midnight,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-rose.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-rose,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-silver.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-silver,An animated preview displaying the rotating card,image/webm
+art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-spice.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-spice,An animated preview displaying the rotating card,image/webm
