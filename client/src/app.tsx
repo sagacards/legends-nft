@@ -57,7 +57,7 @@ interface LegendManifest {
 
 // Fetching w/ react suspense
 export const host = window.location.host.includes('localhost')
-    ? 'http://rwlgt-iiaaa-aaaaa-aaaaa-cai.localhost:8000'
+    ? `http://${window.location.host}`
     : `https://${window.location.host}`;
 const index = (window as any).legendIndex || 0;
 const promise = fetch(`${host}/legend-manifest/${index}/`).then(r => r.json());
