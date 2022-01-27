@@ -23,7 +23,8 @@ fi
 caprouter="null"
 if [[ $network == local ]]
 then
-    caprouter="opt $(jq '."ic-history-router"."local"' ~/Projects/cap/.dfx/local/canister_ids.json)"
+    cap_dfx_path=~/Projects/cap/.dfx/local/canister_ids.json
+    [ -f $cap_dfx_path ] && caprouter="opt $(jq '."ic-history-router"."local"' $cap_dfx_path)"
 fi
 
 # Get or create canister ID
