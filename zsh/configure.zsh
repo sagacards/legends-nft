@@ -21,7 +21,8 @@ payload="(vec {"
 IFS=$OLDIFS
 payload="$payload})"
 
-dfx canister --network $network call $canister configureLegends $payload
+dfx canister --network $network call $canister configureMetadata $payload
+dfx canister --network $network call $canister init
 
 if [[ $canister != "0-the-fool" ]]
 then
