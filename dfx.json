@@ -1,14 +1,18 @@
 {
   "canisters": {
+    "charlie": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "foxtrot": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
     "0-the-fool": {
       "main": "src/main.mo",
       "type": "motoko"
     },
     "1-the-magician": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "legends-test": {
       "main": "src/main.mo",
       "type": "motoko"
     }

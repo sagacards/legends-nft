@@ -8,7 +8,7 @@ name=${2}
 tags=(${(@s/ /)3})
 description=${4}
 mime=${5:-image/$fileextension}
-canister=${6:-legends-test}
+canister=${6:-charlie}
 network=${7:-local}
 threshold=${8:-250000}
 

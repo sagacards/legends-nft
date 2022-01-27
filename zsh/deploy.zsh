@@ -1,8 +1,11 @@
 #!/bin/zsh
-canister=${1:-legends-test}
+PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
+
+canister=${1:-charlie}
 network=${2:-local}
 
 wallet="" && [[ $network == local ]] && wallet=--no-wallet
+confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
 
 # Confirm before deploying to mainnet
 if [[ $network != "local" ]]
@@ -38,7 +41,7 @@ do
 done
 
 # Deploy using config manifest as arguments
-config="./config/canisters/$canister.json"
+config="./config/canisters/$confname.json"
 [ ! -f $config ] && { echo "$config file not found"; exit 99; }
 IFS=$'\n'
 read -r -d$'\1' supply name flavour description artists <<< $(jq -r '.supply, .name, .flavour, .description, .artists' $config)

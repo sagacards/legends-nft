@@ -24,6 +24,8 @@ This single repository powers all of the legends NFTs, where each release is ind
 
 ## Development & Deployment
 
+There are two test canisters: **charlie** and **foxtrot**. Charlie on local network will be the default for most commands.
+
 ```zsh
 dfx start --clean --background
 zsh/deploy.zsh
@@ -33,8 +35,8 @@ zsh/configure.zsh
 You can specify network as well as which legend you would like to deploy using command line arguments like so:
 
 ```zsh
-# zsh/deploy.zsh <CANISTER_NAME:legends-test> <NETWORK:local>
-zsh/deploy.zsh legends-test local
+# zsh/deploy.zsh <CANISTER_NAME:charlie> <NETWORK:local>
+zsh/deploy.zsh charlie local
 ```
 
 To create a new legend canister, perform the following initial setup:
@@ -76,7 +78,7 @@ To begin the upload process, run the following command:
 
 ```zsh
 # zsh/manifest_upload.zsh <CANISTER> <NETWORK>
-zsh/manifest_upload.zsh legends-test ic
+zsh/manifest_upload.zsh charlie ic
 ```
 
 You may run into errors when using the upload script, if your shell cannot handle the chunk sizes. In that case, you should tweak the threshold parameter in [`zsh/upload.zsh`](zsh/upload.zsh#L13).

@@ -1,9 +1,11 @@
 #!/bin/zsh
-canister=${1:-legends-test}
+canister=${1:-charlie}
 network=${2:-local}
 
+confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
+
 # Configure canister metadata
-metadata="./config/metadata/$canister.csv"
+metadata="./config/metadata/$confname.csv"
 [ ! -f $metadata ] && { echo "$metadata file not found"; exit 99; }
 OLDIFS=$IFS
 IFS=','

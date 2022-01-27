@@ -1,7 +1,7 @@
 #!/bin/zsh
 PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
 
-canister=${1:-legends-test}
+canister=${1:-charlie}
 network=${2:-local}
 
 # Get canister ID

@@ -1,8 +1,10 @@
 #!/bin/zsh
 PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
 
-canister=${1:-legends-test}
+canister=${1:-charlie}
 network=${2:-local}
+
+confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
 
 # Get supply
 supply=117
@@ -105,7 +107,7 @@ done;
 # Make sure each file in the manifest returns a non-empty 200 response, and that the return size matches the local size
 errors=0
 missing_assets=""
-manifest="./config/manifests/$canister.csv"
+manifest="./config/manifests/$confname.csv"
 [ ! -f $manifest ] && { echo "$manifest file not found"; exit 99; }
 echo "Validating all assets in the manifest...\n"
 echo "token, file, code, size, local size, errors, missing"
