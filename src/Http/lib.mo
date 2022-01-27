@@ -420,7 +420,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state._Tokens._getLegend(i);
+                    let legend = state._Tokens._getMetadata(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -442,7 +442,7 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state._Tokens._getLegend(i);
+                    let legend = state._Tokens._getMetadata(i);
                     renderAssetWithTags([
                         "preview", "animated", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -498,7 +498,7 @@ module {
             if (Text.contains(request.url, #text("type=card-art"))) {
                 return renderAssetWithTags(["preview", "flat"]);
             };
-            let legend = state._Tokens._getLegend(Nat32.toNat(index));
+            let legend = state._Tokens._getMetadata(Nat32.toNat(index));
             if (Text.contains(request.url, #text("type=animated"))) {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
@@ -521,7 +521,7 @@ module {
             let index = Iter.toArray(Text.tokens(request.url, #text("tokenindex=")))[1];
             switch (natFromText(index)) {
                 case (?i) {
-                    let legend = state._Tokens._getLegend(i);
+                    let legend = state._Tokens._getMetadata(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink
@@ -570,7 +570,7 @@ module {
         ) : Types.Response {
             switch (natFromText(tokens[0])) {
                 case (?index) {
-                    let legend = state._Tokens._getLegend(index);
+                    let legend = state._Tokens._getMetadata(index);
                     if (tokens.size() == 1) {
                         return renderLegendPreview(index)
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {

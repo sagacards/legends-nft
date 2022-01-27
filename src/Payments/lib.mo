@@ -256,11 +256,7 @@ module {
                 };
                 case _ ();
             };
-            switch (
-                await state._Tokens._getRandomMintIndex(
-                    ?_getValidLocks()
-                )
-            ) {
+            switch (state._Tokens._getNextMintIndex()) {
                 case (?token) {
                     let txId = nextTxId;
                     nextTxId += 1;

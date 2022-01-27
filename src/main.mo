@@ -67,10 +67,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var stableAdmins : [Principal] = [creator];
 
-    // Ledger
+    // Tokens
 
     private stable var stableTokens : [?TokenTypes.Token] = Array.tabulate<?TokenTypes.Token>(Nat16.toNat(canisterMeta.supply), func (i) { null });
-    private stable var stableLegends: [TokenTypes.Legend] = [];
+    private stable var stableLegends: [TokenTypes.Metadata] = [];
+    private stable var stableShuffled = false;
 
     // Entrepot
 
@@ -100,11 +101,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableAdmins := _Admins.toStable();
 
         // Preserve token ledger
-        let { tokens = x; legends } = _Tokens.toStable();
+        let { tokens = x; metadata = y; isShuffled } = _Tokens.toStable();
         stableTokens := x;
-
-        // Preserve legends
-        stableLegends := legends;
+        // Preserve metadata
+        stableLegends := y;
+        stableShuffled := isShuffled;
 
         // Preserve entrepot
         let {
@@ -251,9 +252,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Admins;
         _Assets;
         _Cap;
-        tokens  = stableTokens;
-        legends = stableLegends;
-        supply  = canisterMeta.supply;
+        tokens      = stableTokens;
+        metadata    = stableLegends;
+        isShuffled  = stableShuffled;
+        supply      = canisterMeta.supply;
         cid;
     });
 
@@ -267,20 +269,28 @@ shared ({ caller = creator }) actor class LegendsNFT(
         await _Tokens.mint(caller, to);
     };
 
-    public shared ({ caller }) func configureLegends (
-        conf : [TokenTypes.Legend],
+    public shared ({ caller }) func configureMetadata (
+        conf : [TokenTypes.Metadata],
     ) : async Result.Result<(), Text> {
-        _Tokens.configureLegends(caller, conf);
+        _Tokens.configureMetadata(caller, conf);
     };
 
-    public query ({ caller }) func tokensBackup () : async [?TokenTypes.Token] {
+    public query ({ caller }) func tokensBackup () : async TokenTypes.LocalStableState {
         _Tokens.backup(caller);
     };
 
     public shared ({ caller }) func tokensRestore (
-        data : [?TokenTypes.Token],
+        backup : TokenTypes.LocalStableState,
     ) : async Result.Result<(), Text> {
-        _Tokens.restore(caller, data);
+        _Tokens.restore(caller, backup);
+    };
+
+    public shared ({ caller }) func shuffleMetadata () : async () {
+        await _Tokens.shuffleMetadata(caller);
+    };
+
+    public query func readMeta () : async [TokenTypes.Metadata] {
+        _Tokens.readMeta();
     };
 
 

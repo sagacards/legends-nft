@@ -8,17 +8,24 @@ import Assets "../Assets";
 
 module Ledger {
 
-    public type State = {
-        _Admins : Admins.Admins;
-        _Assets : Assets.Assets;
-        _Cap    : Cap.Cap;
-        tokens : [?Token];
-        legends : [Legend];
-        supply  : Nat16;
-        cid     : Principal;
+    public type LocalStableState = {
+        tokens      : [?Token];
+        metadata    : [Metadata];
+        isShuffled  : Bool;
     };
 
-    public type Legend = {
+    public type State = {
+        _Admins     : Admins.Admins;
+        _Assets     : Assets.Assets;
+        _Cap        : Cap.Cap;
+        tokens      : [?Token];
+        metadata    : [Metadata];
+        isShuffled  : Bool;
+        supply      : Nat16;
+        cid         : Principal;
+    };
+
+    public type Metadata = {
         back    : Text;
         border  : Text;
         ink     : Text;

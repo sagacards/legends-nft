@@ -2,10 +2,14 @@ import Array "mo:base/Array";
 import Bool "mo:base/Bool";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
+import Int "mo:base/Int";
+import Int8 "mo:base/Int8";
+import Float "mo:base/Float";
 import Nat "mo:base/Nat";
 import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
+import Principal "mo:base/Principal";
 import Random "mo:base/Random";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -24,13 +28,45 @@ module {
     public class Factory (state : Types.State) {
 
 
+        ////////////
+        // State //
+        //////////
+
+
+        var ledger      : [var ?Types.Token]    = Array.init(Nat16.toNat(state.supply), null);
+        var metadata    : [Types.Metadata]        = [];
+
+        var isShuffled = state.isShuffled;
+
+        // Dump all local state from this module for stableness purposes.
+        public func toStable () : Types.LocalStableState {
+            {
+                metadata;
+                isShuffled;
+                tokens = Array.freeze(ledger);
+            }
+        };
+
+        // Restore local state from a backup.
+        public func _restore (
+            backup  : Types.LocalStableState,
+        ) : () {
+            ledger      := Array.thaw(backup.tokens);
+            metadata    := backup.metadata;
+            isShuffled  := backup.isShuffled;
+        };
+
+        // Restore local state on init.
+        _restore(state);
+
+
         ////////////////////////
         // Utils / Internals //
         //////////////////////
 
 
-        public func _getNextMintIndex () : ?Nat {
-            var i : Nat = 0;
+        public func _getNextMintIndex () : ?Nat32 {
+            var i : Nat32 = 0;
             for (v in ledger.vals()) {
                 if (v == null) return ?i;
                 i += 1;
@@ -71,57 +107,8 @@ module {
             return minted.toArray();
         };
 
-        // Get a random unminted token index.
-        // Excludes non general sale tokens
-        public func _getRandomMintIndex (
-            exclude : ?[Ext.TokenIndex],
-        ) : async ?Ext.TokenIndex {
-            var i : Nat32 = 17;
-            let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
-            label l while (Nat32.toNat(i) < Nat16.toNat(state.supply)) {
-                switch (exclude) {
-                    case (?ex) {
-                        var msg = "Ignoring vals: ";
-                        for (v in ex.vals()) {
-                            msg := msg # Nat32.toText(v) # ", ";
-                        };
-                        if (not Option.isNull(Array.find<Ext.TokenIndex>(ex, func (a) { a == i }))) {
-                            i += 1;
-                            continue l;
-                        }
-                    };
-                    case _ ();
-                };
-                if (Option.isNull(ledger[Nat32.toNat(i)])) {
-                    unminted.add(i);
-                };
-                i += 1;
-            };
-            let size = unminted.size();
-            if (size == 0) {
-                return null;
-            };
-            var token : ?Ext.TokenIndex = null;
-            i := 0;
-            let random = Random.Finite(await Random.blob());
-            while (Option.isNull(token)) {
-                switch ((random.coin(), random.coin())) {
-                    case ((?a, ?b)) {
-                        if (a and b) {
-                            token := ?unminted.get(Nat32.toNat(i));
-                        } else {
-                            i += 1;
-                        };
-                    };
-                    case _ token := ?unminted.get(0);
-                };
-                if (Nat32.toNat(i) >= size) i := 0;
-            };
-            token;
-        };
-
-        public func _getLegend (i : Nat) : Types.Legend {
-            legends[i];
+        public func _getMetadata (i : Nat) : Types.Metadata {
+            metadata[i];
         };
 
         public func _getOwner (i : Nat) : ?Types.Token {
@@ -161,29 +148,49 @@ module {
             }
         };
 
+        // NOTE: I lifted all of this randomness code from Moritz in the BTC Flower project
+        // https://github.com/letmejustputthishere/btcflower-nft/blob/d0031f8fec88a9ee22b353a65e6d8d937458c437/btcflower-nft/lock_code.mo#L572
 
-        ////////////
-        // State //
-        //////////
+        private func _fromNat8ToInt(n : Nat8) : Int {
+            Int8.toInt(Int8.fromNat8(n))
+        };
 
+        private func _fromIntToNat8(n: Int) : Nat8 {
+            Int8.toNat8(Int8.fromIntWrap(n))
+        };
 
-        var ledger : [var ?Types.Token] = Array.init(Nat16.toNat(state.supply), null);
-        var legends : [Types.Legend] = [];
+        // Returns a pseudo random number between 0-99
+        private func _prng(current: Nat8) : Nat8 {
+            let next : Int =  _fromNat8ToInt(current) * 1103515245 + 12345;
+            return _fromIntToNat8(next) % 100;
+        };
 
-        // Provision ledger from stable state
-        ledger := Array.thaw(state.tokens);
+        // A Fisher-Yates shuffle to make sure the minting process is fair.
+        public func shuffleMetadata (
+            caller : Principal,
+        ) : async () {
+            // The fool was sold before shuffling was a thing.
+            assert(Principal.toText(state.cid) != "nges7-giaaa-aaaaj-qaiya-cai");
+            assert(state._Admins._isAdmin(caller) and isShuffled == false);
 
-        // Provision legends from stable state
-        legends := state.legends;
+            let seed: Blob = await Random.blob();
 
-        public func toStable () : {
-            tokens  : [?Types.Token];
-            legends : [Types.Legend];
-        } {
-            {
-                tokens = Array.freeze(ledger);
-                legends = legends;
-            }
+            var randomNumber : Nat8 = Random.byteFrom(seed);
+            var currentIndex : Nat = metadata.size();            
+            var shuffledMetadata = Array.thaw<Types.Metadata>(metadata);
+
+            while (currentIndex != 1) {
+                randomNumber := _prng(randomNumber);
+                var randomIndex : Nat = Int.abs(Float.toInt(Float.floor(Float.fromInt(_fromNat8ToInt(randomNumber)* currentIndex/100))));
+                assert(randomIndex < currentIndex);
+                currentIndex -= 1;
+                let temporaryValue = shuffledMetadata[currentIndex];
+                shuffledMetadata[currentIndex] := shuffledMetadata[randomIndex];
+                shuffledMetadata[randomIndex] := temporaryValue;
+            };
+
+            metadata := Array.freeze(shuffledMetadata);
+            isShuffled := true;
         };
 
 
@@ -202,7 +209,7 @@ module {
                 case (?i) {
 
                     // Mint the NFT
-                    ledger[i] := ?{
+                    ledger[Nat32.toNat(i)] := ?{
                         createdAt = Time.now();
                         owner = Ext.User.toAccountIdentifier(to);
                         txId = "N/A";
@@ -213,21 +220,21 @@ module {
                         caller;
                         operation = "mint";
                         details = [
-                            ("token", #Text(tokenId(state.cid, Nat32.fromNat(i)))),
+                            ("token", #Text(tokenId(state.cid, i))),
                             ("to", #Text(Ext.User.toAccountIdentifier(to))),
                             // TODO: Add price
                         ];
                     });
-                    #ok(i);
+                    #ok(Nat32.toNat(i));
                 };
                 case _ #err("No more supply.");
             }
         };
 
         // @auth: admin
-        public func configureLegends (
+        public func configureMetadata (
             caller  : Principal,
-            conf    : [Types.Legend],
+            conf    : [Types.Metadata],
         ) : Result.Result<(), Text> {
             assert(state._Admins._isAdmin(caller));
             if (conf.size() != Nat16.toNat(state.supply)) {
@@ -238,7 +245,7 @@ module {
                     Nat.toText(conf.size())
                 );
             };
-            legends := conf;
+            metadata := conf;
             #ok();
         };
 
@@ -246,19 +253,24 @@ module {
         // @auth: admin
         public func backup (
             caller : Principal,
-        ) : [?Types.Token] {
+        ) : Types.LocalStableState {
             assert(state._Admins._isAdmin(caller));
-            Array.freeze(ledger);
+            toStable();
         };
 
         // Restore the ledger from a backup.
         // @auth: admin
         public func restore (
             caller  : Principal,
-            data    : [?Types.Token],
+            backup  : Types.LocalStableState,
         ) : Result.Result<(), Text> {
-            ledger := Array.thaw(data);
+            _restore(backup);
             #ok();
+        };
+
+        // @auth: admin
+        public func readMeta () : [Types.Metadata] {
+            metadata
         };
 
 
@@ -275,10 +287,10 @@ module {
         };
 
 
-        public func nfts (index : ?Nat) : [Types.Legend] {
+        public func nfts (index : ?Nat) : [Types.Metadata] {
             switch (index) {
-                case (?i) [legends[i]];
-                case _ legends;
+                case (?i) [metadata[i]];
+                case _ metadata;
             };
         };
 
