@@ -24,12 +24,14 @@ This single repository powers all of the legends NFTs, where each release is ind
 
 ## Development & Deployment
 
-There are two test canisters: **charlie** and **foxtrot**. Charlie on local network will be the default for most commands.
+There are two test canisters: **charlie** and **foxtrot**. Charlie on local network will be the default for most commands. You may wish to setup a local instance of CAP.
 
 ```zsh
 dfx start --clean --background
 zsh/deploy.zsh
+dfx canister call charlie addAdmin "principal \"$(dfx identity get-principal)\""
 zsh/configure.zsh
+dfx canister call charlie init
 ```
 
 You can specify network as well as which legend you would like to deploy using command line arguments like so:
@@ -52,6 +54,7 @@ Then you can deploy your new canister (this will use the canisters config) follo
 
 ```zsh
 zsh/deploy.zsh my-new-canister somenet
+dfx canister call my-new-canister addAdmin "principal \"$(dfx identity get-principal)\""
 zsh/manifest_upload.zsh my-new-canister somenet
 ```
 
