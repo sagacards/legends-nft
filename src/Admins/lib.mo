@@ -7,8 +7,7 @@ import Types "types";
 module {
 
     public class Admins(state : Types.State) {
-        // Make sure that there is always at least one admin.
-        // TODO:  
+        // Make sure that there is always at least one admin at initialization.
         assert(state.admins.size() != 0);
 
 

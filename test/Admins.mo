@@ -1,6 +1,8 @@
 import Error "mo:base/Error";
 import Principal "mo:base/Principal";
 
+import Debug "mo:base/Debug";
+
 import Admins "../src/Admins";
 import Types "../src/Admins/types";
 
@@ -26,3 +28,5 @@ assert(a.isAdmin(admin, user));
 a.removeAdmin(user, user);
 assert(not a._isAdmin(user));
 assert(not a.isAdmin(admin, user));
+
+Debug.print("✅ Admins.mo");
