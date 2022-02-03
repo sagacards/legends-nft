@@ -537,7 +537,7 @@ module {
         private func httpPaymentsPrice (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat64.toText(state._Payments.getPrice())
+                    Nat64.toText(state._PublicSale.getPrice())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -553,7 +553,7 @@ module {
         private func httpPaymentsAvailable (path : ?Text) : Types.Response {
             {
                 body = Text.encodeUtf8(
-                    Nat.toText(state._Payments.available())
+                    Nat.toText(state._PublicSale.available())
                 );
                 headers = [
                     ("Content-Type", "text/plain"),

@@ -250,6 +250,8 @@ module {
             caller  : Principal,
             memo    : Nat64,
         ) : async Result.Result<Types.TxId, Text> {
+            // Permit a single lock per principal.
+            // TODO: Could this result in critical lost transaction state?
             switch (_findLock(caller)) {
                 case (?lock) {
                     locks.delete(lock.id);

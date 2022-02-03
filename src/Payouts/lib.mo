@@ -16,7 +16,7 @@ import Ext "mo:ext/Ext";
 
 import EntrepotTypes "../Entrepot/types";
 import NNSTypes "../NNS/types";
-import PaymentTypes "../Payments/types";
+import PublicSaleTypes "../PublicSale/types";
 import Types "types";
 
 

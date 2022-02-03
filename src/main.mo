@@ -24,8 +24,8 @@ import Http "Http";
 import HttpTypes "Http/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
-import Payments "Payments";
-import PaymentsTypes "Payments/types";
+import PublicSale "PublicSale";
+import PublicSaleTypes "PublicSale/types";
 import Payouts "Payouts";
 import PayoutsTypes "Payouts/types";
 import TokenTypes "Tokens/types";
@@ -83,12 +83,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stableLowestPriceSale  : Nat64 = 0;
     private stable var stableHighestPriceSale : Nat64 = 0;
 
-    // Payments
+    // Public Sale
 
-    private stable var stablePaymentsLocks      : [(PaymentsTypes.TxId, PaymentsTypes.Lock)] = [];
-    private stable var stablePaymentsPurchases  : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)] = [];
-    private stable var stablePaymentsNextTxId   : PaymentsTypes.TxId = 0;
-    private stable var stablePaymentsRefunds    : [(PaymentsTypes.TxId, PaymentsTypes.Refund)] = [];
+    private stable var stablePaymentsLocks      : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)] = [];
+    private stable var stablePaymentsPurchases  : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
+    private stable var stablePaymentsNextTxId   : PublicSaleTypes.TxId = 0;
+    private stable var stablePaymentsRefunds    : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)] = [];
 
     // Upgrades
 
@@ -125,13 +125,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableLowestPriceSale       := lowestPriceSale;
         stableHighestPriceSale      := highestPriceSale;
 
-        // Preserve Payments
+        // Preserve Public Sale
         let {
             locks;
             purchases;
             nextTxId;
             refunds;
-        } = _Payments.toStable();
+        } = _PublicSale.toStable();
         stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
         stablePaymentsRefunds   := refunds;
@@ -445,12 +445,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
 
-    ///////////////
-    // Payments //
-    /////////////
+    //////////////////
+    // Public Sale //
+    ////////////////
 
 
-    let _Payments = Payments.Factory({
+    let _PublicSale = PublicSale.Factory({
         _Admins;
         _Cap;
         _Nns;
@@ -462,51 +462,51 @@ shared ({ caller = creator }) actor class LegendsNFT(
         cid;
     });
 
-    public query func paymentsBackup () : async {
-        nextTxId    : PaymentsTypes.TxId;
-        locks       : [(PaymentsTypes.TxId, PaymentsTypes.Lock)];
-        purchases   : [(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
-        refunds     : [(PaymentsTypes.TxId, PaymentsTypes.Refund)];
+    public query func publicSaleBackup () : async {
+        nextTxId    : PublicSaleTypes.TxId;
+        locks       : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
+        purchases   : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+        refunds     : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
     } {
-        _Payments.toStable();
+        _PublicSale.toStable();
     };
 
-    public shared ({ caller }) func paymentsRestore (
+    public shared ({ caller }) func publicSaleRestore (
         backup : {
-            nextTxId    : ?PaymentsTypes.TxId;
-            locks       : ?[(PaymentsTypes.TxId, PaymentsTypes.Lock)];
-            purchases   : ?[(PaymentsTypes.TxId, PaymentsTypes.Purchase)];
-            refunds     : ?[(PaymentsTypes.TxId, PaymentsTypes.Refund)];
+            nextTxId    : ?PublicSaleTypes.TxId;
+            locks       : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
+            purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
+            refunds     : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
         }
     ) : async () {
-        _Payments.restore(caller, backup);
+        _PublicSale.restore(caller, backup);
     };
 
-    public shared ({ caller }) func paymentsLock (
+    public shared ({ caller }) func publicSaleLock (
         memo : Nat64,
-    ) : async Result.Result<PaymentsTypes.TxId, Text> {
-        await _Payments.lock(caller, memo);
+    ) : async Result.Result<PublicSaleTypes.TxId, Text> {
+        await _PublicSale.lock(caller, memo);
     };
 
-    public shared ({ caller }) func paymentsNotify (
+    public shared ({ caller }) func publicSaleNotify (
         memo        : Nat64,
         blockheight : NNSTypes.BlockHeight,
     ) : async Result.Result<EXT.TokenIndex, Text> {
-        await _Payments.notify(caller, blockheight, memo, cid);
+        await _PublicSale.notify(caller, blockheight, memo, cid);
     };
 
-    public query func paymentsGetPrice () : async Nat64 {
-        _Payments.getPrice();
+    public query func publicSaleGetPrice () : async Nat64 {
+        _PublicSale.getPrice();
     };
 
-    public query func paymentsGetAvailable () : async Nat {
-        _Payments.available();
+    public query func publicSaleGetAvailable () : async Nat {
+        _PublicSale.available();
     };
 
-    public shared ({ caller }) func paymentsProcessRefunds (
-        transactions : [PaymentsTypes.NNSTransaction],
+    public shared ({ caller }) func publicSaleProcessRefunds (
+        transactions : [PublicSaleTypes.NNSTransaction],
     ) : async Result.Result<(), Text> {
-        await _Payments.processRefunds(caller, cid, transactions);
+        await _PublicSale.processRefunds(caller, cid, transactions);
     };
 
 
@@ -537,7 +537,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Admins;
         _Entrepot;
         _Tokens;
-        _Payments;
+        _PublicSale;
         supply = canisterMeta.supply;
         nri;
     });

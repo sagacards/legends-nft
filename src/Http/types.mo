@@ -1,7 +1,7 @@
 import Admins "../Admins";
 import Assets "../Assets";
 import Entrepot "../Entrepot";
-import Payments "../Payments";
+import PublicSale "../PublicSale";
 import Tokens "../Tokens";
 
 
@@ -12,7 +12,7 @@ module {
         _Assets     : Assets.Assets;
         _Tokens     : Tokens.Factory;
         _Entrepot   : Entrepot.Factory;
-        _Payments   : Payments.Factory;
+        _PublicSale : PublicSale.Factory;
         supply      : Nat16;
         nri         : [(Text, Float)];
     };

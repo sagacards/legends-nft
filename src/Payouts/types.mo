@@ -5,7 +5,7 @@ import Ext "mo:ext/Ext";
 import Admin "../Admins/lib";
 import NNS "../NNS";
 import NNSTypes "../NNS/types";
-import Payments "../Payments";
+import PublicSale "../PublicSale";
 import Tokens "../Tokens";
 
 module {
@@ -14,7 +14,7 @@ module {
         _Admins     : Admin.Admins;
         _Tokens     : Tokens.Factory;
         _Nns        : NNS.Factory;
-        _Payments   : Payments.Factory;
+        _PublicSale : PublicSale.Factory;
     };
 
     public type Manifest = {
