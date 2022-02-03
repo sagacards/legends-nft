@@ -1,6 +1,6 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
-import Buffer "mo:base/Buffer";
+import Buffer "../Buffer";
 import HashMap "mo:base/HashMap";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -11,7 +11,7 @@ import Types "types";
 
 module {
 
-    public class Assets (state : Types.State) {
+    public class Assets (state : Types.State) : Types.Interface {
 
 
         ////////////////
@@ -38,7 +38,7 @@ module {
         };
 
         // Determine whether an asset has a given tag.
-        private func _assetHasTag (
+        private func _assetHashTag (
             asset   : Types.Record,
             tag     : Text,
         ) : Bool {
@@ -65,16 +65,16 @@ module {
 
         // Find the first asset with a given tag.
         public func _findTag (tag : Text) : ?Types.Record {
-            Array.find<Types.Record>(assets.toArray(), func (asset : Types.Record) {
-                _assetHasTag(asset, tag);
+            assets.find(func (asset : Types.Record) {
+                _assetHashTag(asset, tag);
             });
         };
 
         // Find the first asset with all given tag.
         public func _findTags (tags : [Text]) : ?Types.Record {
-            Array.find<Types.Record>(assets.toArray(), func (asset : Types.Record) {
+            assets.find(func (asset : Types.Record) {
                 for (tag in tags.vals()) {
-                    if (_assetHasTag(asset, tag) == false) return false;
+                    if (not _assetHashTag(asset, tag)) return false;
                 };
                 return true;
             });
@@ -82,8 +82,8 @@ module {
 
         // Find all asset with a given tag.
         public func _findAllTag (tag : Text) : [Types.Record] {
-            Array.filter<Types.Record>(assets.toArray(), func (asset : Types.Record) {
-                _assetHasTag(asset, tag);
+            assets.filter(func (asset : Types.Record) {
+                _assetHashTag(asset, tag);
             });
         };
 

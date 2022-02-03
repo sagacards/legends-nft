@@ -1,7 +1,6 @@
+import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import Principal "mo:base/Principal";
-
-import Debug "mo:base/Debug";
 
 import Admins "../src/Admins";
 import Types "../src/Admins/types";
