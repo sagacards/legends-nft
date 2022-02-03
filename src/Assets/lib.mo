@@ -266,11 +266,15 @@ module {
                 return #err("Please confirm your intention to delete all assets by typing in \"DELETE ALL ASSETS\"");
             };
             switch (tag) {
-                case (?t) {
-                    var i = 0;
-                    for (asset in assets.vals()) {
-                        
-                    };
+                case (? tag) {
+                    assets.filterSelf(
+                        func (r : Types.Record) : Bool {
+                            not _assetHashTag(r, tag);
+                        },
+                        func (b : Bool, r : Types.Record) {
+                            if (b) files.delete(r.meta.filename)
+                        },
+                    );
                 };
                 case _ {
                     assets.clear();

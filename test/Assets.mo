@@ -85,6 +85,29 @@ switch (a.getAssetByName("asset4.data")) {
 
 assert(a.getManifest().size() == 4);
 
-// TODO: file upload, finalize, clear and purge.
+a.upload(admin, [Blob.fromArray([0x00])]);
+a.uploadClear(admin);
+a.upload(admin, [Blob.fromArray([0x01])]);
+
+switch (a.uploadFinalize(admin, "new", {
+    tags        = ["tag0", "new"];
+    filename    = "new.data";
+    name        = "new";
+    description = "";
+})) {
+    case (#ok()) {};
+    case (_) assert(false);
+};
+assert(a._findAllTag("tag0").size() == 3);
+switch (a._findTag("new")) {
+    case (?r) {
+        assert(r.asset.payload.size() == 1);
+        assert(Blob.toArray(r.asset.payload[0]) == [0x01]);
+    };
+    case (_) assert(false);
+};
+
+ignore a.purge(admin, "DELETE ALL ASSETS", ?"tag0");
+assert(a.getManifest().size() == 2);
 
 Debug.print("✅ Assets.mo");
