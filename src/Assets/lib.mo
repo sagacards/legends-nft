@@ -38,7 +38,7 @@ module {
         };
 
         // Determine whether an asset has a given tag.
-        private func _assetHashTag (
+        private func _assetHasTag (
             asset   : Types.Record,
             tag     : Text,
         ) : Bool {
@@ -66,7 +66,7 @@ module {
         // Find the first asset with a given tag.
         public func _findTag (tag : Text) : ?Types.Record {
             assets.find(func (asset : Types.Record) {
-                _assetHashTag(asset, tag);
+                _assetHasTag(asset, tag);
             });
         };
 
@@ -74,7 +74,7 @@ module {
         public func _findTags (tags : [Text]) : ?Types.Record {
             assets.find(func (asset : Types.Record) {
                 for (tag in tags.vals()) {
-                    if (not _assetHashTag(asset, tag)) return false;
+                    if (not _assetHasTag(asset, tag)) return false;
                 };
                 return true;
             });
@@ -83,7 +83,7 @@ module {
         // Find all asset with a given tag.
         public func _findAllTag (tag : Text) : [Types.Record] {
             assets.filter(func (asset : Types.Record) {
-                _assetHashTag(asset, tag);
+                _assetHasTag(asset, tag);
             });
         };
 
@@ -269,7 +269,7 @@ module {
                 case (? tag) {
                     assets.filterSelf(
                         func (r : Types.Record) : Bool {
-                            not _assetHashTag(r, tag);
+                            not _assetHasTag(r, tag);
                         },
                         func (b : Bool, r : Types.Record) {
                             if (b) files.delete(r.meta.filename)

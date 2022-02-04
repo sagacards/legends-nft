@@ -2,8 +2,8 @@ import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import Principal "mo:base/Principal";
 
-import Admins "../src/Admins";
-import Types "../src/Admins/types";
+import Admins "lib";
+import Types "types";
 
 let admin = Principal.fromText("2ibo7-dia");
 let user  = Principal.fromText("yrxcb-sg7");

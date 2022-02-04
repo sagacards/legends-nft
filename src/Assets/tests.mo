@@ -2,9 +2,9 @@ import Blob "mo:base/Blob";
 import Debug "mo:base/Debug";
 import Principal "mo:base/Principal";
 
-import Admins "../src/Admins";
-import Assets "../src/Assets";
-import Types "../src/Assets/types";
+import Admins "../Admins";
+import Assets "lib";
+import Types "types";
 
 func createAsset(name : Text, tags : [Text]) : Types.Record = {
     asset = {
