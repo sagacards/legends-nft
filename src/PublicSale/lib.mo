@@ -5,14 +5,15 @@ import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
+import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Ext "mo:ext/Ext";
-import Prim "mo:prim";
 
+import Allowlist "Allowlist";
 import NNS "../NNS/lib";
 import NNSTypes "../NNS/types";
 import Types "types";
@@ -48,6 +49,13 @@ module {
             func (a) { a },
         );
 
+        public var presale = true;
+        public let allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
+            state.allowlist.size(),
+            AccountIdentifier.equal,
+            AccountIdentifier.hash,
+        );
+
         // Pre Upgrade
 
         public func toStable () : {
@@ -55,12 +63,14 @@ module {
             locks       : [(Types.TxId, Types.Lock)];
             purchases   : [(Types.TxId, Types.Purchase)];
             refunds     : [(Types.TxId, Types.Refund)];
+            allowlist   : [(Types.AccountIdentifier, Nat8)];
         } {
             {
                 nextTxId;
                 locks       = Iter.toArray(locks.entries());
                 purchases   = Iter.toArray(purchases.entries());
                 refunds     = Iter.toArray(refunds.entries());
+                allowlist  = Iter.toArray(allowlist.entries());
             }
         };
 
@@ -72,6 +82,7 @@ module {
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
+                allowlist  : ?[(Types.AccountIdentifier, Nat8)];
             }
         ) : () {
             switch (backup.nextTxId) {
@@ -99,6 +110,11 @@ module {
                 case (?x) for ((k, v) in Iter.fromArray(x)) refunds.put(k, v);
                 case _ ();
             };
+
+            switch (backup.allowlist) {
+                case (?x) for ((k, v) in Iter.fromArray(x)) allowlist.put(k, v);
+                case _ ();
+            }
         };
 
         public func restore (
@@ -108,6 +124,7 @@ module {
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
+                allowlist  : ?[(Types.AccountIdentifier, Nat8)];
             }
         ) : () {
             assert(state._Admins._isAdmin(caller));
@@ -119,6 +136,7 @@ module {
             locks = ?state.locks;
             purchases = ?state.purchases;
             refunds = ?state.refunds;
+            allowlist = ?state.allowlist;
         });
 
 
@@ -250,6 +268,16 @@ module {
             caller  : Principal,
             memo    : Nat64,
         ) : async Result.Result<Types.TxId, Text> {
+            // allowlistAccount contains an account if the presale is active and
+            // the caller is in the allowlist.
+            let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
+                switch (Allowlist.isInAllowlist(caller, allowlist)) {
+                    // Return error if presale is active and caller is not allowed.
+                    case (null)  return #err("Not in presale allowlist.");
+                    case (? aId) ?aId;
+                };
+            } else { null };
+
             // Permit a single lock per principal.
             // TODO: Could this result in critical lost transaction state?
             switch (_findLock(caller)) {
@@ -270,6 +298,11 @@ module {
                         token;
                         memo;
                     });
+                    switch (allowlistAccount) {
+                        // Mint was successful, so we can remove allowlist entry.
+                        case (? aId) Allowlist.consumeAllowlist(aId, allowlist);
+                        case (_) {} // Not presale, nothing to do there.
+                    };
                     #ok(txId);
                 };
                 case _ #err("No tokens left to mint.");
