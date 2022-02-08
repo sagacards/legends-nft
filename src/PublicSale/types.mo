@@ -1,11 +1,12 @@
 import Time "mo:base/Time";
 
+import AccountIdentifier "mo:principal/AccountIdentifier";
 import Cap "mo:cap/Cap";
 
 import Admins "../Admins";
-import TokenTypes "../Tokens/types";
 import NNS "../NNS/lib";
 import NNSTypes "../NNS/types";
+import TokenTypes "../Tokens/types";
 import Tokens "../Tokens";
 
 module {
@@ -19,8 +20,12 @@ module {
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];
         locks       : [(TxId, Lock)];
+        // TODO: replace Text with an AccountIdentifier.
+        allowlist  : [(AccountIdentifier, Nat8)];
         cid         : Principal;
     };
+
+    public type AccountIdentifier = AccountIdentifier.AccountIdentifier;
 
     public type TxId = Nat32;
 

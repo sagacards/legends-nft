@@ -90,6 +90,9 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stablePaymentsNextTxId   : PublicSaleTypes.TxId = 0;
     private stable var stablePaymentsRefunds    : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)] = [];
 
+    private stable var presale = true;
+    private stable var stableAllowlist          : [(PublicSaleTypes.AccountIdentifier, Nat8)] = [];
+
     // Upgrades
 
     system func preupgrade() {
@@ -131,12 +134,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
             purchases;
             nextTxId;
             refunds;
+            allowlist;
         } = _PublicSale.toStable();
         stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
         stablePaymentsRefunds   := refunds;
+        stableAllowlist         := allowlist;
         stablePaymentsNextTxId  := nextTxId;
-
+        presale := _PublicSale.presale;
     };
 
     system func postupgrade() {
@@ -458,9 +463,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
         locks       = stablePaymentsLocks;
         purchases   = stablePaymentsPurchases;
         refunds     = stablePaymentsRefunds;
+        allowlist   = stableAllowlist;
         nextTxId    = stablePaymentsNextTxId;
         cid;
     });
+    _PublicSale.presale := presale;
 
     public query func publicSaleBackup () : async {
         nextTxId    : PublicSaleTypes.TxId;
@@ -477,9 +484,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
             locks       : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
             purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
             refunds     : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
+            allowlist   : ?[(PublicSaleTypes.AccountIdentifier, Nat8)];
+            presale     : Bool;
         }
     ) : async () {
         _PublicSale.restore(caller, backup);
+        _PublicSale.presale := backup.presale;
     };
 
     public shared ({ caller }) func publicSaleLock (
