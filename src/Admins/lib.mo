@@ -6,7 +6,9 @@ import Types "types";
 
 module {
 
-    public class Admins (state : Types.State) {
+    public class Admins(state : Types.State) : Types.Interface {
+        // Make sure that there is always at least one admin at initialization.
+        assert(state.admins.size() != 0);
 
 
         ////////////
@@ -48,7 +50,7 @@ module {
         // Removes the given principal from the list of admins.
         public func removeAdmin(caller : Principal, p : Principal) : () {
             assert(_isAdmin(caller));
-            let newAdmins =  Array.filter(
+            let newAdmins = Array.filter(
                 admins.toArray(),
                 func (a : Principal) : Bool {
                     a != p;
