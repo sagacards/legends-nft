@@ -4,6 +4,7 @@ import Cycles "mo:base/ExperimentalCycles";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
+import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Nat8 "mo:base/Nat8";
@@ -16,6 +17,8 @@ import Prim "mo:prim";
 import AssetTypes "../Assets/types";
 import Stoic "../Integrations/Stoic";
 import Types "types";
+import Hex "../NNS/Hex";
+import NNS "../NNS";
 
 
 module {
@@ -565,6 +568,41 @@ module {
             };
         };
 
+        
+        // @path: /supply
+        // Get supply.
+        private func httpSupply (path : ?Text) : Types.Response {
+            {
+                body = Text.encodeUtf8(
+                    Nat16.toText(state.supply)
+                );
+                headers = [
+                    ("Content-Type", "text/plain"),
+                    ("Access-Control-Allow-Origin", "*"),
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
+
+        
+        // @path: /address
+        // Get canister NNS address.
+        private func httpAddress (path : ?Text) : Types.Response {
+            let a = NNS.accountIdentifier(state.cid, NNS.defaultSubaccount());
+            {
+                body = Text.encodeUtf8(
+                    Hex.encode(Blob.toArray(a))
+                );
+                headers = [
+                    ("Content-Type", "text/plain"),
+                    ("Access-Control-Allow-Origin", "*"),
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
+
 
         // @path: /<nat>(.(web(p|m)|json))?
         private func httpLegendRootView (
@@ -654,6 +692,8 @@ module {
             ("animated-preview", httpAnimatedPreview),
             ("public-sale-price", httpPaymentsPrice),
             ("public-sale-available", httpPaymentsAvailable),
+            ("supply", httpSupply),
+            ("address", httpAddress),
         ];
 
 

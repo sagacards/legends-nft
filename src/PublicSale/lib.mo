@@ -339,6 +339,7 @@ module {
                         token;
                         memo;
                     });
+                    // TODO: move to settle.
                     switch (allowlistAccount) {
                         // Mint was successful, so we can remove allowlist entry.
                         case (? aId) Allowlist.consumeAllowlist(aId, allowlist);
