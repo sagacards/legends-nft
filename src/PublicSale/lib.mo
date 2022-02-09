@@ -50,7 +50,7 @@ module {
         );
 
         public var presale = true;
-        public let allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
+        public var allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
             state.allowlist.size(),
             AccountIdentifier.equal,
             AccountIdentifier.hash,
@@ -70,7 +70,7 @@ module {
                 locks       = Iter.toArray(locks.entries());
                 purchases   = Iter.toArray(purchases.entries());
                 refunds     = Iter.toArray(refunds.entries());
-                allowlist  = Iter.toArray(allowlist.entries());
+                allowlist   = Iter.toArray(allowlist.entries());
             }
         };
 
