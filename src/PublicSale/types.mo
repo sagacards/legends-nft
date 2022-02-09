@@ -20,9 +20,10 @@ module {
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];
         locks       : [(TxId, Lock)];
-        // TODO: replace Text with an AccountIdentifier.
-        allowlist  : [(AccountIdentifier, Nat8)];
+        allowlist   : [(AccountIdentifier, Nat8)];
         cid         : Principal;
+        pricePrivateE8s : Nat64;
+        pricePublicE8s : Nat64;
     };
 
     public type AccountIdentifier = AccountIdentifier.AccountIdentifier;

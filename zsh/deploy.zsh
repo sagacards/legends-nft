@@ -45,7 +45,7 @@ done
 config="./config/canisters/$confname.json"
 [ ! -f $config ] && { echo "$config file not found"; exit 99; }
 IFS=$'\n'
-read -r -d$'\1' supply name flavour description artists <<< $(jq -r '.supply, .name, .flavour, .description, .artists' $config)
+read -r -d$'\1' supply name flavour description artists price_private price_public <<< $(jq -r '.supply, .name, .flavour, .description, .artists, .private_sale_price_e8s, .public_sale_price_e8s' $config)
 dfx deploy $wallet --network $network $canister --argument "(
     principal $canister_id,
     $caprouter,
@@ -57,3 +57,5 @@ dfx deploy $wallet --network $network $canister --argument "(
         \"artists\" = $artists;
     }
 )"
+
+dfx canister --network $network call $canister configurePublicSalePrice "( $price_private : nat64, $price_public : nat64 )"

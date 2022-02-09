@@ -3,5 +3,7 @@
     "supply": 117,
     "flavour": "Travel Light, fair wanderer; The Journey is beginning now",
     "artists": "vec { \"Colin Arc\"; \"The Saxon Storyteller\"; \"Jorgen Builder\" }",
-    "description": "Collectible Major Arcana cards celebrating the enduring spirit of tarot, the innervating virtues of web3, and the first deck developed by Saga Tarot."
+    "description": "Collectible Major Arcana cards celebrating the enduring spirit of tarot, the innervating virtues of web3, and the first deck developed by Saga Tarot.",
+    "public_sale_price_e8s": 200000000,
+    "private_sale_price_e8s": 200000000
 }
