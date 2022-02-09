@@ -339,12 +339,6 @@ module {
                         token;
                         memo;
                     });
-                    // TODO: move to settle.
-                    switch (allowlistAccount) {
-                        // Mint was successful, so we can remove allowlist entry.
-                        case (? aId) Allowlist.consumeAllowlist(aId, allowlist);
-                        case (_) {} // Not presale, nothing to do there.
-                    };
                     #ok(txId);
                 };
                 case _ #err("No tokens left to mint.");
@@ -407,6 +401,18 @@ module {
                                                 )
                                             ) {
                                                 case (#ok(_)) {
+                                                    let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
+                                                        switch (Allowlist.isInAllowlist(caller, allowlist)) {
+                                                            // Return error if presale is active and caller is not allowed.
+                                                            case (null)  return #err("Not in presale allowlist.");
+                                                            case (? aId) ?aId;
+                                                        };
+                                                    } else { null };
+                                                    // Mint was successful, so we can remove allowlist entry.
+                                                    switch (allowlistAccount) {
+                                                        case (? aId) Allowlist.consumeAllowlist(aId, allowlist);
+                                                        case (_) {} // Not presale, nothing to do there.
+                                                    };
                                                     // Insert transaction history event.
                                                     ignore await state._Cap.insert({
                                                         caller;
