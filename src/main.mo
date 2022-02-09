@@ -1,5 +1,7 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
 import Nat16 "mo:base/Nat16";
 import Nat64 "mo:base/Nat64";
 import Nat8 "mo:base/Nat8";
@@ -24,10 +26,10 @@ import Http "Http";
 import HttpTypes "Http/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
-import PublicSale "PublicSale";
-import PublicSaleTypes "PublicSale/types";
 import Payouts "Payouts";
 import PayoutsTypes "Payouts/types";
+import PublicSale "PublicSale";
+import PublicSaleTypes "PublicSale/types";
 import TokenTypes "Tokens/types";
 import Tokens "Tokens";
 
@@ -208,6 +210,30 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Admins.getAdmins();
     };
 
+    // Allowlist
+
+    public shared ({ caller }) func togglePresale(b : Bool) {
+        assert(_Admins._isAdmin(caller));
+        _PublicSale.presale := b;
+    };
+
+    public shared ({ caller }) func setAllowlist(
+        allowlist : [(PublicSaleTypes.AccountIdentifier, Nat8)],
+    ) {
+        assert(_Admins._isAdmin(caller));
+        let h = HashMap.HashMap<PublicSaleTypes.AccountIdentifier, Nat8>(
+            allowlist.size(),
+            AccountIdentifier.equal,
+            AccountIdentifier.hash,
+        );
+        for ((k, v) in Iter.fromArray(allowlist)) h.put(k, v);
+        _PublicSale.allowlist := h;
+    };
+
+    public query ({ caller }) func getAllowlist() : async [(PublicSaleTypes.AccountIdentifier, Nat8)] {
+        assert(_Admins._isAdmin(caller));
+        Iter.toArray(_PublicSale.allowlist.entries());
+    };
     
     /////////////
     // Assets //
@@ -474,6 +500,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         locks       : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
         purchases   : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
         refunds     : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
+        allowlist   : [(PublicSaleTypes.AccountIdentifier, Nat8)];
     } {
         _PublicSale.toStable();
     };
