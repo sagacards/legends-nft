@@ -1,5 +1,6 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Nat16 "mo:base/Nat16";
@@ -236,7 +237,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
     public shared ({ caller }) func setAllowlist(
-        allowlist : [(PublicSaleTypes.AccountIdentifier, Nat8)],
+        allowlist : [(Text, Nat8)],
     ) {
         assert(_Admins._isAdmin(caller));
         let h = HashMap.HashMap<PublicSaleTypes.AccountIdentifier, Nat8>(
@@ -244,7 +245,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
             AccountIdentifier.equal,
             AccountIdentifier.hash,
         );
-        for ((k, v) in Iter.fromArray(allowlist)) h.put(k, v);
+        for ((k, v) in Iter.fromArray(allowlist)) h.put(switch (AccountIdentifier.fromText(k)) {
+            case (#ok(x)) x;
+            case _ throw Error.reject("Invalid account");
+        }, v);
         _PublicSale.allowlist := h;
     };
 
@@ -606,6 +610,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _PublicSale;
         supply = canisterMeta.supply;
         nri;
+        cid;
     });
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {

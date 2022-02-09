@@ -15,6 +15,7 @@ module {
         _PublicSale : PublicSale.Factory;
         supply      : Nat16;
         nri         : [(Text, Float)];
+        cid         : Principal;
     };
 
     public type HeaderField = (Text, Text);

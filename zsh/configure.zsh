@@ -4,6 +4,18 @@ network=${2:-local}
 
 confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
 
+# Confirm before deploying to mainnet
+if [[ $network != "local" ]]
+then
+    echo "Confirm mainnet launch"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) break;;
+            No ) exit;;
+        esac
+    done
+fi
+
 # Configure canister metadata
 metadata="./config/metadata/$confname.csv"
 [ ! -f $metadata ] && { echo "$metadata file not found"; exit 99; }
@@ -23,6 +35,36 @@ payload="$payload})"
 
 dfx canister --network $network call $canister configureMetadata $payload
 dfx canister --network $network call $canister init
+
+# Configure price
+
+config="./config/canisters/$confname.json"
+[ ! -f $config ] && { echo "$config file not found"; exit 99; }
+read -r -d$'\1' price_private price_public <<< $(jq -r '.private_sale_price_e8s, .public_sale_price_e8s' $config)
+
+dfx canister --network $network call $canister configurePublicSalePrice "( $price_private : nat64, $price_public : nat64 )"
+
+# Configure presale allow list
+
+whitelist="./config/whitelists/$confname.csv"
+[ ! -f $whitelist ] && { echo "$whitelist file not found"; exit 99; }
+OLDIFS=$IFS
+IFS=','
+payload="(vec {"
+{
+	read # skip headers
+	while read account count note
+	do
+		if [[ $account == "" ]] continue # skip empty lines
+        payload="$payload record {\"$account\"; $count : nat8};"
+	done
+} < $whitelist
+IFS=$OLDIFS
+payload="$payload})"
+
+dfx canister --network $network call $canister setAllowlist $payload
+
+# Configure NRI
 
 if [[ $canister != "0-the-fool" ]]
 then
