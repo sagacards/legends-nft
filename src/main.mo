@@ -90,6 +90,9 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stablePaymentsNextTxId   : PublicSaleTypes.TxId = 0;
     private stable var stablePaymentsRefunds    : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)] = [];
 
+    private stable var stablePricePrivateE8s : Nat64 = 200_000_000;
+    private stable var stablePricePublicE8s : Nat64 = 200_000_000;
+
     private stable var presale = true;
     private stable var stableAllowlist          : [(PublicSaleTypes.AccountIdentifier, Nat8)] = [];
 
@@ -106,7 +109,18 @@ shared ({ caller = creator }) actor class LegendsNFT(
         // Preserve token ledger
         let { tokens = x; metadata = y; isShuffled } = _Tokens.toStable();
         stableTokens := x;
-        // Preserve metadata
+
+        // If supply has increased, update stable tokens array
+        if (x.size() < Nat16.toNat(canisterMeta.supply)) {
+            stableTokens := Array.tabulate<?TokenTypes.Token>(Nat16.toNat(canisterMeta.supply), func (i) {
+                switch (i < x.size()) {
+                    case (true) x[i];
+                    case (false) null;
+                }
+            });
+        };
+
+        // Preserve token metadata
         stableLegends := y;
         stableShuffled := isShuffled;
 
@@ -135,12 +149,16 @@ shared ({ caller = creator }) actor class LegendsNFT(
             nextTxId;
             refunds;
             allowlist;
+            pricePrivateE8s;
+            pricePublicE8s;
         } = _PublicSale.toStable();
         stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
         stablePaymentsRefunds   := refunds;
         stableAllowlist         := allowlist;
         stablePaymentsNextTxId  := nextTxId;
+        stablePricePrivateE8s   := pricePrivateE8s;
+        stablePricePublicE8s    := pricePublicE8s;
         presale := _PublicSale.presale;
     };
 
@@ -465,6 +483,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
         refunds     = stablePaymentsRefunds;
         allowlist   = stableAllowlist;
         nextTxId    = stablePaymentsNextTxId;
+        pricePrivateE8s = stablePricePrivateE8s;
+        pricePublicE8s = stablePricePublicE8s;
         cid;
     });
     _PublicSale.presale := presale;
@@ -486,6 +506,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
             refunds     : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
             allowlist   : ?[(PublicSaleTypes.AccountIdentifier, Nat8)];
             presale     : Bool;
+            pricePrivateE8s : ?Nat64;
+            pricePublicE8s : ?Nat64;
         }
     ) : async () {
         _PublicSale.restore(caller, backup);
@@ -517,6 +539,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
         transactions : [PublicSaleTypes.NNSTransaction],
     ) : async Result.Result<(), Text> {
         await _PublicSale.processRefunds(caller, cid, transactions);
+    };
+
+    public shared ({ caller }) func configurePublicSalePrice (
+        privatePriceE8s : Nat64,
+        publicPriceE8s : Nat64,
+    ) : async () {
+        _PublicSale.configurePrice(caller, privatePriceE8s, publicPriceE8s);
     };
 
 

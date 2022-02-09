@@ -22,7 +22,6 @@ import Types "types";
 module {
 
 
-    public let price : Nat64 = 200_000_000;
     public let lockTtl = 300_000_000_000;  // Time for a transaction to complete (5 mins.)
 
     public class Factory (state : Types.State) {
@@ -49,6 +48,9 @@ module {
             func (a) { a },
         );
 
+        private var pricePublicE8s : Nat64 = state.pricePublicE8s;
+        private var pricePrivateE8s : Nat64 = state.pricePrivateE8s;
+
         public var presale = true;
         public let allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
             state.allowlist.size(),
@@ -64,13 +66,17 @@ module {
             purchases   : [(Types.TxId, Types.Purchase)];
             refunds     : [(Types.TxId, Types.Refund)];
             allowlist   : [(Types.AccountIdentifier, Nat8)];
+            pricePrivateE8s : Nat64;
+            pricePublicE8s : Nat64;
         } {
             {
                 nextTxId;
                 locks       = Iter.toArray(locks.entries());
                 purchases   = Iter.toArray(purchases.entries());
                 refunds     = Iter.toArray(refunds.entries());
-                allowlist  = Iter.toArray(allowlist.entries());
+                allowlist   = Iter.toArray(allowlist.entries());
+                pricePrivateE8s;
+                pricePublicE8s;
             }
         };
 
@@ -82,11 +88,23 @@ module {
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
-                allowlist  : ?[(Types.AccountIdentifier, Nat8)];
+                allowlist   : ?[(Types.AccountIdentifier, Nat8)];
+                pricePrivateE8s : ?Nat64;
+                pricePublicE8s : ?Nat64;
             }
         ) : () {
             switch (backup.nextTxId) {
                 case (?x) nextTxId := x;
+                case _ ();
+            };
+            
+            switch (backup.pricePrivateE8s) {
+                case (?x) pricePrivateE8s := x;
+                case _ ();
+            };
+            
+            switch (backup.pricePublicE8s) {
+                case (?x) pricePublicE8s := x;
                 case _ ();
             };
 
@@ -125,6 +143,8 @@ module {
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
                 allowlist  : ?[(Types.AccountIdentifier, Nat8)];
+                pricePrivateE8s : ?Nat64;
+                pricePublicE8s : ?Nat64;
             }
         ) : () {
             assert(state._Admins._isAdmin(caller));
@@ -137,6 +157,8 @@ module {
             purchases = ?state.purchases;
             refunds = ?state.refunds;
             allowlist = ?state.allowlist;
+            pricePrivateE8s = ?state.pricePrivateE8s;
+            pricePublicE8s = ?state.pricePublicE8s;
         });
 
 
@@ -144,6 +166,15 @@ module {
         // Utils / Internal //
         /////////////////////
 
+
+        // Get current price.
+        public func _getPrice () : Nat64 {
+            if (presale) {
+                pricePrivateE8s;
+            } else {
+                pricePublicE8s;
+            }
+        };
 
         // Uppercase a string
         public func _upper (
@@ -257,6 +288,16 @@ module {
             }
         };
 
+        public func configurePrice (
+            caller          : Principal,
+            privatePriceE8s : Nat64,
+            publicPriceE8s  : Nat64,
+        ) : () {
+            assert(state._Admins._isAdmin(caller));
+            pricePrivateE8s := privatePriceE8s;
+            pricePublicE8s  := publicPriceE8s;
+        };
+
 
         /////////////////
         // Public API //
@@ -316,6 +357,7 @@ module {
             memo        : Nat64,
             canister    : Principal,
         ) : async Result.Result<Ext.TokenIndex, Text> {
+            let price = _getPrice();
             switch (await state._Nns.block(blockheight)) {
                 case (#Ok(block)) {
                     switch (block) {
@@ -395,7 +437,7 @@ module {
         };
 
         public func getPrice () : Nat64 {
-            price;
+            _getPrice();
         };
 
         public func available () : Nat {

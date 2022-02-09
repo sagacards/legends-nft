@@ -541,6 +541,7 @@ module {
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
+                    ("Access-Control-Allow-Origin", "*"),
                 ];
                 status_code = 200;
                 streaming_strategy = null;
@@ -557,6 +558,7 @@ module {
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
+                    ("Access-Control-Allow-Origin", "*"),
                 ];
                 status_code = 200;
                 streaming_strategy = null;

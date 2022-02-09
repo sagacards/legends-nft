@@ -34,7 +34,7 @@ module {
 
 
         var ledger      : [var ?Types.Token]    = Array.init(Nat16.toNat(state.supply), null);
-        var metadata    : [Types.Metadata]        = [];
+        var metadata    : [Types.Metadata]      = [];
 
         var isShuffled = state.isShuffled;
 
@@ -85,7 +85,7 @@ module {
 
         public func _getUnminted () : [Ext.TokenIndex] {
             let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
-            var i : Nat32 = 17;
+            var i : Nat32 = 0;
             while (Nat32.toNat(i) < Nat16.toNat(state.supply)) {
                 if (Option.isNull(ledger[Nat32.toNat(i)])) {
                     unminted.add(i);
@@ -179,10 +179,17 @@ module {
             var currentIndex : Nat = metadata.size();            
             var shuffledMetadata = Array.thaw<Types.Metadata>(metadata);
 
-            while (currentIndex != 1) {
+            label l while (currentIndex != 1) {
+                if (not Option.isNull(ledger[currentIndex])) {
+                    // Do not shuffle a minted token.
+                    currentIndex -= 1;
+                    continue l;
+                };
                 randomNumber := _prng(randomNumber);
                 var randomIndex : Nat = Int.abs(Float.toInt(Float.floor(Float.fromInt(_fromNat8ToInt(randomNumber)* currentIndex/100))));
                 assert(randomIndex < currentIndex);
+                // TODO: Do not allow replacing a minted token index.
+                // TODO: If there are no more unminted token indeces, break.
                 currentIndex -= 1;
                 let temporaryValue = shuffledMetadata[currentIndex];
                 shuffledMetadata[currentIndex] := shuffledMetadata[randomIndex];

@@ -5,9 +5,10 @@ canister=${1:-charlie}
 network=${2:-local}
 
 confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
+config="./config/canisters/$confname.json"
 
 # Get supply
-supply=117
+read -r -d$'\1' supply <<< $(jq -r '.supply' $config)
 
 # Get canister ID
 canisters_json="./canister_ids.json" && [[ $network == local ]] && canisters_json=".dfx/local/canister_ids.json"
