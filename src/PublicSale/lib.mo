@@ -52,7 +52,7 @@ module {
         private var pricePrivateE8s : Nat64 = state.pricePrivateE8s;
 
         public var presale = true;
-        public let allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
+        public var allowlist = HashMap.HashMap<Types.AccountIdentifier, Nat8>(
             state.allowlist.size(),
             AccountIdentifier.equal,
             AccountIdentifier.hash,
