@@ -364,7 +364,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Ext.allowance(caller, request);
     };
 
-    public shared func bearer(
+    public query func bearer(
         tokenId : EXT.TokenIdentifier,
     ) : async EXT.NonFungible.BearerResponse {
         _Ext.bearer(tokenId);
