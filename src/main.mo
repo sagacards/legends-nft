@@ -363,6 +363,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
     ) : async EXT.Allowance.Response {
         _Ext.allowance(caller, request);
     };
+
+    public shared func bearer(
+        tokenId : EXT.TokenIdentifier,
+    ) : async EXT.NonFungible.BearerResponse {
+        _Ext.bearer(tokenId);
+    };
     
     public query ({ caller }) func metadata(
         tokenId : EXT.TokenIdentifier,
