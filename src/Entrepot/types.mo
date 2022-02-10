@@ -29,6 +29,17 @@ module {
         highestPriceSale        : Nat64;
     };
 
+    public type Backup = {
+        listings                : ? [(Ext.TokenIndex, Listing)];
+        transactions            : ? [(Nat, Transaction)];
+        pendingTransactions     : ? [(Ext.TokenIndex, Transaction)];
+        _usedPaymentAddresses   : ? [(Ext.AccountIdentifier, Principal, Ext.SubAccount)];
+        totalVolume             : ? Nat64;
+        lowestPriceSale         : ? Nat64;
+        highestPriceSale        : ? Nat64;
+    };
+
+
     public type Listing = {
         // 6 extra digits
         // javascript   : 1_637_174_793_714

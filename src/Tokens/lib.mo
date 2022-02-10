@@ -277,7 +277,7 @@ module {
 
         // @auth: admin
         public func readMeta () : [Types.Metadata] {
-            metadata
+            metadata;
         };
 
 

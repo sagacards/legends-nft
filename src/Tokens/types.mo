@@ -6,7 +6,7 @@ import Admins "../Admins";
 import Assets "../Assets";
 
 
-module Ledger {
+module {
 
     public type LocalStableState = {
         tokens      : [?Token];

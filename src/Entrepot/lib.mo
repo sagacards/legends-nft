@@ -33,23 +33,23 @@ module {
 
 
         // NFTs listed for sale.
-        let listings = HashMap.HashMap<Ext.TokenIndex, Types.Listing>(
+        private var listings = HashMap.HashMap<Ext.TokenIndex, Types.Listing>(
             state.listings.size(),
             Ext.TokenIndex.equal,
             Ext.TokenIndex.hash
         );
 
         // Unfinalized transactions.
-        let pendingTransactions = HashMap.HashMap<Ext.TokenIndex, Types.Transaction>(
+        private var pendingTransactions = HashMap.HashMap<Ext.TokenIndex, Types.Transaction>(
             state.pendingTransactions.size(),
             Ext.TokenIndex.equal,
             Ext.TokenIndex.hash
         );
 
-        var nextTxId = 0;
+        private var nextTxId = 0;
 
         // Finalized transactions.
-        let transactions = HashMap.HashMap<Nat, Types.Transaction>(
+        private var transactions = HashMap.HashMap<Nat, Types.Transaction>(
             state.transactions.size(),
             Nat.equal,
             Nat32.fromNat
@@ -57,7 +57,7 @@ module {
 
         // Used payment addresses.
         // NOTE: Payment addresses are generated at transaction time by combining random subaccount bytes (determined in secret by the buyer,) with the seller's address. The transaction protocol relies on a unique address for each transaction, so these payment addresses can never be used again.
-        private let _usedPaymentAddresses : Buffer.Buffer<(
+        private var _usedPaymentAddresses : Buffer.Buffer<(
             Ext.AccountIdentifier, Principal, Ext.SubAccount
         )> = Buffer.Buffer(0);
 
@@ -91,26 +91,68 @@ module {
         // Post upgrade
 
         private func _restore (
-            backup : Types.State,
+            backup : Types.Backup,
         ) : () {
-            for ((k, v) in backup.listings.vals()) listings.put(k, v);
-            for ((k, v) in backup.transactions.vals()) transactions.put(k, v);
-            for ((k, v) in backup.pendingTransactions.vals()) {
-                if (Time.now() < (v.initiated + transactionTtl)) {
-                    pendingTransactions.put(k, v);
+            switch (backup.listings) {
+                case (?x) {
+                    listings := HashMap.HashMap<Ext.TokenIndex, Types.Listing>(
+                        x.size(),
+                        Ext.TokenIndex.equal,
+                        Ext.TokenIndex.hash
+                    );
+                    for ((k, v) in x.vals()) listings.put(k, v);
                 };
+                case _ ();
             };
-            for (x in backup._usedPaymentAddresses.vals()) _usedPaymentAddresses.add(x);
-            totalVolume := backup.totalVolume;
-            lowestPriceSale := backup.lowestPriceSale;
-            highestPriceSale := backup.highestPriceSale;
+            switch (backup.transactions) {
+                case (?x) {
+                    for ((k, v) in x.vals()) transactions.put(k, v);
+                };
+                case _ ();
+            };
+            switch (backup.pendingTransactions) {
+                case (?x) {
+                    for ((k, v) in x.vals()) {
+                        if (Time.now() < (v.initiated + transactionTtl)) {
+                            pendingTransactions.put(k, v);
+                        };
+                    };
+                };
+                case _ ();
+            };
+            switch (backup._usedPaymentAddresses) {
+                case (?x) {
+                     for (x in x.vals()) _usedPaymentAddresses.add(x);
+                };
+                case _ ();
+            };
+            totalVolume := switch (backup.totalVolume) {
+                case (?x) x;
+                case _ totalVolume;
+            };
+            lowestPriceSale := switch (backup.lowestPriceSale) {
+                case (?x) x;
+                case _ lowestPriceSale;
+            };
+            highestPriceSale := switch (backup.highestPriceSale) {
+                case (?x) x;
+                case _ highestPriceSale;
+            };
         };
 
-        _restore(state);
+        _restore({
+            listings = ?state.listings;
+            transactions = ?state.transactions;
+            pendingTransactions = ?state.pendingTransactions;
+            _usedPaymentAddresses = ?state._usedPaymentAddresses;
+            totalVolume = ?state.totalVolume;
+            lowestPriceSale = ?state.lowestPriceSale;
+            highestPriceSale = ?state.highestPriceSale;
+        });
 
         public func restore (
             caller : Principal,
-            backup : Types.State,
+            backup : Types.Backup,
         ) : () {
             assert state._Admins._isAdmin(caller);
             _restore(backup);
