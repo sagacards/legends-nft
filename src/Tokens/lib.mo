@@ -200,12 +200,14 @@ module {
             isShuffled := true;
         };
 
-        public func getTokens() : [(Ext.TokenIndex, Ext.Metadata)] {
-            var resp : [(Ext.TokenIndex, Ext.Metadata)] = [];
-            for(e in _tokenMetadata.entries()){
-                resp := Array.append(resp, [(e.0, #nonfungible({ metadata = null }))]);
+        public func getTokens() : [(Ext.TokenIndex, Ext.Common.Metadata)] {
+            let r = Buffer.Buffer<(Ext.TokenIndex, Ext.Common.Metadata)>(0);
+            var i : Nat32 = 0;
+            while (Nat32.toNat(i) < ledger.size()) {
+                r.add((i, #nonfungible({ metadata = null })));
+                i += 1;
             };
-            resp;
+            r.toArray();
         };
 
 

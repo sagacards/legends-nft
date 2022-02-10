@@ -346,7 +346,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Tokens.readMeta();
     };
 
-    public query func getTokens() : async [(TokenIndex, Metadata)] {
+    public query func getTokens() : async [(EXT.TokenIndex, EXT.Common.Metadata)] {
         _Tokens.getTokens();
     };
 
