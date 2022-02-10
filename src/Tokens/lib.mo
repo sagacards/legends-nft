@@ -200,6 +200,14 @@ module {
             isShuffled := true;
         };
 
+        public func getTokens() : [(Ext.TokenIndex, Ext.Metadata)] {
+            var resp : [(Ext.TokenIndex, Ext.Metadata)] = [];
+            for(e in _tokenMetadata.entries()){
+                resp := Array.append(resp, [(e.0, #nonfungible({ metadata = null }))]);
+            };
+            resp;
+        };
+
 
         ////////////////
         // Admin API //
