@@ -497,6 +497,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Entrepot.readTransactions();
     };
 
+    public shared ({ caller }) func entrepotRestore (
+        backup : EntrepotTypes.Backup
+    ) : async () {
+        _Entrepot.restore(caller, backup);
+    };
+
 
     //////////////////
     // Public Sale //
