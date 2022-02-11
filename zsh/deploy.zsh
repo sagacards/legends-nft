@@ -4,6 +4,7 @@ PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
 canister=${1:-charlie}
 network=${2:-local}
 
+wallet="" && [[ $network == local ]] && wallet=--no-wallet
 confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
 
 # Confirm before deploying to mainnet
@@ -36,7 +37,7 @@ do
     if [[ ! $canister_id ]]
     then
         # Create the canister
-        dfx canister --network $network create $canister;
+        dfx canister --network $network $wallet create $canister;
     fi
 done
 
@@ -45,7 +46,7 @@ config="./config/canisters/$confname.json"
 [ ! -f $config ] && { echo "$config file not found"; exit 99; }
 IFS=$'\n'
 read -r -d$'\1' supply name flavour description artists <<< $(jq -r '.supply, .name, .flavour, .description, .artists' $config)
-dfx deploy --network $network $canister --argument "(
+dfx deploy $wallet --network $network $canister --argument "(
     principal $canister_id,
     $caprouter,
     record {

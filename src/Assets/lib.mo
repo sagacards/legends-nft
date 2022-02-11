@@ -131,7 +131,7 @@ module {
 
         public func backup () : Types.State {
             return {
-                assets = assets.toArray();
+                assets = [];
                 colors;
             };
         };

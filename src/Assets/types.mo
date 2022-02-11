@@ -18,7 +18,13 @@ module Assets {
         _Admins : Admins.Admins;
     };
 
-    public type Params = State and Dependencies;
+    // TODO: This after upgrading DFX
+    // public type Params = State and Dependencies;
+    public type Params = {
+        assets  : [Record];
+        colors  : [Color];
+        _Admins : Admins.Admins;
+    };
 
     public type Asset = {
         contentType : Text;
