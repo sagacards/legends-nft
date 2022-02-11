@@ -1,17 +1,17 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
-import Buffer "../Buffer";
 import HashMap "mo:base/HashMap";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
 import Admins "../Admins";
+import Buffer "../Buffer";
 import Types "types";
 
 
 module {
 
-    public class Assets (state : Types.State) : Types.Interface {
+    public class Assets (state : Types.Params) : Types.Interface {
 
 
         ////////////////
@@ -118,68 +118,25 @@ module {
         // Assets are retrieved from the buffer by searching on their metadata.
         private let assets : Buffer.Buffer<Types.Record> = Buffer.Buffer(0);
 
-        // Provision assets from stable state.
-        for (asset in state.assets.vals()) {
-            ignore _addAsset(asset);
+        // Colors for the legends trim.
+        // TODO: Use token traits instead.
+        private var colors : [Types.Color] = state.colors;
+
+        public func restore (backup : Types.State) : () {
+            for (asset in backup.assets.vals()) {
+                ignore _addAsset(asset);
+            };
+            colors := backup.colors;
         };
 
-        public func toStable () : [Types.Record] {
-            return assets.toArray();
+        public func backup () : Types.State {
+            return {
+                assets = assets.toArray();
+                colors;
+            };
         };
 
-
-        ////////////////////////////
-        // Ink Color Definitions //
-        //////////////////////////
-
-
-        // TODO: Make configurable
-        public let inkColors : [
-            (
-                Text,
-                {
-                    base     : Types.Color;
-                    specular : Types.Color;
-                    emissive : Types.Color;
-                }
-            )
-        ] = [
-            ("copper", {
-                base     = "#000000";
-                specular = "#4e230a";
-                emissive = "#a78319";
-            }),
-            ("silver", {
-                base     = "#33343b";
-                specular = "#8e98a0";
-                emissive = "#c4c0a7";
-            }),
-            ("gold", {
-                base     = "#764007";
-                specular = "#c1ab59";
-                emissive = "#c1ab59";
-            }),
-            ("canopy", {
-                base     = "#3a3e39";
-                specular = "#57b44b";
-                emissive = "#424800";
-            }),
-            ("rose", {
-                base     = "#524f32";
-                specular = "#4b0000";
-                emissive = "#ff00ee";
-            }),
-            ("spice", {
-                base     = "#341414";
-                specular = "#620909";
-                emissive = "#b40000";
-            }),
-            ("midnight", {
-                base     = "#191224";
-                specular = "#7239aa";
-                emissive = "#00536c";
-            }),
-        ];
+        restore(state);
 
 
         /////////////////
@@ -200,6 +157,11 @@ module {
         // Retrieve the asset manifest.
         public func getManifest () : [Types.Record] {
             assets.toArray();
+        };
+
+        // Get all colors.
+        public func getColors () : [Types.Color] {
+            colors;
         };
 
 
@@ -284,6 +246,15 @@ module {
                 };
             };
             #ok();
+        };
+
+        // Configure colors.
+        public func configureColors (
+            caller      : Principal,
+            newColors   : [Types.Color],
+        ) : () {
+            assert state._Admins._isAdmin(caller);
+            colors := newColors;
         };
 
     };

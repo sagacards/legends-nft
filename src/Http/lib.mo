@@ -222,12 +222,13 @@ module {
                 };
                 colors = do {
                     var map = {
+                        name     = "";
                         base     = "#000000";
                         specular = "#000000";
                         emissive = "#000000";
                     };
-                    for ((name, colors) in state._Assets.inkColors.vals()) {
-                        if (name == ink) map := colors;
+                    for (color in state._Assets.getColors().vals()) {
+                        if (color.name == ink) map := color;
                     };
                     map;
                 };
