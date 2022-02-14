@@ -34,7 +34,28 @@ IFS=$OLDIFS
 payload="$payload})"
 
 dfx canister --network $network call $canister configureMetadata $payload
+
+# Initialize CAP
 dfx canister --network $network call $canister init
+
+# Configure colors
+colors="./config/colors/$confname.csv"
+[ ! -f $colors ] && { echo "$colors file not found"; exit 99; }
+OLDIFS=$IFS
+IFS=','
+payload="(vec {"
+{
+	read # skip headers
+	while read name base specular emissive background
+	do
+		if [[ $name == "" ]] continue # skip empty lines
+        payload="$payload record { name = \"$name\"; base = \"$base\"; specular = \"$specular\"; emissive = \"$emissive\"; background = \"$background\"; };"
+	done
+} < $colors
+IFS=$OLDIFS
+payload="$payload})"
+
+dfx canister --network $network call $canister configureColors $payload
 
 # Configure price
 

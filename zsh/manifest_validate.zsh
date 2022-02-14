@@ -56,7 +56,7 @@ for i in {0..$supply}; do
     
     [[ $resp =~ 'Content-Length: ([0-9]+)' ]]
     size=$match[1]
-    size_local=$(wc -c $file_local | awk '{print $3}')
+    size_local=$(wc -c $file_local | awk '{print $1}')
     if [[ $code != 200 || ! -f $file_local || $size_local != $((size)) ]]
     then
         errors=$((errors+1))

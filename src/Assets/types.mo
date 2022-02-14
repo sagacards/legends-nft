@@ -9,10 +9,20 @@ module Assets {
     
     public type FilePath = Text;
 
-    public type Color = Text;
-
     public type State = {
         assets  : [Record];
+        colors  : [Color];
+    };
+
+    public type Dependencies = {
+        _Admins : Admins.Admins;
+    };
+
+    // TODO: This after upgrading DFX
+    // public type Params = State and Dependencies;
+    public type Params = {
+        assets  : [Record];
+        colors  : [Color];
         _Admins : Admins.Admins;
     };
 
@@ -50,12 +60,12 @@ module Assets {
             layers      : [FilePath];
             back        : FilePath;
             border      : FilePath;
-            background   : FilePath;
         };
         colors  : {
-            base        : Color;
-            specular    : Color;
-            emissive    : Color;
+            base        : Text;
+            specular    : Text;
+            emissive    : Text;
+            background  : Text;
         };
         views   : {
             flat        : FilePath;
@@ -63,6 +73,15 @@ module Assets {
             animated    : FilePath;
             interactive : FilePath;
         }
+    };
+
+    // TODO: Use arbitrary traits for colors, backs, etc.
+    public type Color = {
+        name        : Text;
+        base        : Text;
+        specular    : Text;
+        emissive    : Text;
+        background  : Text;
     };
 
     public type Interface = {

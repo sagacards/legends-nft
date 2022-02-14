@@ -65,6 +65,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     // Assets
 
     private stable var stableAssets : [AssetTypes.Record] = [];
+    private stable var stableColors : [AssetTypes.Color] = [];
 
     // Admins
 
@@ -104,7 +105,9 @@ shared ({ caller = creator }) actor class LegendsNFT(
     system func preupgrade() {
 
         // Preserve assets
-        stableAssets := _Assets.toStable();
+        let { colors; assets } = _Assets.backup();
+        stableAssets := assets;
+        stableColors := colors;
 
         // Preserve admins
         stableAdmins := _Admins.toStable();
@@ -265,6 +268,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     let _Assets = Assets.Assets({
         _Admins;
         assets = stableAssets;
+        colors = stableColors;
     });
 
     public shared ({ caller }) func upload (
@@ -293,6 +297,33 @@ shared ({ caller = creator }) actor class LegendsNFT(
         tag     : ?Text,
     ) : async Result.Result<(), Text> {
         _Assets.purge(caller, confirm, tag);
+    };
+
+    public query ({ caller }) func assetsBackup () : async AssetTypes.State {
+        assert _Admins._isAdmin(caller);
+        _Assets.backup();
+    };
+
+    public query ({ caller }) func assetsRestore (
+        backup : AssetTypes.State
+    ) : async () {
+        assert _Admins._isAdmin(caller);
+        _Assets.restore(backup);
+    };
+
+    public shared ({ caller }) func assetsTag (
+        files : [(
+            file    : Text,
+            tags    : [Text],
+        )],
+    ) : async () {
+        _Assets.tag(caller, files);
+    };
+
+    public shared ({ caller }) func configureColors (
+        colors : [AssetTypes.Color],
+    ) : async () {
+        _Assets.configureColors(caller, colors);
     };
 
 

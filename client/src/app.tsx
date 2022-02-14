@@ -40,6 +40,7 @@ interface LegendManifest {
         base: Color;
         specular: Color;
         emissive: Color;
+        background: Color;
     };
     views: {
         flat: FilePath;
@@ -788,16 +789,16 @@ function Loader3 () {
 // Main canvas
 
 function LegendPreviewCanvas() {
-    const { views : { flat, sideBySide, animated}, back, border, ink, nri } = useLegendManifest();
+    const { views : { flat, sideBySide, animated}, back, border, ink, nri, colors } = useLegendManifest();
     return (
         <div className="canvasContainer" style={{ width: '100%', height: '100%' }}>
-            <div className="stats-1">
+            {/* <div className="stats-1">
                 <div>Mint: #{(window as any).legendIndex || 0}</div>
                 <div>Back: {back} (NRI {Math.floor(nri.back * 100)}%)</div>
                 <div>Border: {border} (NRI {Math.floor(nri.border * 100)}%)</div>
                 <div>Ink: {ink} (NRI {Math.floor(nri.ink * 100)}%)</div>
                 <div>Average NRI: {Math.floor(nri.avg * 100)}%</div>
-            </div>
+            </div> */}
             <div className="stats-2">
                 <a href={sideBySide}>Static View</a>
                 <a href={animated}>Animated View</a>
@@ -808,8 +809,18 @@ function LegendPreviewCanvas() {
                 mode="concurrent"
             >
                 <React.Suspense fallback={<Loader3 />}>
-                    <LegendCard />
+                    <group position={[0, 0, 1]}><LegendCard /></group>
+                    <mesh position={[0, 0, -1]}>
+                        <planeGeometry args={[10, 10]} />
+                        <meshStandardMaterial
+                            normalMap={useLegendNormal()}
+                            // @ts-ignore
+                            normalScale={[0.03, 0.03]}
+                            color={'#000'}
+                        />
+                    </mesh>
                     <Light />
+                    <spotLight color={colors.background} angle={5} penumbra={Math.PI / 4} decay={0} target={center} position={[0, -5, 0]} intensity={5} />
                 </React.Suspense>
             </Canvas>
         </div>
