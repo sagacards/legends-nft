@@ -20,19 +20,17 @@ module {
 
 
         // Writes a new asset to state, including the denormalized index
-        private func _addAsset (record : Types.Record) : Result.Result<(), Text> {
+        private func _addAsset (record : Types.Record) : () {
             switch (files.get(record.meta.filename)) {
                 case (?i) {
                     // Add asset to state
                     assets.put(i, record);
-                    #ok();
                 };
                 case _ {
                     // Store a denormalized index of filename to asset index
                     files.put(record.meta.filename, assets.size());
                     // Add asset to state
                     assets.add(record);
-                    #ok();
                 };
             };
         };
@@ -124,14 +122,14 @@ module {
 
         public func restore (backup : Types.State) : () {
             for (asset in backup.assets.vals()) {
-                ignore _addAsset(asset);
+                _addAsset(asset);
             };
             colors := backup.colors;
         };
 
         public func backup () : Types.State {
             return {
-                assets = [];
+                assets = assets.toArray();
                 colors;
             };
         };
@@ -190,21 +188,15 @@ module {
             meta        : Types.Meta,
         ) : Result.Result<(), Text> {
             assert(state._Admins._isAdmin(caller));
-            switch (
-                _addAsset({
-                    asset = {
-                        contentType = contentType;
-                        payload = buffer.toArray();
-                    };
-                    meta;
-                })
-            ) {
-                case (#err(msg)) return #err(msg);
-                case _ {
-                    buffer.clear();
-                    return #ok();
-                }
-            };
+            _addAsset({
+                asset = {
+                    contentType = contentType;
+                    payload = buffer.toArray();
+                };
+                meta;
+            });
+            buffer.clear();
+            return #ok();
         };
 
         // Clear the upload buffer
@@ -246,6 +238,33 @@ module {
                 };
             };
             #ok();
+        };
+
+        // Set tags on assets.
+        public func tag (
+            caller  : Principal,
+            files   : [(
+                file    : Text,
+                tags    : [Text],
+            )],
+        ) : () {
+            assert(state._Admins._isAdmin(caller));
+            for ((file, tags) in files.vals()) {
+                switch (getAssetByName(file)) {
+                    case (?asset) {
+                        _addAsset({
+                            asset = asset.asset;
+                            meta = {
+                                filename = asset.meta.filename;
+                                name = asset.meta.name;
+                                description = asset.meta.description;
+                                tags;
+                            };
+                        })
+                    };
+                    case _ ();
+                };
+            };
         };
 
         // Configure colors.

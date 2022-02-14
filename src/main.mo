@@ -311,6 +311,15 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Assets.restore(backup);
     };
 
+    public shared ({ caller }) func assetsTag (
+        files : [(
+            file    : Text,
+            tags    : [Text],
+        )],
+    ) : async () {
+        _Assets.tag(caller, files);
+    };
+
     public shared ({ caller }) func configureColors (
         colors : [AssetTypes.Color],
     ) : async () {
