@@ -65,26 +65,6 @@ read -r -d$'\1' price_private price_public <<< $(jq -r '.private_sale_price_e8s,
 
 dfx canister --network $network call $canister configurePublicSalePrice "( $price_private : nat64, $price_public : nat64 )"
 
-# Configure presale allow list
-
-whitelist="./config/whitelists/$confname.csv"
-[ ! -f $whitelist ] && { echo "$whitelist file not found"; exit 99; }
-OLDIFS=$IFS
-IFS=','
-payload="(vec {"
-{
-	read # skip headers
-	while read account count note
-	do
-		if [[ $account == "" ]] continue # skip empty lines
-        payload="$payload record {\"$account\"; $count : nat8};"
-	done
-} < $whitelist
-IFS=$OLDIFS
-payload="$payload})"
-
-dfx canister --network $network call $canister setAllowlist $payload
-
 # Configure NRI
 
 if [[ $canister != "0-the-fool" ]]
