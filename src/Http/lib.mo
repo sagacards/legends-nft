@@ -213,12 +213,6 @@ module {
                             case _ "";
                         };
                     };
-                    background = do {
-                        switch (state._Assets._findTag("background")) {
-                            case (?a) a.meta.filename;
-                            case _ "";
-                        };
-                    };
                 };
                 colors = do {
                     var map = {
@@ -226,6 +220,7 @@ module {
                         base     = "#000000";
                         specular = "#000000";
                         emissive = "#000000";
+                        background = "#000000";
                     };
                     for (color in state._Assets.getColors().vals()) {
                         if (color.name == ink) map := color;
@@ -280,7 +275,6 @@ module {
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
                     "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
-                    "\t\t\"background\" : \"/assets/" # manifest.maps.background # "\",\n" #
                     "\t\t\"layers\"     : [\n" #
                         Array.foldLeft<AssetTypes.FilePath, Text>(
                             manifest.maps.layers,
@@ -298,7 +292,8 @@ module {
                 "\t\"colors\": {\n" #
                     "\t\t\"base\"       : \"" # manifest.colors.base # "\",\n" #
                     "\t\t\"specular\"   : \"" # manifest.colors.specular # "\",\n" #
-                    "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\"\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\",\n" #
+                    "\t\t\"background\" : \"" # manifest.colors.background # "\"\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
