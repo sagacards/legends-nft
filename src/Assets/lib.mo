@@ -20,7 +20,7 @@ module {
 
 
         // Writes a new asset to state, including the denormalized index
-        private func _addAsset (record : Types.Record) : () {
+        private func _putAsset (record : Types.Record) : () {
             switch (files.get(record.meta.filename)) {
                 case (?i) {
                     // Add asset to state
@@ -122,7 +122,7 @@ module {
 
         public func restore (backup : Types.State) : () {
             for (asset in backup.assets.vals()) {
-                _addAsset(asset);
+                _putAsset(asset);
             };
             colors := backup.colors;
         };
@@ -188,7 +188,7 @@ module {
             meta        : Types.Meta,
         ) : Result.Result<(), Text> {
             assert(state._Admins._isAdmin(caller));
-            _addAsset({
+            _putAsset({
                 asset = {
                     contentType = contentType;
                     payload = buffer.toArray();
@@ -252,7 +252,7 @@ module {
             for ((file, tags) in files.vals()) {
                 switch (getAssetByName(file)) {
                     case (?asset) {
-                        _addAsset({
+                        _putAsset({
                             asset = asset.asset;
                             meta = {
                                 filename = asset.meta.filename;
