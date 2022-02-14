@@ -314,16 +314,17 @@ module {
             let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
                 switch (Allowlist.isInAllowlist(caller, allowlist)) {
                     // Return error if presale is active and caller is not allowed.
-                    case (null)  return #err("Not in presale allowlist.");
+                    case (null)  return #err("Not in presale allowlist!");
                     case (? aId) ?aId;
                 };
             } else { null };
 
             // Permit a single lock per principal.
-            // TODO: Could this result in critical lost transaction state?
             switch (_findLock(caller)) {
                 case (?lock) {
-                    locks.delete(lock.id);
+                    if (Time.now() < (lock.lockedAt + lockTtl)) {
+                        return #ok(lock.id);
+                    };
                 };
                 case _ ();
             };
