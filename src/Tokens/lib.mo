@@ -180,7 +180,7 @@ module {
             var shuffledMetadata = Array.thaw<Types.Metadata>(metadata);
 
             label l while (currentIndex != 1) {
-                if (not Option.isNull(ledger[currentIndex])) {
+                if (not Option.isNull(ledger[currentIndex - 1])) {
                     // Do not shuffle a minted token.
                     currentIndex -= 1;
                     continue l;
