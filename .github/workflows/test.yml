@@ -1,7 +1,5 @@
-on:
-  push:
-    paths:
-      - 'test/**'
+name: Motoko Tests
+on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
