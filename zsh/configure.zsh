@@ -7,7 +7,7 @@ confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && 
 # Confirm before deploying to mainnet
 if [[ $network != "local" ]]
 then
-    echo "Confirm mainnet launch"
+    echo "Confirm mainnet launch. WARNING: RECONFIGURING A LIVE CANISTER AFTER SHUFFLING CAN CAUSE HUGE, PERMANENT DAMAGE"
     select yn in "Yes" "No"; do
         case $yn in
             Yes ) break;;
