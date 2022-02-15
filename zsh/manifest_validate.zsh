@@ -102,6 +102,17 @@ for i in {0..$supply}; do
     if (( $e == 0 )); then
         valid=true
     fi
+    read -r -d$'\1' back border <<< $(echo $resp | jq -r '.maps.back, .maps.border')
+    if [[ $back = "/assets/" ]]; then
+        valid=false
+    fi
+    if [[ $border = "/assets/" ]]; then
+        valid=false
+    fi
+    if [[ $valid == false ]]; then
+        errors=$((errors+1))
+        missing_tokens="$missing_tokens$i "
+    fi
     echo "$((i+1))/$supply, $valid, $errors, $missing_tokens"
 done;
 
