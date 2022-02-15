@@ -63,7 +63,7 @@ export const host = window.location.host.includes('localhost')
 const index = window.location.host.includes('localhost')
     ? parseInt(window.location.pathname.split('/')[1])
     : (window as any).legendIndex || 0;
-const isCinematic = index === 39;
+const isCinematic = index === 82;
 const promise = fetch(`${host}/legend-manifest/${index}/`).then(r => r.json());
 function suspend<T>(promise: Promise<T>) {
     let result: T;
