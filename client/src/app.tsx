@@ -504,7 +504,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                 (flip ? 0 : Math.PI) - THREE.MathUtils.degToRad(mouse.current.x * 5) + rotDeviceTilt[1],
                 0 + rotDeviceTilt[2]
             ] as unknown) as THREE.Vector3,
-            position: ([0, 0, mouse.current.hover ? 0.1 : 0] as unknown) as THREE.Euler,
+            position: ([.1 * Math.sin(t / 2), .1 * Math.sin(t), mouse.current.hover ? 0.1 : 0] as unknown) as THREE.Euler,
             config: {
                 mass: 30,
                 tension: 300,
