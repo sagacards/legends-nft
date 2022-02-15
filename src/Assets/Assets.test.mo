@@ -20,16 +20,17 @@ func createAsset(name : Text, tags : [Text]) : Types.Record = {
 };
 
 let admin = Principal.fromText("2ibo7-dia");
-let state : Types.State = {
+let params : Types.Params = {
     assets  = [
         createAsset("asset0", ["border", "raw", "data"]),
         createAsset("asset1", ["border", "tag0", "tag1"]),
         createAsset("asset2", ["backs", "tag2"]),
         createAsset("asset3", ["preview", "tag0", "tag1", "tag3"]),
     ];
+    colors = [];
     _Admins = Admins.Admins({ admins = [admin] });
 };
-let a = Assets.Assets(state);
+let a = Assets.Assets(params);
 
 assert(a._flattenPayload([
     Blob.fromArray([0x00]),

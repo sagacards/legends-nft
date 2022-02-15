@@ -1,3 +1,4 @@
+import Array "mo:base/Array";
 import HashMap "mo:base/HashMap";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
@@ -9,17 +10,23 @@ module {
         caller    : Principal,
         allowlist : HashMap.HashMap<Types.AccountIdentifier, Nat8>
     ) : ?Types.AccountIdentifier {
-        let accountId = AccountIdentifier.fromPrincipal(caller, null); // 0-subaccount
-        switch (allowlist.get(accountId)) {
-            case (?n) {
-                if (n == 0) {
+        let subAccount = Array.init<Nat8>(32, 0);
+
+        var i : Nat8 = 0;
+        while (i < 10) {
+            subAccount[31] := i;
+            let accountId = AccountIdentifier.fromPrincipal(caller, ?Array.freeze(subAccount));
+            switch (allowlist.get(accountId)) {
+                case (?n) {
+                    if (n != 0) return ?accountId;
                     // Just a double check.
                     allowlist.delete(accountId);
-                    null;
-                } else ?accountId;
+                };
+                case (_) {};
             };
-            case (_) null;
+            i += 1;
         };
+        return null;
     };
 
     public func consumeAllowlist(accountId : Types.AccountIdentifier, allowlist : HashMap.HashMap<Types.AccountIdentifier, Nat8>) {
