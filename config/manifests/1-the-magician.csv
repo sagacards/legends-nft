@@ -27,7 +27,6 @@ art/common/back-swords.webp,Swords Card Back,back swords,An alpha map for the ba
 art/common/back-wyrd.webp,Wyrd Card Back,back wyrd,An alpha map for the back-Wyrd card back,image/webp
 
 art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
-
 art/common/border-naked.webp,Naked Card Border,border bare,An alpha map for the Nake card border,image/webp
 art/common/border-round.webp,Round Card Border,border round,An alpha map for the border-Round card border,image/webp
 art/common/border-saxon-worn.webp,Worn border-Saxon Card Border,border worn-saxon,An alpha map for the Worn border-Saxon card border,image/webp
@@ -205,6 +204,7 @@ art/1-the-magician/static/preview-side-by-side-cup-wider-thicc-lavender-brillian
 art/1-the-magician/static/preview-side-by-side-cup-wider-thicc-witching-hour.webp,Side by Side Preview,preview side-by-side back-cup-wider border-thicc ink-witching-hour,A static preview displaying the card back and border,image/webp
 art/1-the-magician/static/preview-side-by-side-saxon-saxon-energetic.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-energetic,A static preview displaying the card back and border,image/webp
 art/1-the-magician/static/preview-side-by-side-saxon-saxon-fools-gold.webp,Side by Side Preview,preview side-by-side back-saxon border-saxon ink-fools-gold,A static preview displaying the card back and border,image/webp
+art/1-the-magician/static/preview-side-by-side-cinematic-cinematic-cinematic.webp,Side by Side Preview,preview side-by-side back-cinematic border-cinematic ink-cinematic,A static preview displaying the card back and border,image/webp
 
 art/1-the-magician/animated/compressed/preview-animated-fate-line-energetic.webm,Animated Preview,preview animated back-fate border-line ink-energetic,An animated preview displaying the card back and border,image/webm
 art/1-the-magician/animated/compressed/preview-animated-fate-line-sanguine.webm,Animated Preview,preview animated back-fate border-line ink-sanguine,An animated preview displaying the card back and border,image/webm
@@ -356,3 +356,4 @@ art/1-the-magician/animated/compressed/preview-animated-cup-wider-thicc-lavender
 art/1-the-magician/animated/compressed/preview-animated-cup-wider-thicc-witching-hour.webm,Animated Preview,preview animated back-cup-wider border-thicc ink-witching-hour,An animated preview displaying the card back and border,image/webm
 art/1-the-magician/animated/compressed/preview-animated-saxon-saxon-energetic.webm,Animated Preview,preview animated back-saxon border-saxon ink-energetic,An animated preview displaying the card back and border,image/webm
 art/1-the-magician/animated/compressed/preview-animated-saxon-saxon-fools-gold.webm,Animated Preview,preview animated back-saxon border-saxon ink-fools-gold,An animated preview displaying the card back and border,image/webm
+art/1-the-magician/animated/compressed/preview-animated-cinematic-cinematic-cinematic.webm,Animated Preview,preview animated back-cinematic border-cinematic ink-cinematic,An animated preview displaying the card back and border,image/webm
