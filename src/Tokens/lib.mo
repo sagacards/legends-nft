@@ -254,6 +254,7 @@ module {
             conf    : [Types.Metadata],
         ) : Result.Result<(), Text> {
             assert(state._Admins._isAdmin(caller));
+            assert(!isShuffled);
             if (conf.size() != Nat16.toNat(state.supply)) {
                 return #err(
                     "Must include configuration for " #
