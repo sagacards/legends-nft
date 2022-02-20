@@ -1,5 +1,6 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Bool "mo:base/Bool";
 import Cycles "mo:base/ExperimentalCycles";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
@@ -402,7 +403,12 @@ module {
                 case _ null;
             };
             switch (index) {
-                case (?i) renderLegendPreview(i);
+                case (?i) {
+                    switch (mintedOr404(i)) {
+                        case (?err) err;
+                        case _ renderLegendPreview(i);
+                    };
+                };
                 case _ http404(?"Bad index.");
             }
         };
@@ -419,11 +425,16 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state._Tokens._getMetadata(i);
-                    renderAssetWithTags([
-                        "preview", "side-by-side", "back-" # legend.back,
-                        "border-" # legend.border, "ink-" # legend.ink
-                    ]);
+                    switch (mintedOr404(i)) {
+                        case (?err) err;
+                        case _ {
+                            let legend = state._Tokens._getMetadata(i);
+                            renderAssetWithTags([
+                                "preview", "side-by-side", "back-" # legend.back,
+                                "border-" # legend.border, "ink-" # legend.ink
+                            ]);
+                        };
+                    };
                 };
                 case _ http404(?"Invalid index.");
             };
@@ -441,11 +452,16 @@ module {
             };
             switch (index) {
                 case (?i) {
-                    let legend = state._Tokens._getMetadata(i);
-                    renderAssetWithTags([
-                        "preview", "animated", "back-" # legend.back,
-                        "border-" # legend.border, "ink-" # legend.ink
-                    ]);
+                    switch (mintedOr404(i)) {
+                        case (?err) err;
+                        case _ {
+                            let legend = state._Tokens._getMetadata(i);
+                            renderAssetWithTags([
+                                "preview", "animated", "back-" # legend.back,
+                                "border-" # legend.border, "ink-" # legend.ink
+                            ]);
+                        };
+                    };
                 };
                 case _ http404(?"Invalid index.");
             };
@@ -537,6 +553,24 @@ module {
             {
                 body = Text.encodeUtf8(
                     Nat64.toText(state._PublicSale.getPrice())
+                );
+                headers = [
+                    ("Content-Type", "text/plain"),
+                    ("Access-Control-Allow-Origin", "*"),
+                ];
+                status_code = 200;
+                streaming_strategy = null;
+            };
+        };
+
+        
+        // TODO: More types
+        // @path: /public-sale-mode
+        // Get the current public sale status.
+        private func httpPaymentsStatus (path : ?Text) : Types.Response {
+            {
+                body = Text.encodeUtf8(
+                    Bool.toText(state._PublicSale.presale)
                 );
                 headers = [
                     ("Content-Type", "text/plain"),
@@ -687,6 +721,7 @@ module {
             ("side-by-side-preview", httpSideBySidePreview),
             ("animated-preview", httpAnimatedPreview),
             ("public-sale-price", httpPaymentsPrice),
+            ("public-sale-mode", httpPaymentsStatus),
             ("public-sale-available", httpPaymentsAvailable),
             ("supply", httpSupply),
             ("address", httpAddress),

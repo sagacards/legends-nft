@@ -66,6 +66,7 @@ module {
             purchases   : [(Types.TxId, Types.Purchase)];
             refunds     : [(Types.TxId, Types.Refund)];
             allowlist   : [(Types.AccountIdentifier, Nat8)];
+            presale     : Bool;
             pricePrivateE8s : Nat64;
             pricePublicE8s : Nat64;
         } {
@@ -77,6 +78,7 @@ module {
                 allowlist   = Iter.toArray(allowlist.entries());
                 pricePrivateE8s;
                 pricePublicE8s;
+                presale;
             }
         };
 
@@ -89,10 +91,16 @@ module {
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
                 allowlist   : ?[(Types.AccountIdentifier, Nat8)];
+                presale     : ?Bool;
                 pricePrivateE8s : ?Nat64;
                 pricePublicE8s : ?Nat64;
             }
         ) : () {
+            switch (backup.presale) {
+                case (?x) presale := x;
+                case _ ();
+            };
+
             switch (backup.nextTxId) {
                 case (?x) nextTxId := x;
                 case _ ();
@@ -142,7 +150,8 @@ module {
                 locks       : ?[(Types.TxId, Types.Lock)];
                 purchases   : ?[(Types.TxId, Types.Purchase)];
                 refunds     : ?[(Types.TxId, Types.Refund)];
-                allowlist  : ?[(Types.AccountIdentifier, Nat8)];
+                allowlist   : ?[(Types.AccountIdentifier, Nat8)];
+                presale     : ?Bool;
                 pricePrivateE8s : ?Nat64;
                 pricePublicE8s : ?Nat64;
             }
@@ -159,6 +168,7 @@ module {
             allowlist = ?state.allowlist;
             pricePrivateE8s = ?state.pricePrivateE8s;
             pricePublicE8s = ?state.pricePublicE8s;
+            presale = ?state.presale;
         });
 
 
@@ -375,7 +385,7 @@ module {
                                     } else if (transfer.amount.e8s < price) {
                                         return #err("Incorrect transfer amount.");
                                     };
-                                    switch (_findLockWithMemo(caller, b.transaction.memo)) {
+                                    switch (_findLockWithMemo(caller, memo)) {
                                         case (?lock) {
                                             purchases.put(lock.id, {
                                                 id          = lock.id;

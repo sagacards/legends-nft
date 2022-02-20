@@ -31,7 +31,6 @@ dfx start --clean --background
 zsh/deploy.zsh
 dfx canister call charlie addAdmin "principal \"$(dfx identity get-principal)\""
 zsh/configure.zsh
-dfx canister call charlie init
 ```
 
 You can specify network as well as which legend you would like to deploy using command line arguments like so:

@@ -239,6 +239,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _PublicSale.presale := b;
     };
 
+    public shared ({ caller }) func isPresale () : async Bool {
+        _PublicSale.presale;
+    };
+
     public shared ({ caller }) func setAllowlist(
         allowlist : [(Text, Nat8)],
     ) {
@@ -563,6 +567,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         pricePrivateE8s = stablePricePrivateE8s;
         pricePublicE8s = stablePricePublicE8s;
         cid;
+        presale;
     });
     _PublicSale.presale := presale;
 
@@ -583,13 +588,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
             purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
             refunds     : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
             allowlist   : ?[(PublicSaleTypes.AccountIdentifier, Nat8)];
-            presale     : Bool;
+            presale     : ?Bool;
             pricePrivateE8s : ?Nat64;
             pricePublicE8s : ?Nat64;
         }
     ) : async () {
         _PublicSale.restore(caller, backup);
-        _PublicSale.presale := backup.presale;
     };
 
     public shared ({ caller }) func publicSaleLock (

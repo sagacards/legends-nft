@@ -22,6 +22,7 @@ module {
         locks       : [(TxId, Lock)];
         allowlist   : [(AccountIdentifier, Nat8)];
         cid         : Principal;
+        presale     : Bool;
         pricePrivateE8s : Nat64;
         pricePublicE8s : Nat64;
     };
