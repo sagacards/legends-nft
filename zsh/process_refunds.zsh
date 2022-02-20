@@ -1,4 +1,7 @@
 #!/bin/zsh
-network=${1:-local}
+PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
 
-dfx canister --network $network call legends paymentsProcessRefunds "(vec { $(node 'node/process-refunds.js' 0 200) })"
+canister=${1:-charlie}
+network=${2:-local}
+
+dfx canister --network $network call $canister publicSaleProcessRefunds "(vec { $(node 'node/process-refunds.js' 0 10) })"

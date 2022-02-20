@@ -11,8 +11,8 @@ We are interested in an transactions sent the NFT canister.
 const start = process.argv[2] || 0;
 const end = process.argv[3] || 99999999999999999999;
 
-const CanisterAccount = '39385700a813375477ca0d044b65593272283650d23c0ac0acbc6e48cad5e6fc';
-const CanisterPrincipal = 'nges7-giaaa-aaaaj-qaiya-cai';
+const CanisterAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
+const CanisterPrincipal = 'cwu5z-wyaaa-aaaaj-qaoaq-cai';
 
 // Rosetta is super picky. If a request isn't properly formed it will return a blank response.
 const API = 'https://rosetta-api.internetcomputer.org/search/transactions';
@@ -26,7 +26,6 @@ const data = {
         "address": CanisterAccount,
     },
 }
-
 fetch(API, {
     method: 'POST',
     headers: {
@@ -34,28 +33,37 @@ fetch(API, {
     },
     body: JSON.stringify(data),
 })
-.then(r => r.json())
+.then(r => {
+    return r.json()
+})
 .then(r => {
     return r.transactions
-        .filter(x => x.transaction.operations[1].account.address === CanisterAccount
-            && x.transaction.operations[1].status === 'COMPLETED'
-            && x.transaction.metadata.block_height > 1_646_947 /* Last known test transaction block */)
-        .map(x => ({
-            from: x.transaction.operations[0].account.address,
-            amount: x.transaction.operations[1].amount.value,
-            timestamp: x.transaction.metadata.timestamp,
-            memo: x.transaction.metadata.memo,
-            blockheight: x.transaction.metadata.block_height,
-        }))
+        .filter(x => {
+            return x.transaction.operations[0].account.address != CanisterAccount
+                && x.transaction.operations[1].status === 'COMPLETED'
+                && x.transaction.metadata.block_height > 	
+                2_551_021 /* Last known test transaction block */
+        })
+        .map(x => {
+            return {
+                from: x.transaction.operations[0].account.address,
+                amount: x.transaction.operations[1].amount.value,
+                timestamp: x.transaction.metadata.timestamp,
+                memo: x.transaction.metadata.memo,
+                blockheight: x.transaction.metadata.block_height,
+            }
+        })
         .sort((a, b) => a.timestamp - b.timestamp)
-        .slice(start, end)
-        .reduce((agg, x) => `${agg}
+        // .slice(start, end)
+        .reduce((agg, x) => {
+            return `${agg}
 record {
     from        = "${x.from}";
     amount      = ${x.amount} : nat64;
     timestamp   = ${x.timestamp} : int;
     memo        = ${x.memo} : nat64;
     blockheight = ${x.blockheight} : nat64;
-};`, '');
+};`}, '');
 })
 .then(console.log)
+.catch(console.log)
