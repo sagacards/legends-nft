@@ -1,8 +1,10 @@
-who, how much, account address, note
-jorgen, 75, null, gotta pay the bills
-athena, 10, null, ongoing rate for tarot expert + writing
-community coffer, 10, null, for the community to decide
-quint, 5, null, 5-10+ variable depending on commitment
-peter, 0, null, might be our discord manager
-sam, 0, null, might be working on marketing creative
-lucas, 0, null,  might be working on marketing creative
+who, address, how much, account address, note, paid
+canister, 1, EA446F6D879FAC7C4CD4867532117B49815D903009AB91ED8C227E3A0C003ED1, null, canister maintenance, true
+jorgen, 70, 79867AE4C39553850F70FC3C1F208966F22818BCE8B00DFF272CFFF59786C66B, null, gotta pay the bills, true
+athena, 10, 077F39F5BC3269044FD1901F30BAEE34D2483E40680021DCC14E4C0393FD9DA2, null, ongoing rate for tarot expert + writing, partial (1 ICP)
+community coffer, 10, FB74CFD0067EE0657B5EE1B719E075E9AE1FC2C428A0F98575CC504D6E1949E3, null, for the community to decide, true
+quint, 9, 65379C9BD53EF1713BC2601700E29F10431F435770CCE56FA6E604FA53AC5C5D, null, 5-10+ variable depending on commitment, false
+peter, 0, , null, might be our discord manager, false
+sam, 0, , null, might be working on marketing creative, false
+lucas, 0, , null,  might be working on marketing creative, false
+total: 378
