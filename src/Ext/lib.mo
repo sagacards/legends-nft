@@ -168,6 +168,26 @@ module {
         //     state._Tokens.mint(caller, request.to);
         // };
 
+        public func getRegistry() : [(Ext.TokenIndex, Ext.AccountIdentifier)] {
+            var i : Nat32 = 0;
+            Array.mapFilter<?TokenTypes.Token, (Ext.TokenIndex, Ext.AccountIdentifier)>(
+                state._Tokens.read(null),
+                func (a) {
+                    switch (a) {
+                        case (?a) {
+                            let r = ?(i, a.owner);
+                            i += 1;
+                            r;
+                        };
+                        case _ {
+                            i += 1;
+                            null;
+                        };
+                    }
+                }
+            );
+        };
+
         /////////////////////
         // @ext:allowance //
         ///////////////////

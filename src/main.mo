@@ -445,6 +445,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Ext.tokenId(cid, index);
     };
 
+    public query func getRegistry() : async [(EXT.TokenIndex, EXT.AccountIdentifier)] {
+        _Ext.getRegistry();
+    };
+
 
     //////////
     // NNS //
