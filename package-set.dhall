@@ -9,6 +9,10 @@ let
       , repo = "https://github.com/Psychedelic/cap-motoko-library"
       , version = "v1.0.4"
       , dependencies = [] : List Text
+      }, { name = "canistergeek"
+      , repo = "https://github.com/jorgenbuilder/canistergeek-ic-motoko"
+      , version = "master"
+      , dependencies = [] : List Text
       }] : List Package
 
 in  upstream # additions

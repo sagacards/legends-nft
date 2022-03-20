@@ -11,6 +11,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
+import Canistergeek "mo:canistergeek/canistergeek";
 import Cap "mo:cap/Cap";
 import CapRouter "mo:cap/Router";
 import EXT "mo:ext/Ext";
@@ -100,6 +101,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var presale = true;
     private stable var stableAllowlist          : [(PublicSaleTypes.AccountIdentifier, Nat8)] = [];
 
+    // Canister geek
+
+    private stable var _canistergeekMonitorUD: ? Canistergeek.UpgradeData = null;
+    private stable var _canistergeekLoggerUD: ? Canistergeek.LoggerUpgradeData = null;
+
     // Upgrades
 
     system func preupgrade() {
@@ -166,10 +172,81 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stablePricePrivateE8s   := pricePrivateE8s;
         stablePricePublicE8s    := pricePublicE8s;
         presale := _PublicSale.presale;
+
+        // Preserve canistergeek
+
+        _canistergeekMonitorUD := ? canistergeekMonitor.preupgrade();
+        _canistergeekLoggerUD := ? canistergeekLogger.preupgrade();
     };
 
     system func postupgrade() {
+        
         // Yeet
+
+        canistergeekMonitor.postupgrade(_canistergeekMonitorUD);
+        _canistergeekMonitorUD := null;
+
+        canistergeekLogger.postupgrade(_canistergeekLoggerUD);
+        _canistergeekLoggerUD := null;
+    };
+
+
+    ///////////////////
+    // Canistergeek //
+    /////////////////
+
+
+    // Metrics
+
+    private let canistergeekMonitor = Canistergeek.Monitor();
+
+    /**
+    * Returns collected data based on passed parameters.
+    * Called from browser.
+    */
+    public query ({caller}) func getCanisterMetrics(parameters: Canistergeek.GetMetricsParameters): async ?Canistergeek.CanisterMetrics {
+        assert(_Admins._isAdmin(caller));
+        canistergeekMonitor.getMetrics(parameters);
+    };
+
+    /**
+    * Force collecting the data at current time.
+    * Called from browser or any canister "update" method.
+    */
+    public shared ({caller}) func collectCanisterMetrics(): async () {
+        _captureMetrics();
+        assert(_Admins._isAdmin(caller));
+        canistergeekMonitor.collectMetrics();
+    };
+
+    // This needs to be places in every update call.
+    private func _captureMetrics () : () {
+        canistergeekMonitor.collectMetrics();
+    };
+
+    // Logging
+
+    private let canistergeekLogger = Canistergeek.Logger();
+
+    /**
+    * Returns collected log messages based on passed parameters.
+    * Called from browser.
+    */
+    public query ({caller}) func getCanisterLog(request: ?Canistergeek.CanisterLogRequest) : async ?Canistergeek.CanisterLogResponse {
+        assert(_Admins._isAdmin(caller));
+        canistergeekLogger.getLog(request);
+    };
+
+    private func _log (
+        caller  : Principal,
+        method  : Text,
+        message : Text,
+    ) : () {
+        canistergeekLogger.logMessage(
+            Principal.toText(caller) # " :: " #
+            method # " :: " #
+            message
+        );
     };
 
 
@@ -193,6 +270,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     // This needs to be manually called once after canister creation.
     public shared ({ caller }) func init () : async Result.Result<(), Text> {
+        _captureMetrics();
         assert(_Admins._isAdmin(caller));
         // Initialize CAP and store root bucket id
         capRoot := await _Cap.handshake(
@@ -205,6 +283,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func configureNri (
         data : [(Text, Float)],
     ) : async () {
+        _captureMetrics();
         assert(_Admins._isAdmin(caller));
         nri := data;
         _HttpHandler.updateNri(data);
@@ -213,6 +292,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func addAdmin (
         p : Principal,
     ) : async () {
+        _captureMetrics();
         _Admins.addAdmin(caller, p);
     };
 
@@ -225,6 +305,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func removeAdmin (
         p : Principal,
     ) : async () {
+        _captureMetrics();
         _Admins.removeAdmin(caller, p);
     };
 
@@ -235,17 +316,20 @@ shared ({ caller = creator }) actor class LegendsNFT(
     // Allowlist
 
     public shared ({ caller }) func togglePresale(b : Bool) {
+        _captureMetrics();
         assert(_Admins._isAdmin(caller));
         _PublicSale.presale := b;
     };
 
     public shared ({ caller }) func isPresale () : async Bool {
+        _captureMetrics();
         _PublicSale.presale;
     };
 
     public shared ({ caller }) func setAllowlist(
         allowlist : [(Text, Nat8)],
     ) {
+        _captureMetrics();
         assert(_Admins._isAdmin(caller));
         let h = HashMap.HashMap<PublicSaleTypes.AccountIdentifier, Nat8>(
             allowlist.size(),
@@ -278,6 +362,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func upload (
         bytes : [Blob],
     ) : async () {
+        _captureMetrics();
         _Assets.upload(caller, bytes);
     };
 
@@ -285,6 +370,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         contentType : Text,
         meta        : AssetTypes.Meta,
     ) : async Result.Result<(), Text> {
+        _captureMetrics();
         _Assets.uploadFinalize(
             caller,
             contentType,
@@ -293,6 +379,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
     public shared ({ caller }) func uploadClear () : async () {
+        _captureMetrics();
         _Assets.uploadClear(caller);
     };
 
@@ -300,6 +387,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         confirm : Text,
         tag     : ?Text,
     ) : async Result.Result<(), Text> {
+        _captureMetrics();
         _Assets.purge(caller, confirm, tag);
     };
 
@@ -321,12 +409,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
             tags    : [Text],
         )],
     ) : async () {
+        _captureMetrics();
         _Assets.tag(caller, files);
     };
 
     public shared ({ caller }) func configureColors (
         colors : [AssetTypes.Color],
     ) : async () {
+        _captureMetrics();
         _Assets.configureColors(caller, colors);
     };
 
@@ -348,18 +438,21 @@ shared ({ caller = creator }) actor class LegendsNFT(
     });
 
     public shared func readLedger () : async [?TokenTypes.Token] {
+        _captureMetrics();
         _Tokens.read(null);
     };
 
     public shared ({ caller }) func mint (
         to : EXT.User,
     ) : async Result.Result<Nat, Text> {
+        _captureMetrics();
         await _Tokens.mint(caller, to);
     };
 
     public shared ({ caller }) func configureMetadata (
         conf : [TokenTypes.Metadata],
     ) : async Result.Result<(), Text> {
+        _captureMetrics();
         _Tokens.configureMetadata(caller, conf);
     };
 
@@ -370,10 +463,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func tokensRestore (
         backup : TokenTypes.LocalStableState,
     ) : async Result.Result<(), Text> {
+        _captureMetrics();
         _Tokens.restore(caller, backup);
     };
 
     public shared ({ caller }) func shuffleMetadata () : async () {
+        _captureMetrics();
         await _Tokens.shuffleMetadata(caller);
     };
 
@@ -387,11 +482,125 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     //////////
+    // NNS //
+    ////////
+
+
+    let _Nns = NNS.Factory({
+        _Admins;
+    });
+    
+    public query func address () : async (Blob, Text) {
+        let a = NNS.accountIdentifier(cid, NNS.defaultSubaccount());
+        (a, Hex.encode(Blob.toArray(a)));
+    };
+
+    public shared ({ caller }) func balance () : async NNSTypes.ICP {
+        _captureMetrics();
+        await _Nns.balance(NNS.accountIdentifier(cid, NNS.defaultSubaccount()));
+    };
+
+    public shared ({ caller }) func nnsTransfer (
+        amount  : NNSTypes.ICP,
+        to      : Text,
+        memo    : NNSTypes.Memo,
+    ) : async NNSTypes.TransferResult {
+        _captureMetrics();
+        await _Nns.transfer(caller, amount, to, memo);
+    };
+
+
+    ///////////////
+    // Entrepot //
+    /////////////
+
+    let _Entrepot = Entrepot.Factory({
+        _Admins;
+        _Cap;
+        _Tokens;
+        _Nns;
+        cid;
+        listings            = stableListings;
+        transactions        = stableTransactions;
+        pendingTransactions = stablePendingTransactions;
+        supply              = canisterMeta.supply;
+        _usedPaymentAddresses = stableUsedPaymentAddress;
+        totalVolume         = stableTotalVolume;
+        lowestPriceSale     = stableLowestPriceSale;
+        highestPriceSale    = stableHighestPriceSale;
+        _log;
+    });
+
+    public query func details (token : EXT.TokenIdentifier) : async EntrepotTypes.DetailsResponse {
+        _Entrepot.details(token);
+    };
+
+    public query func listings () : async EntrepotTypes.ListingsResponse {
+        _Entrepot.getListings();
+    };
+
+    public shared ({ caller }) func list (
+        request : EntrepotTypes.ListRequest,
+    ) : async EntrepotTypes.ListResponse {
+        _captureMetrics();
+        _log(caller, "list", request.token # " :: Start");
+        await _Entrepot.list(caller, request);
+    };
+
+    public query func stats () : async (
+        Nat64,  // Total Volume
+        Nat64,  // Highest Price Sale
+        Nat64,  // Lowest Price Sale
+        Nat64,  // Current Floor Price
+        Nat,    // # Listings
+        Nat,    // # Supply
+        Nat,    // #Sales
+    ) {
+        _Entrepot.stats();
+    };
+
+    public shared ({ caller }) func lock (
+        token : EXT.TokenIdentifier,
+        price : Nat64,
+        buyer : EXT.AccountIdentifier,
+        bytes : [Nat8],
+    ) : async EntrepotTypes.LockResponse {
+        _captureMetrics();
+        _log(caller, "lock", token # " :: Start");
+        await _Entrepot.lock(caller, token, price, buyer, bytes);
+    };
+
+    public shared ({ caller }) func settle (
+        token : EXT.TokenIdentifier,
+    ) : async Result.Result<(), EXT.CommonError> {
+        _captureMetrics();
+        _log(caller, "settle", token # " :: Start");
+        await _Entrepot.settle(caller, token);
+    };
+
+    public query ({ caller }) func payments () : async ?[EXT.SubAccount] {
+        _Entrepot.payments(caller);
+    };
+
+    public query ({ caller }) func transactions () : async [EntrepotTypes.EntrepotTransaction] {
+        _Entrepot.readTransactions();
+    };
+
+    public shared ({ caller }) func entrepotRestore (
+        backup : EntrepotTypes.Backup
+    ) : async () {
+        _captureMetrics();
+        _Entrepot.restore(caller, backup);
+    };
+
+
+    //////////
     // EXT //
     ////////
 
 
     let _Ext = Ext.make({
+        _Entrepot;
         _Tokens;
         _Cap;
         cid;
@@ -400,6 +609,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func allowance(
         request : EXT.Allowance.Request,
     ) : async EXT.Allowance.Response {
+        _captureMetrics();
         _Ext.allowance(caller, request);
     };
 
@@ -418,12 +628,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func approve(
         request : EXT.Allowance.ApproveRequest,
     ) : async () {
+        _captureMetrics();
         _Ext.approve(caller, request);
     };
 
     public shared ({ caller }) func transfer(
         request : EXT.Core.TransferRequest,
     ) : async EXT.Core.TransferResponse {
+        _captureMetrics();
         await _Ext.transfer(caller, request);
     };
 
@@ -447,109 +659,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     public query func getRegistry() : async [(EXT.TokenIndex, EXT.AccountIdentifier)] {
         _Ext.getRegistry();
-    };
-
-
-    //////////
-    // NNS //
-    ////////
-
-
-    let _Nns = NNS.Factory({
-        _Admins;
-    });
-    
-    public query func address () : async (Blob, Text) {
-        let a = NNS.accountIdentifier(cid, NNS.defaultSubaccount());
-        (a, Hex.encode(Blob.toArray(a)));
-    };
-
-    public shared ({ caller }) func balance () : async NNSTypes.ICP {
-        await _Nns.balance(NNS.accountIdentifier(cid, NNS.defaultSubaccount()));
-    };
-
-    public shared ({ caller }) func nnsTransfer (
-        amount  : NNSTypes.ICP,
-        to      : Text,
-        memo    : NNSTypes.Memo,
-    ) : async NNSTypes.TransferResult {
-        await _Nns.transfer(caller, amount, to, memo);
-    };
-
-
-    ///////////////
-    // Entrepot //
-    /////////////
-
-    let _Entrepot = Entrepot.Factory({
-        _Admins;
-        _Cap;
-        _Tokens;
-        _Nns;
-        cid;
-        listings            = stableListings;
-        transactions        = stableTransactions;
-        pendingTransactions = stablePendingTransactions;
-        supply              = canisterMeta.supply;
-        _usedPaymentAddresses = stableUsedPaymentAddress;
-        totalVolume         = stableTotalVolume;
-        lowestPriceSale     = stableLowestPriceSale;
-        highestPriceSale    = stableHighestPriceSale;
-    });
-
-    public query func details (token : EXT.TokenIdentifier) : async EntrepotTypes.DetailsResponse {
-        _Entrepot.details(token);
-    };
-
-    public query func listings () : async EntrepotTypes.ListingsResponse {
-        _Entrepot.getListings();
-    };
-
-    public shared ({ caller }) func list (
-        request : EntrepotTypes.ListRequest,
-    ) : async EntrepotTypes.ListResponse {
-        await _Entrepot.list(caller, request);
-    };
-
-    public query func stats () : async (
-        Nat64,  // Total Volume
-        Nat64,  // Highest Price Sale
-        Nat64,  // Lowest Price Sale
-        Nat64,  // Current Floor Price
-        Nat,    // # Listings
-        Nat,    // # Supply
-        Nat,    // #Sales
-    ) {
-        _Entrepot.stats();
-    };
-
-    public shared ({ caller }) func lock (
-        token : EXT.TokenIdentifier,
-        price : Nat64,
-        buyer : EXT.AccountIdentifier,
-        bytes : [Nat8],
-    ) : async EntrepotTypes.LockResponse {
-        await _Entrepot.lock(caller, token, price, buyer, bytes);
-    };
-
-    public shared func settle (
-        token : EXT.TokenIdentifier,
-    ) : async Result.Result<(), EXT.CommonError> {
-        await _Entrepot.settle(token);
-    };
-
-    public query ({ caller }) func payments () : async ?[EXT.SubAccount] {
-        _Entrepot.payments(caller);
-    };
-
-    public query ({ caller }) func transactions () : async [EntrepotTypes.EntrepotTransaction] {
-        _Entrepot.readTransactions();
-    };
-
-    public shared ({ caller }) func entrepotRestore (
-        backup : EntrepotTypes.Backup
-    ) : async () {
-        _Entrepot.restore(caller, backup);
     };
 
 
@@ -597,12 +706,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
             pricePublicE8s : ?Nat64;
         }
     ) : async () {
+        _captureMetrics();
         _PublicSale.restore(caller, backup);
     };
 
     public shared ({ caller }) func publicSaleLock (
         memo : Nat64,
     ) : async Result.Result<PublicSaleTypes.TxId, Text> {
+        _captureMetrics();
         await _PublicSale.lock(caller, memo);
     };
 
@@ -610,6 +721,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         memo        : Nat64,
         blockheight : NNSTypes.BlockHeight,
     ) : async Result.Result<EXT.TokenIndex, Text> {
+        _captureMetrics();
         await _PublicSale.notify(caller, blockheight, memo, cid);
     };
 
@@ -624,6 +736,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     public shared ({ caller }) func publicSaleProcessRefunds (
         transactions : [PublicSaleTypes.NNSTransaction],
     ) : async Result.Result<(), Text> {
+        _captureMetrics();
         await _PublicSale.processRefunds(caller, cid, transactions);
     };
 
@@ -631,6 +744,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         privatePriceE8s : Nat64,
         publicPriceE8s : Nat64,
     ) : async () {
+        _captureMetrics();
         _PublicSale.configurePrice(caller, privatePriceE8s, publicPriceE8s);
     };
 
