@@ -582,6 +582,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Entrepot.payments(caller);
     };
 
+    public query ({ caller }) func paymentsRaw () : async [(Nat, EntrepotTypes.Transaction)] {
+        _Entrepot.paymentsRaw(caller);
+    };
+
+    public query ({ caller }) func readPending () : async [(EXT.TokenIndex, EntrepotTypes.Transaction)] {
+        _Entrepot.readPending(caller);
+    };
+
     public query ({ caller }) func transactions () : async [EntrepotTypes.EntrepotTransaction] {
         _Entrepot.readTransactions();
     };

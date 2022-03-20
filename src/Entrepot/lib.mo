@@ -279,7 +279,15 @@ module {
         public func readPending (
             caller  : Principal,
         ) : [(Ext.TokenIndex, Types.Transaction)] {
-            Iter.toArray(pendingTransactions.entries())
+            assert(state._Admins._isAdmin(caller));
+            Iter.toArray(pendingTransactions.entries());
+        };
+
+        public func paymentsRaw (
+            caller  : Principal,
+        ) : [(Nat, Types.Transaction)] {
+            assert(state._Admins._isAdmin(caller));
+            Iter.toArray(transactions.entries());
         };
 
 
