@@ -27,6 +27,7 @@ module {
         totalVolume             : Nat64;
         lowestPriceSale         : Nat64;
         highestPriceSale        : Nat64;
+        _log                    : (caller  : Principal, method  : Text, message : Text,) -> ();
     };
 
     public type Backup = {

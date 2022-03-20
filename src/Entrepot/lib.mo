@@ -205,7 +205,8 @@ module {
         // Ensure that a token listing is not settleable. Will settle a tranaction if possible to do so. This can be called before marketplace operations because it's possible that a buyer submitted payment, but did not correctly settle the transaction. In such a case, some ICP could end up being misallocated or lost.
         // NOTE: This is all ripped from Toniq labs. My understanding of these usecases is not great. Be careful about refactoring.
         func _canSettle (
-            token : Ext.TokenIdentifier
+            caller : Principal,
+            token : Ext.TokenIdentifier,
         ) : async Result.Result<(), Ext.CommonError> {
 
             // Decode token index.
@@ -217,7 +218,7 @@ module {
             switch (pendingTransactions.get(index)) {
                 case (?tx) {
                     // Attempt to settle the pending transaction.
-                    switch (await settle(token)) {
+                    switch (await settle(caller, token)) {
                         case (#ok) {
                             // The old transaction was able to be settled.
                             return #err(#Other("Listing has been sold."));
@@ -322,23 +323,31 @@ module {
         ) : async Types.ListResponse {
             // Decode token index.
             let index = switch (Ext.TokenIdentifier.decode(request.token)) {
-                case (#err(_)) { return #err(#InvalidToken(request.token)); };
+                case (#err(_)) {
+                    state._log(caller, "list", request.token # " :: ERR :: Invalid token");
+                    return #err(#InvalidToken(request.token));
+                };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
             
             // Verify token owner.
             if (not state._Tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
+                state._log(caller, "list", request.token # " :: ERR :: Unauthorized");
                 return #err(#Other("Unauthorized"));
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
+                state._log(caller, "list", request.token # " :: ERR :: Token locked");
                 return #err(#Other("Token is locked."));
             };
 
             // Ensure there isn't a pending transaction which can be settled.
-            switch (await _canSettle(request.token)) {
-                case (#err(e)) return #err(e);
+            switch (await _canSettle(caller, request.token)) {
+                case (#err(e)) {
+                    state._log(caller, "list", request.token # " :: ERR :: Pending settlement completed");
+                    return #err(e);
+                };
                 case _ ();
             };
 
@@ -358,6 +367,8 @@ module {
                     listings.delete(index);
                 };
             };
+
+            state._log(caller, "list", request.token # " :: OK");
 
             #ok();
         };
@@ -402,8 +413,8 @@ module {
 
             // Validate subaccount bytes.
             // NOTE: This subaccount is a secret created by the buyer. Therefore, it should never be exposed to the seller until the seller's side is fulfilled. These bytes are hashed with the seller's address to create an escrow address, which is a critical component of this protocol.
-            // TODO: Is it possible that a subaccount is being created on the seller's principal, without the seller being able to control that money?
             if (bytes.size() != 32) {
+                state._log(caller, "list", token # " :: ERR :: Invalid subaccount (possible attack)");
                 return #err(#Other("Invalid subaccount."));
             };
 
@@ -423,27 +434,34 @@ module {
             // Decode token index from token identifier.
             let index : Ext.TokenIndex = switch (_unpackTokenIdentifier(token)) {
                 case (#ok(i)) i;
-                case (#err(e)) return #err(e);
+                case (#err(e)) {
+                    state._log(caller, "list", token # " :: ERR :: Invalid token");
+                    return #err(e);
+                };
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
+                state._log(caller, "list", token # " :: ERR :: Already locked");
                 return #err(#Other("Already locked."));
             };
 
             // Retrieve the token's listing.
             switch (listings.get(index)) {
-                case (null) #err(#Other("No such listing."));
+                case (null) {
+                    state._log(caller, "list", token # " :: ERR :: No such listing");
+                    #err(#Other("No such listing."));
+                };
 
                 case (?listing) {
 
                     // Double check listing price
                     if (price != listing.price) {
+                        state._log(caller, "list", token # " :: ERR :: Wrong price");
                         return #err(#Other("Incorrect listing price."));
                     };
 
                     // Ensure the payment address is unique.
-                    // TODO: Ensure the AccountIdentifier hashing is done correctly.
                     let paymentAddress : Ext.AccountIdentifier = AccountIdentifier.toText(
                         AccountIdentifier.fromPrincipal(
                             listing.seller,
@@ -451,6 +469,7 @@ module {
                         )
                     );
                     if (not _isUniquePaymentAddress(paymentAddress)) {
+                        state._log(caller, "list", token # " :: ERR :: Payment address already used");
                         return #err(#Other("Payment address is not unique"));
                     };
 
@@ -464,11 +483,12 @@ module {
 
                     // TODO: In the event that a balance of ICP is "stuck," what can we do? Doesn't the seller have control of it?
 
-                    // TODO: Can I replace the mechanism with something that uses ICP in a canister, while maintaining the same API?
-
                     // Ensure there isn't a pending transaction which can be settled.
-                    switch (await _canSettle(token)) {
-                        case (#err(e)) return #err(e);
+                    switch (await _canSettle(caller, token)) {
+                        case (#err(e)) {
+                            state._log(caller, "list", token # " :: ERR :: Pending settlement completed");
+                            return #err(e);
+                        };
                         case _ ();
                     };
 
@@ -491,6 +511,8 @@ module {
                     });
                     nextTxId += 1;  // Don't forget this 😬
 
+                    state._log(caller, "list", token # " :: OK");
+
                     #ok(paymentAddress);
                     
                 };
@@ -499,28 +521,39 @@ module {
 
         // As the final step, after transfering ICP, we can settle the transaction.
         public func settle (
+            caller  : Principal,
             token   : Ext.TokenIdentifier,
         ) : async Result.Result<(), Ext.CommonError> {
             // Decode token index from token identifier.
             let index : Ext.TokenIndex = switch (_unpackTokenIdentifier(token)) {
                 case (#ok(i)) i;
-                case (#err(e)) return #err(e);
+                case (#err(e)) {
+                    state._log(caller, "settle", token # " :: ERR :: Invalid token");
+                    return #err(e);
+                };
             };
 
             // Retrieve the pending transaction.
             let transaction = switch (pendingTransactions.get(index)) {
                 case (?t) t;
-                case _ return #err(#Other("No such pending transaction."));
+                case _ {
+                    state._log(caller, "settle", token # " :: ERR :: No such transaction");
+                    return #err(#Other("No such pending transaction."));
+                }
             };
 
             // Verify token owner.
+            // TODO: pending transactions keyed on tokens loses data...
             if (not state._Tokens._isOwner(transaction.from, index)) {
                 let v = switch (state._Tokens._getOwner(Nat32.toNat(index))) {
                     case (?t) t.owner;
                     case _ "undefined";
                 };
+                state._log(caller, "settle", token # " :: ERR :: Unauthorized");
                 return #err(#Other(transaction.from # " is not owner (" # v # ")."));
             };
+
+            state._log(caller, "settle", token # " :: INFO :: Calling NNS");
 
             // Check the transaction account on the nns ledger canister.
             let balance = await state._Nns.balance(
@@ -531,6 +564,7 @@ module {
             );
 
             if (balance.e8s < transaction.price) {
+                state._log(caller, "settle", token # " :: ERR :: Insufficient funds");
                 return #err(#Other("Insufficient funds sent."));
             };
 
@@ -571,6 +605,8 @@ module {
             // Remove the listing.
             listings.delete(index);
 
+            state._log(caller, "settle", token # " :: INFO :: Calling CAP");
+
             // Insert transaction history event.
             ignore await state._Cap.insert({
                 caller = state.cid;
@@ -591,6 +627,8 @@ module {
                     ("price", #U64(transaction.price)),
                 ];
             });
+
+            state._log(caller, "settle", token # " :: OK");
 
             #ok();
         };
