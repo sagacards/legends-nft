@@ -44,7 +44,7 @@ module {
     public type Listing = {
         // 6 extra digits
         // javascript   : 1_637_174_793_714
-        // motoko       : 1_637_174_793_714_948_574)
+        // motoko       : 1_637_174_793_714_948_574
         locked      : ?Time.Time;
         price       : Nat64;  // ICPe8
         seller      : Principal;

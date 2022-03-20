@@ -601,6 +601,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Entrepot.restore(caller, backup);
     };
 
+    public shared ({ caller }) func deleteListing (
+        index : EXT.TokenIndex,
+    ) : async () {
+        _Entrepot.deleteListing(caller, index);
+    };
+
 
     //////////
     // EXT //

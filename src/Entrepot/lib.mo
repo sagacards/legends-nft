@@ -291,6 +291,14 @@ module {
             Iter.toArray(transactions.entries());
         };
 
+        public func deleteListing (
+            caller  : Principal,
+            index   : Ext.TokenIndex,
+        ) : () {
+            assert(state._Admins._isAdmin(caller));
+            listings.delete(index);
+        };
+
 
         /////////////////
         // Public API //
