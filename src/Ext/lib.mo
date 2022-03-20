@@ -2,6 +2,7 @@ import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
+import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -52,6 +53,15 @@ module {
             ["@ext/common", "@ext/nonfungible"];
         };
 
+        // @notice Transfers the ownership of an NFT from one address to another address
+        // @dev Throws unless `msg.caller` is the current owner. Throws if `request.from` is not the current owner. Throws if a valid token index cannot be decoded from `request.token`. Throws if `request.token` is not a valid NFT. NOTE: Should have lots of notes about notify async, but I don't implement it. Throws if the NFT is listed on markets (TODO: could verify lock/pending tx/settle and delist.)
+        // @data request.from (EXT.User) The current owner of the NFT
+        // @data request.to (EXT.User) The new owner
+        // @data request.token (EXT.TokenIdentifier) The nft to transfer 
+        // @data request.amount (Nat) Number of tokens to transfer (must be 1)
+        // @data request.memo (Blob) Additional data with no specified format
+        // @data request.notify (Boolean) If true will attempt to notify recipient
+        // @data request.subaccount (?[Nat8]) Subaccount of the caller
         public func transfer(
             caller : Principal,
             request : Ext.Core.TransferRequest,
@@ -70,6 +80,7 @@ module {
             let owner = Text.map(token.owner, Prim.charToUpper);
             if (owner != from) return #err(#Unauthorized("Owner \"" # owner # "\" is not caller \"" # from # "\""));
             if (from != callerAccount) return #err(#Unauthorized("Only the owner can do that."));
+            if (not Option.isNull(state._Entrepot._getListing(index))) return #err(#Other("This token is currently listed for sale!"));
             state._Tokens.transfer(index, callerAccount, to);
 
             // Insert transaction history event.

@@ -164,6 +164,13 @@ module {
         /////////////////////
 
 
+        // Retrieve listing for a token.
+        public func _getListing (
+            index : Ext.TokenIndex,
+        ) : ?Types.Listing {
+            listings.get(index)
+        };
+        
         // Turn a principal and a subaccount into an uppercase textual account id.
         func _accountId(
             principal   : Principal,
