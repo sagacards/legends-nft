@@ -348,6 +348,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         Iter.toArray(_PublicSale.allowlist.entries());
     };
     
+    
     /////////////
     // Assets //
     ///////////
