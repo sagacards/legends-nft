@@ -282,6 +282,7 @@ module {
             caller  : Principal,
             backup  : Types.LocalStableState,
         ) : Result.Result<(), Text> {
+            assert(state._Admins._isAdmin(caller));
             _restore(backup);
             #ok();
         };
