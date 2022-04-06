@@ -22,7 +22,7 @@ import Types "types"
 
 module {
 
-    private let transactionTtl = 300_000_000_000;  // Time for a transaction to complete (5 mins.)
+    private let transactionTtl = 120_000_000_000;  // Time for a transaction to complete (2 mins.)
 
     public class Factory (state : Types.State) {
 
