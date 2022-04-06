@@ -3,13 +3,13 @@ import Blob "mo:base/Blob";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
+import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Ext "mo:ext/Ext";
-import Prim "mo:prim";
 
 import TokenTypes "../Tokens/types";
 import Types "types";
