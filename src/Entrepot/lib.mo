@@ -61,6 +61,8 @@ module {
             Ext.AccountIdentifier, Principal, Ext.SubAccount
         )> = Buffer.Buffer(0);
 
+        private var nextSubAccount : Nat = state.nextSubAccount;
+
         // Marketplace stats
         var totalVolume         : Nat64 = state.totalVolume;
         var lowestPriceSale     : Nat64 = state.lowestPriceSale;
@@ -76,6 +78,7 @@ module {
             totalVolume             : Nat64;
             lowestPriceSale         : Nat64;
             highestPriceSale        : Nat64;
+            nextSubAccount          : Nat;
         } {
             {
                 listings = Iter.toArray(listings.entries());
@@ -85,6 +88,7 @@ module {
                 totalVolume;
                 lowestPriceSale;
                 highestPriceSale;
+                nextSubAccount;
             }
         };
 
@@ -148,6 +152,7 @@ module {
             totalVolume = ?state.totalVolume;
             lowestPriceSale = ?state.lowestPriceSale;
             highestPriceSale = ?state.highestPriceSale;
+            nextSubAccount = ?state.nextSubAccount;
         });
 
         public func restore (

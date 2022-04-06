@@ -84,9 +84,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stableTransactions           : [(Nat, EntrepotTypes.Transaction)] = [];
     private stable var stablePendingTransactions    : [(EXT.TokenIndex, EntrepotTypes.Transaction)] = [];
     private stable var stableUsedPaymentAddress     : [(EXT.AccountIdentifier, Principal, EXT.SubAccount)] = [];
-    private stable var stableTotalVolume      : Nat64 = 0;
-    private stable var stableLowestPriceSale  : Nat64 = 0;
-    private stable var stableHighestPriceSale : Nat64 = 0;
+    private stable var stableTotalVolume            : Nat64 = 0;
+    private stable var stableLowestPriceSale        : Nat64 = 0;
+    private stable var stableHighestPriceSale       : Nat64 = 0;
+    private stable var stableEntrepotNextSubAccount : Nat = 0;
 
     // Public Sale
 
@@ -145,6 +146,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
             totalVolume;
             lowestPriceSale;
             highestPriceSale;
+            nextSubAccount;
         } = _Entrepot.toStable();
         stableListings              := listings;
         stableTransactions          := transactions;
@@ -153,6 +155,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableTotalVolume           := totalVolume;
         stableLowestPriceSale       := lowestPriceSale;
         stableHighestPriceSale      := highestPriceSale;
+        stableEntrepotNextSubAccount:= nextSubAccount;
 
         // Preserve Public Sale
         let {
@@ -529,6 +532,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         totalVolume         = stableTotalVolume;
         lowestPriceSale     = stableLowestPriceSale;
         highestPriceSale    = stableHighestPriceSale;
+        nextSubAccount      = stableEntrepotNextSubAccount;
         _log;
     });
 
