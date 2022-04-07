@@ -337,7 +337,6 @@ module {
             // Decode token index.
             let index = switch (Ext.TokenIdentifier.decode(request.token)) {
                 case (#err(_)) {
-                    state._log(caller, "list", request.token # " :: ERR :: Invalid token");
                     return #err(#InvalidToken(request.token));
                 };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
@@ -345,20 +344,17 @@ module {
             
             // Verify token owner.
             if (not state._Tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
-                state._log(caller, "list", request.token # " :: ERR :: Unauthorized");
                 return #err(#Other("Unauthorized"));
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
-                state._log(caller, "list", request.token # " :: ERR :: Token locked");
                 return #err(#Other("Token is locked."));
             };
 
             // Ensure there isn't a pending transaction which can be settled.
             switch (await _canSettle(caller, request.token)) {
                 case (#err(e)) {
-                    state._log(caller, "list", request.token # " :: ERR :: Pending settlement completed");
                     return #err(e);
                 };
                 case _ ();
@@ -381,7 +377,6 @@ module {
                 };
             };
 
-            state._log(caller, "list", request.token # " :: OK");
 
             #ok();
         };
