@@ -9,6 +9,7 @@ import Nat8 "mo:base/Nat8";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Time "mo:base/Time";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Canistergeek "mo:canistergeek/canistergeek";
@@ -88,6 +89,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stableLowestPriceSale        : Nat64 = 0;
     private stable var stableHighestPriceSale       : Nat64 = 0;
     private stable var stableEntrepotNextSubAccount : Nat = 0;
+    private stable var stablePendingDisbursements   : [(EXT.TokenIndex, EXT.AccountIdentifier, EXT.SubAccount, Nat64)] = [];
 
     // Public Sale
 
@@ -106,6 +108,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var _canistergeekMonitorUD: ? Canistergeek.UpgradeData = null;
     private stable var _canistergeekLoggerUD: ? Canistergeek.LoggerUpgradeData = null;
+
+    // Heartbeat
+
+    private stable var s_heartbeatIntervalSeconds : Nat = 5;
+    private stable var s_heartbeatLastBeat : Int = 0;
 
     // Upgrades
 
@@ -147,6 +154,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
             lowestPriceSale;
             highestPriceSale;
             nextSubAccount;
+            pendingDisbursements;
         } = _Entrepot.toStable();
         stableListings              := listings;
         stableTransactions          := transactions;
@@ -156,6 +164,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableLowestPriceSale       := lowestPriceSale;
         stableHighestPriceSale      := highestPriceSale;
         stableEntrepotNextSubAccount:= nextSubAccount;
+        stablePendingDisbursements  := pendingDisbursements;
 
         // Preserve Public Sale
         let {
@@ -183,14 +192,36 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
     system func postupgrade() {
-        
-        // Yeet
 
         canistergeekMonitor.postupgrade(_canistergeekMonitorUD);
         _canistergeekMonitorUD := null;
 
         canistergeekLogger.postupgrade(_canistergeekLoggerUD);
         _canistergeekLoggerUD := null;
+    };
+
+
+    ////////////////
+    // Heartbeat //
+    //////////////
+
+
+    system func heartbeat() : async () {
+        // Limit heartbeats
+        let now = Time.now();
+        if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds) return;
+        s_heartbeatLastBeat := now;
+        
+        // Run jobs
+        await _Entrepot.cronDisbursements();
+        await _Entrepot.cronSettlements();
+    };
+
+    public shared ({ caller }) func heartbeatSetInterval (
+        i : Nat
+    ) : () {
+        assert(_Admins._isAdmin(caller));
+        s_heartbeatIntervalSeconds := i;
     };
 
 
@@ -533,6 +564,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         lowestPriceSale     = stableLowestPriceSale;
         highestPriceSale    = stableHighestPriceSale;
         nextSubAccount      = stableEntrepotNextSubAccount;
+        pendingDisbursements= stablePendingDisbursements;
         _log;
     });
 
