@@ -29,6 +29,7 @@ module {
         highestPriceSale        : Nat64;
         _log                    : (caller  : Principal, method  : Text, message : Text,) -> ();
         nextSubAccount          : Nat;
+        pendingDisbursements    : [(Ext.TokenIndex, Ext.AccountIdentifier, Ext.SubAccount, Nat64)];
     };
 
     public type Backup = {
@@ -40,8 +41,8 @@ module {
         lowestPriceSale         : ? Nat64;
         highestPriceSale        : ? Nat64;
         nextSubAccount          : ? Nat;
+        pendingDisbursements    : ? [(Ext.TokenIndex, Ext.AccountIdentifier, Ext.SubAccount, Nat64)];
     };
-
 
     public type Listing = {
         // 6 extra digits
@@ -78,7 +79,7 @@ module {
     )];
 
     public type ListRequest = {
-        from_subaccount  : ?Ext.SubAccount;
+        from_subaccount  : ?Ext.SubAccount; // Deprecated
         price            : ?Nat64;  // ICPe8
         token            : Ext.TokenIdentifier;
     };
@@ -132,5 +133,7 @@ module {
 
     // Returns the address to pay out to.
     public type LockResponse = Result.Result<Ext.AccountIdentifier, Ext.CommonError>;
+
+    public type Disbursement = (Ext.TokenIndex, Ext.AccountIdentifier, Ext.SubAccount, Nat64);
 
 };
