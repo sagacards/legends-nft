@@ -653,17 +653,6 @@ module {
                 }
             };
 
-            // Verify token owner.
-            // TODO: pending transactions keyed on tokens loses data...?
-            if (not state._Tokens._isOwner(transaction.from, index)) {
-                let v = switch (state._Tokens._getOwner(Nat32.toNat(index))) {
-                    case (?t) t.owner;
-                    case _ "undefined";
-                };
-                state._log(caller, "settle", token # " :: ERR :: Unauthorized");
-                return #err(#Other(transaction.from # " is not owner (" # v # ")."));
-            };
-
             state._log(caller, "settle", token # " :: INFO :: Calling NNS");
 
             // Check the transaction account on the nns ledger canister.
