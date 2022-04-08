@@ -664,6 +664,18 @@ module {
             state._log(caller, "settle", token # " :: INFO :: Calling NNS");
 
             // Check the transaction account on the nns ledger canister.
+            let balance = do {
+                try {
+                    let aid = AccountIdentifier.fromPrincipal(state.cid, ?transaction.bytes);
+                    state._log(state.cid, "settle", "INFO :: AID: " # AccountIdentifier.toText(aid));
+                    await nns.account_balance({
+                        account = aid
+                    });
+                } catch (e) {
+                    state._log(state.cid, "settle", "ERR :: NNS Failure: " # Error.message(e));
+                    return #err(#Other("NNS Failure: ." # Error.message(e)));
+                };
+            };
             
             state._log(caller, "settle", token # " :: INFO :: Checking balance.");
 
