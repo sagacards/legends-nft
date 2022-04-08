@@ -59,31 +59,16 @@ module {
 
     public class Factory (state : Types.State) {
 
+        let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
+
         /////////////////////
         // NNS Ledger API //
         ///////////////////
-
-
-        // Jan 14: Dfinity yet to update the ledger candid interface 😡
-        // Still can't verify a transaction onchain without slow/dangerous workaround
-        let blockProxy : Types.BlockProxy = actor("ockk2-xaaaa-aaaai-aaaua-cai");
-
-        public func block (
-            blockheight : Nat64,
-        ) : async {
-            #Ok : { #Ok : Types.Block; #Err : Types.CanisterId };
-            #Err : Text;
-        } {
-            await blockProxy.block(blockheight);
-        };
         
 
-        // Check the balance of this canister on the NNS ledger
-        // @auth: admin
         public func balance(
             account : AccountIdentifier,
         ) : async Types.ICP {
-            let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
             await nns.account_balance({
                 account;
             });
@@ -105,7 +90,6 @@ module {
             assert(state._Admins._isAdmin(caller));
             switch (Hex.decode(to)) {
                 case (#ok(aid)) {
-                    let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
                     await nns.transfer({
                         fee = { e8s = 10_000; };
                         amount;
