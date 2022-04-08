@@ -79,7 +79,7 @@ module {
     )];
 
     public type ListRequest = {
-        from_subaccount  : ?Ext.SubAccount; // Deprecated
+        from_subaccount  : ?Ext.SubAccount;
         price            : ?Nat64;  // ICPe8
         token            : Ext.TokenIdentifier;
     };
