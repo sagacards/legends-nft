@@ -18,7 +18,7 @@ module {
 
     // AccountIdentifier is a 32-byte array.
     // The first 4 bytes is big-endian encoding of a CRC32 checksum of the last 28 bytes.
-    public type AccountIdentifier = Blob;
+    public type AccountIdentifier = [Nat8];
 
     // Subaccount is an arbitrary 32-byte byte array.
     // Ledger uses subaccounts to compute the source address, which enables one
@@ -110,10 +110,10 @@ module {
         // Transfers tokens from a subaccount of the caller to the destination address.
         // The source address is computed from the principal of the caller and the specified subaccount.
         // When successful, returns the index of the block containing the transaction.
-        transfer : (TransferArgs) -> async TransferResult;
+        transfer : shared (TransferArgs) -> async TransferResult;
 
         // Returns the amount of ICP on the specified account.
-        account_balance : (AccountBalanceArgs) -> async ICP;
+        account_balance : shared query AccountBalanceArgs -> async ICP;
     };
 
     // ockk2-xaaaa-aaaai-aaaua-cai

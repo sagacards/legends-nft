@@ -70,7 +70,7 @@ module {
             account : AccountIdentifier,
         ) : async Types.ICP {
             await nns.account_balance({
-                account;
+                account = Blob.toArray(account);
             });
         };
 
@@ -96,7 +96,7 @@ module {
                         memo;
                         from_subaccount = null;
                         created_at_time = null;
-                        to = Blob.fromArray(aid);
+                        to = aid;
                     })
                 };
                 // TODO This error is horribly incorrect.

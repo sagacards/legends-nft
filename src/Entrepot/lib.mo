@@ -228,7 +228,7 @@ module {
                         from_subaccount = ?Blob.fromArray(job!.2);
                         created_at_time = null;
                         to = switch (Hex.decode(job!.1)) {
-                            case(#ok(b)) Blob.fromArray(b);
+                            case(#ok(b)) b;
                             case(#err(e)) {
                                 state._log(state.cid, "cronDisbursements", "ERR :: Hex decode failure: " # e);
                                 failed := List.push(job!, completed);
