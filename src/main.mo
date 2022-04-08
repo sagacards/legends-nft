@@ -113,6 +113,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var s_heartbeatIntervalSeconds : Nat = 5;
     private stable var s_heartbeatLastBeat : Int = 0;
+    private stable var s_heartbeatOn : Bool = true;
 
     // Upgrades
 
@@ -207,6 +208,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
 
     system func heartbeat() : async () {
+        if (not s_heartbeatOn) return;
+
         // Limit heartbeats
         let now = Time.now();
         if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds) return;
@@ -219,11 +222,17 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     public shared ({ caller }) func heartbeatSetInterval (
         i : Nat
-    ) : () {
+    ) : async () {
         assert(_Admins._isAdmin(caller));
         s_heartbeatIntervalSeconds := i;
     };
 
+    public shared ({ caller }) func heartbeatSwitch (
+        on : Bool
+    ) : async () {
+        assert(_Admins._isAdmin(caller));
+        s_heartbeatOn := on;
+    };
 
     ///////////////////
     // Canistergeek //
