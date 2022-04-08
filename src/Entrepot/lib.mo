@@ -139,11 +139,9 @@ module {
             switch (backup.pendingTransactions) {
                 case (?x) {
                     for ((k, v) in x.vals()) {
-                        if (Time.now() < (v.initiated + transactionTtl)) {
                             pendingTransactions.put(k, v);
                         };
                     };
-                };
                 case _ ();
             };
             switch (backup._usedPaymentAddresses) {
