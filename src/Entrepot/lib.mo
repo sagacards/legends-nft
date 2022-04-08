@@ -36,6 +36,8 @@ module {
         ("c7e461041c0c5800a56b64bb7cefc247abc0bbbb99bd46ff71c64e92d9f5c2f9", 1), // 1% Entrepot marketplace fee
     ];
 
+    let nns : NNSTypes.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
+
     public class Factory (state : Types.State) {
 
 
@@ -217,8 +219,6 @@ module {
             let next = List.pop<Types.Disbursement>(pendingDisbursements);
             var job = next.0;
             var remaining = next.1;
-
-            let nns : NNSTypes.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
             label queue while (Option.isSome(job)) ignore do ? {
                 try {
