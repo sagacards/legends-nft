@@ -23,6 +23,7 @@ module {
         isShuffled  : Bool;
         supply      : Nat16;
         cid         : Principal;
+        _log        : (caller  : Principal, method  : Text, message : Text,) -> ();
     };
 
     public type Metadata = {

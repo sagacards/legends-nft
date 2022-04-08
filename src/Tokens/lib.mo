@@ -119,9 +119,14 @@ module {
             caller      : Ext.AccountIdentifier,
             tokenIndex  : Ext.TokenIndex,
         ) : Bool {
-            let token = switch (_getOwner(Nat32.toNat(tokenIndex))) {
+            switch (_getOwner(Nat32.toNat(tokenIndex))) {
                 case (?t) {
-                    Text.map(caller, Prim.charToUpper) == Text.map(t.owner, Prim.charToUpper);
+                    if (Text.map(caller, Prim.charToUpper) == Text.map(t.owner, Prim.charToUpper)) {
+                        true;
+                    } else {
+                        state._log(state.cid, "_isOwner", "ERR :: " # caller # " is not owner (" # t.owner # ")");
+                        false;
+                    };
                 };
                 case _ false;
             };
@@ -319,7 +324,7 @@ module {
             caller      : Ext.AccountIdentifier,
             to          : Ext.AccountIdentifier,
         ) : () {
-            assert (_isOwner(caller, tokenIndex));
+            assert(_isOwner(caller, tokenIndex));
             let i = Nat32.toNat(tokenIndex);
             let token = ledger[i];
             ledger[i] := ?{

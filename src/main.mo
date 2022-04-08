@@ -479,6 +479,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         isShuffled  = stableShuffled;
         supply      = canisterMeta.supply;
         cid;
+        _log;
     });
 
     public shared func readLedger () : async [?TokenTypes.Token] {
