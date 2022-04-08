@@ -682,7 +682,7 @@ module {
             // Schedule disbursements for the proceeds from this sale.
             var funds = balance.e8s;
             // Set aside funds for tx fees.
-            let txFees : Nat64 = 10_000 * 1 + Nat64.fromNat(fees.size());
+            let txFees : Nat64 = 10_000 * (1 + Nat64.fromNat(fees.size()));
             funds -= txFees;
             // Pay the taxman/taxwoman.
             var remaining = funds;
