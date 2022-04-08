@@ -514,7 +514,7 @@ module {
                     listings.put(index, {
                         locked      = null;
                         seller      = caller;
-                        subaccount  = null;
+                        subaccount  = request.from_subaccount;
                         price       = price;
                     });
                 };
@@ -601,7 +601,7 @@ module {
 
                     // Lock the listing
                     listings.put(index, {
-                        subaccount  = ?subaccount;
+                        subaccount  = listing.subaccount;
                         price       = listing.price;
                         seller      = listing.seller;
                         locked      = ?(Time.now() + transactionTtl);
