@@ -234,6 +234,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
         s_heartbeatOn := on;
     };
 
+    public query ({ caller }) func readDisbursements () : async [EntrepotTypes.Disbursement] {
+        _Entrepot.disbursements(caller);
+    };
+
+
     ///////////////////
     // Canistergeek //
     /////////////////
