@@ -244,7 +244,14 @@ module {
                             completed := List.push(job!, completed);
                         };
                         case(#Err(e)) {
-                            state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure.");
+                            let message = switch (e) {
+                                case (#InsufficientFunds(m)) "Insufficient funds " # Nat64.toText(m.balance.e8s);
+                                case (#BadFee(m)) "Bad fee";
+                                case (#TxCreatedInFuture(m)) "Tx in future";
+                                case (#TxDuplicate(m)) "Tx duplicate";
+                                case (#TxTooOld(m)) "Tx too old";
+                            };
+                            state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # message);
                             failed := List.push(job!, completed);
                         };
                     };
@@ -260,6 +267,8 @@ module {
 
             // Put failed mints back in the queue.
             pendingDisbursements := failed;
+            state._log(state.cid, "cronDisbursements", "OK :: Processed #" # Nat.toText(List.size<Types.Disbursement>(completed)) # " jobs (" # List.foldLeft<Types.Disbursement, Text>(completed, "", func (agg, j) { agg # " " # Nat32.toText(j.0) }) # ")");
+        };
 
         public func disbursements (
             caller : Principal
@@ -561,21 +570,21 @@ module {
             let index : Ext.TokenIndex = switch (_unpackTokenIdentifier(token)) {
                 case (#ok(i)) i;
                 case (#err(e)) {
-                    state._log(caller, "list", token # " :: ERR :: Invalid token");
+                    state._log(caller, "lock", token # " :: ERR :: Invalid token");
                     return #err(e);
                 };
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
-                state._log(caller, "list", token # " :: ERR :: Already locked");
+                state._log(caller, "lock", token # " :: ERR :: Already locked");
                 return #err(#Other("Already locked."));
             };
 
             // Retrieve the token's listing.
             switch (listings.get(index)) {
                 case (null) {
-                    state._log(caller, "list", token # " :: ERR :: No such listing");
+                    state._log(caller, "lock", token # " :: ERR :: No such listing");
                     #err(#Other("No such listing."));
                 };
 
@@ -583,7 +592,7 @@ module {
 
                     // Double check listing price
                     if (price != listing.price) {
-                        state._log(caller, "list", token # " :: ERR :: Wrong price");
+                        state._log(caller, "lock", token # " :: ERR :: Wrong price");
                         return #err(#Other("Incorrect listing price."));
                     };
 
@@ -598,12 +607,10 @@ module {
                         locked      = ?(Time.now() + transactionTtl);
                     });
 
-                    // TODO: In the event that a balance of ICP is "stuck," what can we do? Doesn't the seller have control of it?
-
                     // Ensure there isn't a pending transaction which can be settled.
                     switch (await _canSettle(caller, token)) {
                         case (#err(e)) {
-                            state._log(caller, "list", token # " :: ERR :: Pending settlement completed");
+                            state._log(caller, "lock", token # " :: ERR :: Pending settlement completed");
                             return #err(e);
                         };
                         case _ ();
@@ -624,8 +631,6 @@ module {
                         bytes       = subaccount;
                     });
                     nextTxId += 1;  // Don't forget this 😬
-
-                    state._log(caller, "list", token # " :: OK");
 
                     #ok(paymentAddress);
                     
@@ -659,12 +664,8 @@ module {
             state._log(caller, "settle", token # " :: INFO :: Calling NNS");
 
             // Check the transaction account on the nns ledger canister.
-            let balance = await state._Nns.balance(
-                NNS.accountIdentifier(
-                    state.cid,
-                    Blob.fromArray(transaction.bytes),
-                )
-            );
+            
+            state._log(caller, "settle", token # " :: INFO :: Checking balance.");
 
             // Confirm enough funds have been sent.
             if (balance.e8s < transaction.price) {
@@ -675,6 +676,8 @@ module {
                 state._log(caller, "settle", token # " :: ERR :: Insufficient funds");
                 return #err(#Other("Insufficient funds sent."));
             };
+            
+            state._log(caller, "settle", token # " :: INFO :: Add disbursements.");
 
             // Schedule disbursements for the proceeds from this sale.
             var funds = balance.e8s;
@@ -717,6 +720,8 @@ module {
                 case (true) transaction.price;
                 case (false) highestPriceSale;
             };
+
+            state._log(caller, "settle", token # " :: INFO :: Transfer the NFT");
 
             // Transfer the NFT.
             state._Tokens.transfer(
