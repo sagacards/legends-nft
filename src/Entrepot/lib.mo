@@ -311,15 +311,6 @@ module {
             listings.get(index)
         };
         
-        // Turn a principal and a subaccount into an uppercase textual account id.
-        func _accountId(
-            principal   : Principal,
-            subaccount  : ?Ext.SubAccount,
-        ) : Ext.AccountIdentifier {
-            let aid = AccountIdentifier.fromPrincipal(principal, subaccount);
-            Text.map(AccountIdentifier.toText(aid), Prim.charToUpper);
-        };
-
         // Check to see if a listing is locked.
         func _isLocked (
             index : Ext.TokenIndex,
@@ -683,8 +674,6 @@ module {
                 return #err(#Other("Insufficient funds sent."));
             };
             
-            state._log(caller, "settle", token # " :: INFO :: Add disbursements.");
-
             // Schedule disbursements for the proceeds from this sale.
             var funds = balance.e8s;
             // Set aside funds for tx fees.
@@ -727,8 +716,6 @@ module {
                 case (false) highestPriceSale;
             };
 
-            state._log(caller, "settle", token # " :: INFO :: Transfer the NFT");
-
             // Transfer the NFT.
             state._Tokens.transfer(
                 index,
@@ -738,8 +725,6 @@ module {
 
             // Remove the listing.
             listings.delete(index);
-
-            state._log(caller, "settle", token # " :: INFO :: Calling CAP");
 
             // Insert transaction history event.
             ignore await state._Cap.insert({
@@ -761,8 +746,6 @@ module {
                     ("price", #U64(transaction.price)),
                 ];
             });
-
-            state._log(caller, "settle", token # " :: OK");
 
             #ok();
         };

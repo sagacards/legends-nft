@@ -115,7 +115,6 @@ module {
                     if (Text.map(caller, Prim.charToUpper) == Text.map(t.owner, Prim.charToUpper)) {
                         true;
                     } else {
-                        state._log(state.cid, "_isOwner", "ERR :: " # caller # " is not owner (" # t.owner # ")");
                         false;
                     };
                 };

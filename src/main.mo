@@ -604,7 +604,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         request : EntrepotTypes.ListRequest,
     ) : async EntrepotTypes.ListResponse {
         _captureMetrics();
-        _log(caller, "list", request.token # " :: Start");
         await _Entrepot.list(caller, request);
     };
 
@@ -627,7 +626,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         bytes : [Nat8],
     ) : async EntrepotTypes.LockResponse {
         _captureMetrics();
-        _log(caller, "lock", token # " :: Start");
         await _Entrepot.lock(caller, token, price, buyer, bytes);
     };
 
@@ -635,7 +633,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         token : EXT.TokenIdentifier,
     ) : async Result.Result<(), EXT.CommonError> {
         _captureMetrics();
-        _log(caller, "settle", token # " :: Start");
         await _Entrepot.settle(caller, token);
     };
 
