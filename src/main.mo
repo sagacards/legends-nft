@@ -11,6 +11,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
 
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Canistergeek "mo:canistergeek/canistergeek";
 import Cap "mo:cap/Cap";
@@ -541,13 +542,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
     });
     
     public query func address () : async (Blob, Text) {
-        let a = NNS.accountIdentifier(cid, NNS.defaultSubaccount());
-        (a, Hex.encode(Blob.toArray(a)));
+        let a = AccountBlob.fromPrincipal(cid, null);
+        (a, AccountBlob.toText(a));
     };
 
     public shared ({ caller }) func balance () : async NNSTypes.ICP {
         _captureMetrics();
-        await _Nns.balance(NNS.accountIdentifier(cid, NNS.defaultSubaccount()));
+        await _Nns.balance(AccountBlob.fromPrincipal(cid, null));
     };
 
     public shared ({ caller }) func nnsTransfer (

@@ -16,7 +16,7 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
-import AccountIdentifier "mo:principal/AccountIdentifier";
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import Ext "mo:ext/Ext";
 import Hex "mo:encoding/Hex";
 
@@ -490,7 +490,7 @@ module {
             };
             
             // Verify token owner.
-            if (not state._Tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
+            if (not state._Tokens._isOwner(AccountBlob.toText(AccountBlob.fromPrincipal(caller, request.from_subaccount)), index)) {
                 return #err(#Other("Unauthorized"));
             };
 
@@ -535,7 +535,7 @@ module {
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
             switch (listings.get(index)) {
-                case (?listing) #ok((_accountId(listing.seller, listing.subaccount), ?listing));
+                case (?listing) #ok((AccountBlob.toText(AccountBlob.fromPrincipal(listing.seller, listing.subaccount))), ?listing);
                 case _ #err(#Other("No such listing."));
             };
         };
@@ -597,7 +597,7 @@ module {
                     };
 
                     let subaccount = _getNextSubAccount();
-                    let paymentAddress : Ext.AccountIdentifier = Ext.AccountIdentifier.fromPrincipal(state.cid, ?subaccount);
+                    let paymentAddress : Ext.AccountIdentifier = AccountBlob.toText(AccountBlob.fromPrincipal(state.cid, ?subaccount));
 
                     // Lock the listing
                     listings.put(index, {
@@ -623,7 +623,7 @@ module {
                         token       = token;
                         memo        = null;
                         seller      = listing.seller;
-                        from        = _accountId(listing.seller, listing.subaccount);
+                        from        = AccountBlob.toText(AccountBlob.fromPrincipal(listing.seller, listing.subaccount));
                         to          = buyer;
                         price       = listing.price;
                         initiated   = Time.now();
@@ -661,23 +661,8 @@ module {
                 }
             };
 
-            state._log(caller, "settle", token # " :: INFO :: Calling NNS");
-
             // Check the transaction account on the nns ledger canister.
-            let balance = do {
-                try {
-                    let aid = AccountIdentifier.fromPrincipal(state.cid, ?transaction.bytes);
-                    state._log(state.cid, "settle", "INFO :: AID: " # AccountIdentifier.toText(aid));
-                    await nns.account_balance({
-                        account = aid
-                    });
-                } catch (e) {
-                    state._log(state.cid, "settle", "ERR :: NNS Failure: " # Error.message(e));
-                    return #err(#Other("NNS Failure: ." # Error.message(e)));
-                };
-            };
-            
-            state._log(caller, "settle", token # " :: INFO :: Checking balance.");
+            let balance = await state._Nns.balance(AccountBlob.fromPrincipal(state.cid, ?transaction.bytes));
 
             // Confirm enough funds have been sent.
             if (balance.e8s < transaction.price) {

@@ -18,7 +18,7 @@ module {
 
     // AccountIdentifier is a 32-byte array.
     // The first 4 bytes is big-endian encoding of a CRC32 checksum of the last 28 bytes.
-    public type AccountIdentifier = [Nat8];
+    public type AccountIdentifier = Blob;
 
     // Subaccount is an arbitrary 32-byte byte array.
     // Ledger uses subaccounts to compute the source address, which enables one

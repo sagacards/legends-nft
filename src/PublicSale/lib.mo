@@ -319,41 +319,7 @@ module {
             caller  : Principal,
             memo    : Nat64,
         ) : async Result.Result<Types.TxId, Text> {
-            // allowlistAccount contains an account if the presale is active and
-            // the caller is in the allowlist.
-            let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
-                switch (Allowlist.isInAllowlist(caller, allowlist)) {
-                    // Return error if presale is active and caller is not allowed.
-                    case (null)  return #err("Not in presale allowlist!");
-                    case (? aId) ?aId;
-                };
-            } else { null };
-
-            // Permit a single lock per principal.
-            switch (_findLock(caller)) {
-                case (?lock) {
-                    if (Time.now() < (lock.lockedAt + lockTtl)) {
-                        return #ok(lock.id);
-                    };
-                };
-                case _ ();
-            };
-            switch (state._Tokens._getNextMintIndex()) {
-                case (?token) {
-                    let txId = nextTxId;
-                    nextTxId += 1;
-                    locks.put(txId, {
-                        id          = txId;
-                        buyer       = caller;
-                        buyerAccount= NNS.defaultAccount(caller);
-                        lockedAt    = Time.now();
-                        token;
-                        memo;
-                    });
-                    #ok(txId);
-                };
-                case _ #err("No tokens left to mint.");
-            };
+            #err("Deprecated");
         };
 
         // Poll for purchase completion.
@@ -363,7 +329,7 @@ module {
             memo        : Nat64,
             canister    : Principal,
         ) : async Result.Result<Ext.TokenIndex, Text> {
-            #err("");
+            #err("Deprecated");
         };
 
         public func getPrice () : Nat64 {
@@ -382,65 +348,7 @@ module {
             canister        : Principal,
             nnsTransactions : [Types.NNSTransaction],
         )  : async Result.Result<(), Text> {
-            assert(state._Admins._isAdmin(caller));
-            for (transaction in Iter.fromArray(nnsTransactions)) {
-                let account = _upper(transaction.from);
-                switch (_findAccountPurchase(account, transaction.memo, transaction.blockheight)) {
-                    case (?p) ();
-                    case _ {
-                        switch (_findRefund(account, transaction.memo, transaction.blockheight)) {
-                            case (?p) {};
-                            case _ {
-                                // Transaction not found in our canister.
-
-                                // Issue refund.
-                                switch (await state._Nns.transfer(
-                                    caller,
-                                    { e8s = transaction.amount; },
-                                    account,
-                                    transaction.memo,
-                                )) {
-                                    case (#Ok(refundheight)) {
-                                        // Record failure.
-                                        let txId = nextTxId;
-                                        nextTxId += 1;
-                                        refunds.put(txId, {
-                                            id           = txId;
-                                            buyer        = account;
-                                            transactions = {
-                                                original = {
-                                                    blockheight = transaction.blockheight;
-                                                    from        = _upper(transaction.from);
-                                                    amount      = transaction.amount;
-                                                    memo        = transaction.memo;
-                                                    timestamp   = transaction.timestamp;
-                                                };
-                                                refund = {
-                                                    blockheight = refundheight;
-                                                    from        = NNS.defaultAccount(canister);
-                                                    amount      = transaction.amount;
-                                                    memo        = transaction.memo;
-                                                    timestamp   = Time.now();
-                                                };
-                                            };
-                                        });
-                                    };
-                                    case (#Err(error)) {
-                                        switch (error) {
-                                            case (#BadFee(_)) return #err("Bad fee.");
-                                            case (#InsufficientFunds(_)) return #err("Insufficient funds.");
-                                            case (#TxCreatedInFuture(_)) return #err("Tx from future.");
-                                            case (#TxDuplicate(_)) return #err("Duplicate tx.");
-                                            case (#TxTooOld(_)) return #err("Tx too old.");
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-            return #ok();
+            #err("Deprecated");
         };
 
 

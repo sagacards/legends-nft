@@ -19,44 +19,6 @@ import Types "types";
 
 module {
 
-
-    ////////////
-    // Utils //
-    //////////
-
-
-    // Until Quint's account identifier method is fixed:
-    func beBytes(n: Nat32) : [Nat8] {
-        func byte(n: Nat32) : Nat8 {
-            Nat8.fromNat(Nat32.toNat(n & 0xff))
-        };
-        [byte(n >> 24), byte(n >> 16), byte(n >> 8), byte(n)]
-    };
-    type Subaccount = Blob;
-    public type AccountIdentifier = Blob;
-
-    public func accountIdentifier(principal: Principal, subaccount: Subaccount) : AccountIdentifier {
-        let hash = SHA224.Digest();
-        hash.write([0x0A]);
-        hash.write(Blob.toArray(Text.encodeUtf8("account-id")));
-        hash.write(Blob.toArray(Principal.toBlob(principal)));
-        hash.write(Blob.toArray(subaccount));
-        let hashSum = hash.sum();
-        let crc32Bytes = beBytes(CRC32.ofArray(hashSum));
-        Blob.fromArray(Array.append(crc32Bytes, hashSum))
-    };
-
-    public func defaultSubaccount() : Subaccount {
-        Blob.fromArrayMut(Array.init(32, 0 : Nat8))
-    };
-
-    public func defaultAccount(
-        principal : Principal
-    ) : Text {
-        Text.map(Hex.encode(Blob.toArray(accountIdentifier(principal, defaultSubaccount()))), Prim.charToUpper);
-    };
-
-
     public class Factory (state : Types.State) {
 
         let nns : Types.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
@@ -67,10 +29,10 @@ module {
         
 
         public func balance(
-            account : AccountIdentifier,
+            account : Blob,
         ) : async Types.ICP {
             await nns.account_balance({
-                account = Blob.toArray(account);
+                account;
             });
         };
 
@@ -96,7 +58,7 @@ module {
                         memo;
                         from_subaccount = null;
                         created_at_time = null;
-                        to = aid;
+                        to = Blob.fromArray(aid);
                     })
                 };
                 // TODO This error is horribly incorrect.

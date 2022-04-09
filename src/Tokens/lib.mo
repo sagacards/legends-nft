@@ -15,7 +15,7 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
-import AccountIdentifier "mo:principal/AccountIdentifier";
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import Ext "mo:ext/Ext";
 import Prim "mo:prim";
 
@@ -135,7 +135,7 @@ module {
                         createdAt = Time.now();
                         owner = switch (to) {
                             case (#address(a)) a;
-                            case (#principal(p)) AccountIdentifier.toText(AccountIdentifier.fromPrincipal(p, subaccount))
+                            case (#principal(p)) AccountBlob.toText(AccountBlob.fromPrincipal(p, subaccount))
                         };
                         txId = "N/A";
                     };
