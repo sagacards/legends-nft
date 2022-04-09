@@ -213,7 +213,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
         // Limit heartbeats
         let now = Time.now();
-        if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds) return;
+        if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds * 1_000_000_000) return;
         s_heartbeatLastBeat := now;
         
         // Run jobs
