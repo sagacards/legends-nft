@@ -239,6 +239,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Entrepot.disbursements(caller);
     };
 
+    public query ({ caller }) func disbursementQueueSize () : async Nat {
+        _Entrepot.disbursementQueueSize(caller);
+    };
+
+    public query ({ caller }) func disbursementPendingCount () : async Nat {
+        _Entrepot.disbursementPendingCount(caller);
+    };
+
     public shared ({ caller }) func deleteDisbursementJob (
         token : EXT.TokenIndex,
         address: EXT.AccountIdentifier,

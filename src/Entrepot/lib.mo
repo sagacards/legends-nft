@@ -200,7 +200,8 @@ module {
 
         // Process the queue of disbursements.
         var lastDisburseCron : Int = 0;
-        var disburseInterval : Int = 10_000_000_000;
+        var disburseInterval : Int = 5_000_000_000;
+        var pendingCount : Nat = 0;
         public func cronDisbursements () : async () {
 
             // Let's try to save as many cycles on heartbeat as possible.
@@ -219,6 +220,7 @@ module {
             pendingDisbursements := remaining;
 
             label queue while (Option.isSome(job)) ignore do ? {
+                pendingCount += 1;
                 try {
                     switch (
                         await nns.transfer({
@@ -235,6 +237,7 @@ module {
                                     let (disbursement, remaining) = List.pop(pendingDisbursements);
                                     job := disbursement;
                                     pendingDisbursements := remaining;
+                                    pendingCount -= 1;
                                 continue queue;
                                 };
                         };
@@ -242,28 +245,35 @@ module {
                 ) {
                         case(#Ok(r)) {
                             completed := List.push(job!, completed);
+                            pendingCount -= 1;
                         };
                         case(#Err(e)) switch (e) {
                             case (#InsufficientFunds(m)){
                                 state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # "Insufficient funds " # Nat64.toText(job!.3) # " " # Nat64.toText(m.balance.e8s) # ". Dropping task.");
+                                pendingCount -= 1;
                             };
                             case (#TxDuplicate(m)){
                                 state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx duplicate " # Nat64.toText(job!.3) # ". Dropping task.");
+                                pendingCount -= 1;
                             };
                             case (#TxTooOld(m)){
                                 state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx too old " # Nat64.toText(job!.3) # ". Dropping task.");
+                                pendingCount -= 1;
                             };
                             case (#BadFee(m)){
                                 failed := List.push(job!, failed);
+                                pendingCount -= 1;
                             };
                             case (#TxCreatedInFuture(m)){
                                 failed := List.push(job!, failed);
+                                pendingCount -= 1;
                             };
                         };
                     };
                 } catch (e) {
                     state._log(state.cid, "cronDisbursements", "ERR :: Unexpected NNS Failure: " # Error.message(e));
                     failed := List.push(job!, failed);
+                    pendingCount -= 1;
                 };
                 
                 let (disbursement, remaining) = List.pop(pendingDisbursements);
@@ -292,6 +302,20 @@ module {
         ) : [Types.Disbursement] {
             assert(state._Admins._isAdmin(caller));
             List.toArray(pendingDisbursements);
+        };
+
+        public func disbursementQueueSize (
+            caller : Principal
+        ) : Nat {
+            assert(state._Admins._isAdmin(caller));
+            List.size(pendingDisbursements);
+        };
+
+        public func disbursementPendingCount (
+            caller : Principal
+        ) : Nat {
+            assert(state._Admins._isAdmin(caller));
+            pendingCount;
         };
 
         // Trawl for pending transactions that we can settle.
