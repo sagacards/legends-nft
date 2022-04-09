@@ -51,7 +51,11 @@ module {
         public func _restore (
             backup  : Types.LocalStableState,
         ) : () {
-            ledger      := Array.thaw(backup.tokens);
+            var i = 0;
+            for (token in backup.tokens.vals()) {
+                ledger[i] := token;
+                i += 1;
+            };
             metadata    := backup.metadata;
             isShuffled  := backup.isShuffled;
         };
