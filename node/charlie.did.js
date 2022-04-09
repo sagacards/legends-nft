@@ -1,4 +1,4 @@
-exports.idlFactory = idlFactory = ({ IDL }) => {
+exports.idlFactory = ({ IDL }) => {
   const TokenIdentifier = IDL.Text;
   const AccountIdentifier = IDL.Text;
   const User = IDL.Variant({
@@ -393,6 +393,8 @@ exports.idlFactory = idlFactory = ({ IDL }) => {
       ),
     'deleteListing' : IDL.Func([TokenIndex], [], []),
     'details' : IDL.Func([TokenIdentifier], [DetailsResponse], ['query']),
+    'disbursementPendingCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'disbursementQueueSize' : IDL.Func([], [IDL.Nat], ['query']),
     'entrepotRestore' : IDL.Func([Backup], [], []),
     'getAdmins' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'getAllowlist' : IDL.Func(
@@ -518,7 +520,7 @@ exports.idlFactory = idlFactory = ({ IDL }) => {
   });
   return LegendsNFT;
 };
-exports.init = init = ({ IDL }) => {
+exports.init = ({ IDL }) => {
   return [
     IDL.Principal,
     IDL.Opt(IDL.Text),

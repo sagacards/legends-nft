@@ -75,7 +75,7 @@ const toHexString = (byteArray) => {
 }
 
 const principalToAccountIdentifier = (p, s) => {
-    const padding = Buffer("\x0Aaccount-id");
+    const padding = Buffer.from("\x0Aaccount-id");
     const array = new Uint8Array([
         ...padding,
         ...Principal.fromText(p).toUint8Array(),

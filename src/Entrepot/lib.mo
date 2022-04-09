@@ -224,25 +224,25 @@ module {
                 try {
                     switch (
                         await nns.transfer({
-                        fee = { e8s = 10_000; };
-                        amount = { e8s = job!.3 };
-                        memo = Nat64.fromNat(Nat32.toNat(job!.0));
-                        from_subaccount = ?Blob.fromArray(job!.2);
-                        created_at_time = null;
-                        to = switch (Hex.decode(job!.1)) {
+                            fee = { e8s = 10_000; };
+                            amount = { e8s = job!.3 };
+                            memo = Nat64.fromNat(Nat32.toNat(job!.0));
+                            from_subaccount = ?Blob.fromArray(job!.2);
+                            created_at_time = null;
+                            to = switch (Hex.decode(job!.1)) {
                                 case(#ok(b)) Blob.fromArray(b);
-                            case(#err(e)) {
-                                state._log(state.cid, "cronDisbursements", "ERR :: Hex decode failure: " # e);
+                                case(#err(e)) {
+                                    state._log(state.cid, "cronDisbursements", "ERR :: Hex decode failure: " # e);
                                     failed := List.push(job!, failed);
                                     let (disbursement, remaining) = List.pop(pendingDisbursements);
                                     job := disbursement;
                                     pendingDisbursements := remaining;
                                     pendingCount -= 1;
-                                continue queue;
+                                    continue queue;
                                 };
-                        };
-                    })
-                ) {
+                            };
+                        })
+                    ) {
                         case(#Ok(r)) {
                             completed := List.push(job!, completed);
                             pendingCount -= 1;
