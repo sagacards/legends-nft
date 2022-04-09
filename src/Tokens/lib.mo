@@ -74,15 +74,6 @@ module {
             return null;
         };
 
-        // Turn a principal and a subaccount into an uppercase textual account id.
-        func _accountId(
-            principal   : Principal,
-            subaccount  : ?Ext.SubAccount,
-        ) : Ext.AccountIdentifier {
-            let aid = AccountIdentifier.fromPrincipal(principal, subaccount);
-            Text.map(AccountIdentifier.toText(aid), Prim.charToUpper);
-        };
-
         public func _getUnminted () : [Ext.TokenIndex] {
             let unminted = Buffer.Buffer<Ext.TokenIndex>(0);
             var i : Nat32 = 0;
@@ -144,7 +135,7 @@ module {
                         createdAt = Time.now();
                         owner = switch (to) {
                             case (#address(a)) a;
-                            case (#principal(p)) _accountId(p, subaccount)
+                            case (#principal(p)) AccountIdentifier.toText(AccountIdentifier.fromPrincipal(p, subaccount))
                         };
                         txId = "N/A";
                     };

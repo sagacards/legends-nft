@@ -1,6 +1,6 @@
 {
     "name": "Legends Test Canister",
-    "supply": 150,
+    "supply": 10000,
     "flavour": "For testing only.",
     "artists": "vec { \"Jorgen\" }",
     "description": "...",
