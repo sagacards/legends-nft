@@ -266,8 +266,17 @@ module {
             };
 
             // Put failed mints back in the queue.
-            pendingDisbursements := failed;
-            state._log(state.cid, "cronDisbursements", "OK :: Processed #" # Nat.toText(List.size<Types.Disbursement>(completed)) # " jobs (" # List.foldLeft<Types.Disbursement, Text>(completed, "", func (agg, j) { agg # " " # Nat32.toText(j.0) }) # ")");
+
+        public func deleteDisbursementJob (
+            caller : Principal,
+            token : Ext.TokenIndex,
+            address: Ext.AccountIdentifier,
+            amount: Nat64,
+        ) : () {
+            assert(state._Admins._isAdmin(caller));
+            pendingDisbursements := List.filter<Types.Disbursement>(pendingDisbursements, func ((t, u, _, v)) {
+                token != t or address != u or amount != v
+            });
         };
 
         public func disbursements (

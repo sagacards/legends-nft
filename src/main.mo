@@ -239,6 +239,14 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Entrepot.disbursements(caller);
     };
 
+    public shared ({ caller }) func deleteDisbursementJob (
+        token : EXT.TokenIndex,
+        address: EXT.AccountIdentifier,
+        amount: Nat64,
+    ) : async () {
+        _Entrepot.deleteDisbursementJob(caller, token, address, amount);
+    };
+
 
     ///////////////////
     // Canistergeek //
