@@ -296,13 +296,17 @@ module {
 
         // Trawl for pending transactions that we can settle.
         var lastSettleCron : Int = 0;
-        var settleInterval : Int = 60_000_000_000;
+        var settleInterval : Int = 15_000_000_000;
+        let settleLocks = HashMap.HashMap<Nat32, Bool>(0, Nat32.equal, func (a) { a; });
         public func cronSettlements () : async () {
             let now = Time.now();
             if (now - lastSettleCron < settleInterval) return;
             lastSettleCron := now;
-            for ((index, tx) in pendingTransactions.entries()) {
+            label queue for ((index, tx) in pendingTransactions.entries()) {
+                if (not Option.isNull(settleLocks.get(index))) continue queue;
+                settleLocks.put(index, true);
                 ignore await settle(state.cid, tx.token);
+                settleLocks.delete(index);
             };
         };
 
