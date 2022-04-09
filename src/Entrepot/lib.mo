@@ -214,9 +214,9 @@ module {
             var completed   : List.List<Types.Disbursement> = null;
             var failed      : List.List<Types.Disbursement> = null;
 
-            let next = List.pop<Types.Disbursement>(pendingDisbursements);
-            var job = next.0;
-            var remaining = next.1;
+            let (disbursement, remaining) = List.pop(pendingDisbursements);
+            var job = disbursement;
+            pendingDisbursements := remaining;
 
             label queue while (Option.isSome(job)) ignore do ? {
                 try {
@@ -228,44 +228,52 @@ module {
                         from_subaccount = ?Blob.fromArray(job!.2);
                         created_at_time = null;
                         to = switch (Hex.decode(job!.1)) {
-                            case(#ok(b)) b;
+                                case(#ok(b)) Blob.fromArray(b);
                             case(#err(e)) {
                                 state._log(state.cid, "cronDisbursements", "ERR :: Hex decode failure: " # e);
-                                failed := List.push(job!, completed);
-                                let next = List.pop(pendingDisbursements);
-                                job := next.0;
-                                remaining := next.1;
+                                    failed := List.push(job!, failed);
+                                    let (disbursement, remaining) = List.pop(pendingDisbursements);
+                                    job := disbursement;
+                                    pendingDisbursements := remaining;
                                 continue queue;
-                            }
+                                };
                         };
                     })
                 ) {
                         case(#Ok(r)) {
                             completed := List.push(job!, completed);
                         };
-                        case(#Err(e)) {
-                            let message = switch (e) {
-                                case (#InsufficientFunds(m)) "Insufficient funds " # Nat64.toText(m.balance.e8s);
-                                case (#BadFee(m)) "Bad fee";
-                                case (#TxCreatedInFuture(m)) "Tx in future";
-                                case (#TxDuplicate(m)) "Tx duplicate";
-                                case (#TxTooOld(m)) "Tx too old";
+                        case(#Err(e)) switch (e) {
+                            case (#InsufficientFunds(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # "Insufficient funds " # Nat64.toText(job!.3) # " " # Nat64.toText(m.balance.e8s) # ". Dropping task.");
                             };
-                            state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # message);
-                            failed := List.push(job!, completed);
+                            case (#TxDuplicate(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx duplicate " # Nat64.toText(job!.3) # ". Dropping task.");
+                            };
+                            case (#TxTooOld(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx too old " # Nat64.toText(job!.3) # ". Dropping task.");
+                            };
+                            case (#BadFee(m)){
+                                failed := List.push(job!, failed);
+                            };
+                            case (#TxCreatedInFuture(m)){
+                                failed := List.push(job!, failed);
+                            };
                         };
                     };
                 } catch (e) {
-                    state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # Error.message(e));
-                    failed := List.push(job!, completed);
+                    state._log(state.cid, "cronDisbursements", "ERR :: Unexpected NNS Failure: " # Error.message(e));
+                    failed := List.push(job!, failed);
                 };
                 
-                let next = List.pop(pendingDisbursements);
-                job := next.0;
-                remaining := next.1;
+                let (disbursement, remaining) = List.pop(pendingDisbursements);
+                job := disbursement;
+                pendingDisbursements := remaining;
             };
 
             // Put failed mints back in the queue.
+            pendingDisbursements := List.append(failed, pendingDisbursements);
+        };
 
         public func deleteDisbursementJob (
             caller : Principal,
