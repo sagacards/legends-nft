@@ -32,8 +32,8 @@ module {
 
     // Fees to be deducted from all marketplace sales
     private let fees : [(Ext.AccountIdentifier, Nat64)] = [
-        ("ea6e340b18837860b1d9f353af06d459af55c74d97ef3ac024c2a42778e3e030", 2), // 2% Royalty fee
-        ("c7e461041c0c5800a56b64bb7cefc247abc0bbbb99bd46ff71c64e92d9f5c2f9", 1), // 1% Entrepot marketplace fee
+        ("ea6e340b18837860b1d9f353af06d459af55c74d97ef3ac024c2a42778e3e030", 2000), // 2% Royalty fee
+        ("c7e461041c0c5800a56b64bb7cefc247abc0bbbb99bd46ff71c64e92d9f5c2f9", 1000), // 1% Entrepot marketplace fee
     ];
 
     let nns : NNSTypes.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
@@ -675,14 +675,11 @@ module {
             };
             
             // Schedule disbursements for the proceeds from this sale.
-            var funds = balance.e8s;
-            // Set aside funds for tx fees.
-            let txFees : Nat64 = 10_000 * (1 + Nat64.fromNat(fees.size()));
-            funds -= txFees;
+            let funds = balance.e8s - (10_000 * (1 + Nat64.fromNat(fees.size())));
             // Pay the taxman/taxwoman.
             var remaining = funds;
             for ((recipient, pct) in fees.vals()) {
-                let amount : Nat64 = funds * (pct / 100);
+                let amount : Nat64 = funds * pct / 100_000;
                 _addDisbursement(index, recipient, transaction.bytes, amount);
                 remaining -= amount;
             };
@@ -717,11 +714,7 @@ module {
             };
 
             // Transfer the NFT.
-            state._Tokens.transfer(
-                index,
-                transaction.from,
-                transaction.to
-            );
+            state._Tokens.transfer(index, transaction.from, transaction.to);
 
             // Remove the listing.
             listings.delete(index);
