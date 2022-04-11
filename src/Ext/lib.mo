@@ -3,13 +3,13 @@ import Blob "mo:base/Blob";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
+import Prim "mo:prim";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 
-import AccountIdentifier "mo:principal/AccountIdentifier";
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import Ext "mo:ext/Ext";
-import Prim "mo:prim";
 
 import TokenTypes "../Tokens/types";
 import Types "types";
@@ -74,7 +74,7 @@ module {
                 case (?t) t;
                 case _ return #err(#Other("Token owner doesn't exist."));
             };
-            let callerAccount = Text.map(AccountIdentifier.toText(AccountIdentifier.fromPrincipal(caller, request.subaccount)), Prim.charToUpper);
+            let callerAccount = Text.map(AccountBlob.toText(AccountBlob.fromPrincipal(caller, request.subaccount)), Prim.charToUpper);
             let from = Text.map(Ext.User.toAccountIdentifier(request.from), Prim.charToUpper);
             let to = Text.map(Ext.User.toAccountIdentifier(request.to), Prim.charToUpper);
             let owner = Text.map(token.owner, Prim.charToUpper);

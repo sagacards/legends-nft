@@ -7,7 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: aviate-labs/setup-dfx@v0.2.3
         with:
-          dfx-version: 0.8.4
+          dfx-version: 0.9.3
           install-moc: true
           vessel-version: 0.6.2
       - run: for i in $(find src -name '*.test.mo') ; do moc $(vessel sources) -r $i ; done

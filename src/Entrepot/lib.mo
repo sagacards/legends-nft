@@ -4,25 +4,39 @@ import Buffer "mo:base/Buffer";
 import Error "mo:base/Error";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
+import List "mo:base/List";
 import Nat "mo:base/Nat";
+import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Option "mo:base/Option";
 import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
-import AccountIdentifier "mo:principal/AccountIdentifier";
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import Ext "mo:ext/Ext";
+import Hex "mo:encoding/Hex";
 
 import NNS "../NNS";
+import NNSTypes "../NNS/types";
 import Types "types"
 
 
 module {
 
-    private let transactionTtl = 300_000_000_000;  // Time for a transaction to complete (5 mins.)
+    // Time for a transaction to complete (2 mins.)
+    private let transactionTtl = 120_000_000_000;
+
+    // Fees to be deducted from all marketplace sales
+    private let fees : [(Ext.AccountIdentifier, Nat64)] = [
+        ("ea6e340b18837860b1d9f353af06d459af55c74d97ef3ac024c2a42778e3e030", 2000), // 2% Royalty fee
+        ("c7e461041c0c5800a56b64bb7cefc247abc0bbbb99bd46ff71c64e92d9f5c2f9", 1000), // 1% Entrepot marketplace fee
+    ];
+
+    let nns : NNSTypes.NNS = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
     public class Factory (state : Types.State) {
 
@@ -46,6 +60,7 @@ module {
             Ext.TokenIndex.hash
         );
 
+        // Incrementing transaction id.
         private var nextTxId = 0;
 
         // Finalized transactions.
@@ -56,15 +71,22 @@ module {
         );
 
         // Used payment addresses.
+        // DEPRECATED
         // NOTE: Payment addresses are generated at transaction time by combining random subaccount bytes (determined in secret by the buyer,) with the seller's address. The transaction protocol relies on a unique address for each transaction, so these payment addresses can never be used again.
         private var _usedPaymentAddresses : Buffer.Buffer<(
             Ext.AccountIdentifier, Principal, Ext.SubAccount
         )> = Buffer.Buffer(0);
 
+        // Incrementing subaccount for handling marketplace payments.
+        private var nextSubAccount : Nat = state.nextSubAccount;
+
         // Marketplace stats
         var totalVolume         : Nat64 = state.totalVolume;
         var lowestPriceSale     : Nat64 = state.lowestPriceSale;
         var highestPriceSale    : Nat64 = state.highestPriceSale;
+
+        // Pending ICP disbursements from this canister.
+        var pendingDisbursements : List.List<Types.Disbursement> = null;
 
         // Pre upgrade
 
@@ -76,6 +98,8 @@ module {
             totalVolume             : Nat64;
             lowestPriceSale         : Nat64;
             highestPriceSale        : Nat64;
+            nextSubAccount          : Nat;
+            pendingDisbursements    : [Types.Disbursement];
         } {
             {
                 listings = Iter.toArray(listings.entries());
@@ -85,6 +109,8 @@ module {
                 totalVolume;
                 lowestPriceSale;
                 highestPriceSale;
+                nextSubAccount;
+                pendingDisbursements = List.toArray(pendingDisbursements);
             }
         };
 
@@ -113,11 +139,9 @@ module {
             switch (backup.pendingTransactions) {
                 case (?x) {
                     for ((k, v) in x.vals()) {
-                        if (Time.now() < (v.initiated + transactionTtl)) {
                             pendingTransactions.put(k, v);
                         };
                     };
-                };
                 case _ ();
             };
             switch (backup._usedPaymentAddresses) {
@@ -138,6 +162,14 @@ module {
                 case (?x) x;
                 case _ highestPriceSale;
             };
+            nextSubAccount := switch (backup.nextSubAccount) {
+                case (?x) x;
+                case _ nextSubAccount;
+            };
+            pendingDisbursements := switch (backup.pendingDisbursements) {
+                case (?x) List.fromArray<Types.Disbursement>(x);
+                case _ pendingDisbursements;
+            };
         };
 
         _restore({
@@ -148,6 +180,8 @@ module {
             totalVolume = ?state.totalVolume;
             lowestPriceSale = ?state.lowestPriceSale;
             highestPriceSale = ?state.highestPriceSale;
+            nextSubAccount = ?state.nextSubAccount;
+            pendingDisbursements = ?state.pendingDisbursements;
         });
 
         public func restore (
@@ -156,6 +190,144 @@ module {
         ) : () {
             assert state._Admins._isAdmin(caller);
             _restore(backup);
+        };
+
+
+        ///////////////
+        // Hearbeat //
+        /////////////
+
+
+        // Process the queue of disbursements.
+        var lastDisburseCron : Int = 0;
+        var disburseInterval : Int = 5_000_000_000;
+        var pendingCount : Nat = 0;
+        public func cronDisbursements () : async () {
+
+            // Let's try to save as many cycles on heartbeat as possible.
+            if (List.size(pendingDisbursements) == 0) return;
+
+            let now = Time.now();
+            if (now - lastDisburseCron < disburseInterval) return;
+            lastDisburseCron := now;
+
+            // Keep track of completed and failed jobs.
+            var completed   : List.List<Types.Disbursement> = null;
+            var failed      : List.List<Types.Disbursement> = null;
+
+            let (disbursement, remaining) = List.pop(pendingDisbursements);
+            var job = disbursement;
+            pendingDisbursements := remaining;
+
+            label queue while (Option.isSome(job)) ignore do ? {
+                pendingCount += 1;
+                try {
+                    switch (
+                        await nns.transfer({
+                            fee = { e8s = 10_000; };
+                            amount = { e8s = job!.3 };
+                            memo = Nat64.fromNat(Nat32.toNat(job!.0));
+                            from_subaccount = ?Blob.fromArray(job!.2);
+                            created_at_time = null;
+                            to = switch (Hex.decode(job!.1)) {
+                                case(#ok(b)) Blob.fromArray(b);
+                                case(#err(e)) {
+                                    state._log(state.cid, "cronDisbursements", "ERR :: Hex decode failure: " # e);
+                                    failed := List.push(job!, failed);
+                                    let (disbursement, remaining) = List.pop(pendingDisbursements);
+                                    job := disbursement;
+                                    pendingDisbursements := remaining;
+                                    pendingCount -= 1;
+                                    continue queue;
+                                };
+                            };
+                        })
+                    ) {
+                        case(#Ok(r)) {
+                            completed := List.push(job!, completed);
+                            pendingCount -= 1;
+                        };
+                        case(#Err(e)) switch (e) {
+                            case (#InsufficientFunds(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # "Insufficient funds " # Nat64.toText(job!.3) # " " # Nat64.toText(m.balance.e8s) # ". Dropping task.");
+                                pendingCount -= 1;
+                            };
+                            case (#TxDuplicate(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx duplicate " # Nat64.toText(job!.3) # ". Dropping task.");
+                                pendingCount -= 1;
+                            };
+                            case (#TxTooOld(m)){
+                                state._log(state.cid, "cronDisbursements", "ERR :: NNS Failure: " # " Tx too old " # Nat64.toText(job!.3) # ". Dropping task.");
+                                pendingCount -= 1;
+                            };
+                            case (#BadFee(m)){
+                                failed := List.push(job!, failed);
+                                pendingCount -= 1;
+                            };
+                            case (#TxCreatedInFuture(m)){
+                                failed := List.push(job!, failed);
+                                pendingCount -= 1;
+                            };
+                        };
+                    };
+                } catch (e) {
+                    state._log(state.cid, "cronDisbursements", "ERR :: Unexpected NNS Failure: " # Error.message(e));
+                    failed := List.push(job!, failed);
+                    pendingCount -= 1;
+                };
+                
+                let (disbursement, remaining) = List.pop(pendingDisbursements);
+                job := disbursement;
+                pendingDisbursements := remaining;
+            };
+
+            // Put failed mints back in the queue.
+            pendingDisbursements := List.append(failed, pendingDisbursements);
+        };
+
+        public func deleteDisbursementJob (
+            caller : Principal,
+            token : Ext.TokenIndex,
+            address: Ext.AccountIdentifier,
+            amount: Nat64,
+        ) : () {
+            assert(state._Admins._isAdmin(caller));
+            pendingDisbursements := List.filter<Types.Disbursement>(pendingDisbursements, func ((t, u, _, v)) {
+                token != t or address != u or amount != v
+            });
+        };
+
+        public func disbursements (
+            caller : Principal
+        ) : [Types.Disbursement] {
+            assert(state._Admins._isAdmin(caller));
+            List.toArray(pendingDisbursements);
+        };
+
+        public func disbursementQueueSize (
+            caller : Principal
+        ) : Nat {
+            assert(state._Admins._isAdmin(caller));
+            List.size(pendingDisbursements);
+        };
+
+        public func disbursementPendingCount (
+            caller : Principal
+        ) : Nat {
+            assert(state._Admins._isAdmin(caller));
+            pendingCount;
+        };
+
+        // Trawl for pending transactions that we can settle.
+        var lastSettleCron : Int = 0;
+        var settleInterval : Int = 15_000_000_000;
+        public func cronSettlements () : async () {
+            let now = Time.now();
+            if (now - lastSettleCron < settleInterval) return;
+            lastSettleCron := now;
+            label queue for ((index, tx) in pendingTransactions.entries()) {
+                ignore settle(state.cid, tx.token);
+            };
         };
 
 
@@ -171,16 +343,6 @@ module {
             listings.get(index)
         };
         
-        // Turn a principal and a subaccount into an uppercase textual account id.
-        func _accountId(
-            principal   : Principal,
-            subaccount  : ?Ext.SubAccount,
-        ) : Ext.AccountIdentifier {
-            let aid = AccountIdentifier.fromPrincipal(principal, subaccount);
-            Text.map(AccountIdentifier.toText(aid), Prim.charToUpper);
-        };
-
-
         // Check to see if a listing is locked.
         func _isLocked (
             index : Ext.TokenIndex,
@@ -271,6 +433,28 @@ module {
             };
         };
 
+        // Convert incrementing sub account to a proper Blob.
+        func _natToSubAccount(n : Nat) : Ext.SubAccount {
+            let n_byte = func(i : Nat) : Nat8 {
+                assert(i < 32);
+                let shift : Nat = 8 * (32 - 1 - i);
+                Nat8.fromIntWrap(n / 2**shift)
+            };
+            Array.tabulate<Nat8>(32, n_byte)
+        };
+
+        // Get and increment next subaccount.
+        func _getNextSubAccount() : Ext.SubAccount {
+            var _saOffset = 4294967296;
+            nextSubAccount += 1;
+            return _natToSubAccount(_saOffset + nextSubAccount);
+        };
+
+        // Queue a disbursement
+        func _addDisbursement(d : Types.Disbursement) : () {
+            pendingDisbursements := List.push(d, pendingDisbursements);
+        };
+
 
         ////////////////
         // Admin API //
@@ -332,28 +516,24 @@ module {
             // Decode token index.
             let index = switch (Ext.TokenIdentifier.decode(request.token)) {
                 case (#err(_)) {
-                    state._log(caller, "list", request.token # " :: ERR :: Invalid token");
                     return #err(#InvalidToken(request.token));
                 };
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
             
             // Verify token owner.
-            if (not state._Tokens._isOwner(_accountId(caller, request.from_subaccount), index)) {
-                state._log(caller, "list", request.token # " :: ERR :: Unauthorized");
+            if (not state._Tokens._isOwner(AccountBlob.toText(AccountBlob.fromPrincipal(caller, request.from_subaccount)), index)) {
                 return #err(#Other("Unauthorized"));
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
-                state._log(caller, "list", request.token # " :: ERR :: Token locked");
                 return #err(#Other("Token is locked."));
             };
 
             // Ensure there isn't a pending transaction which can be settled.
             switch (await _canSettle(caller, request.token)) {
                 case (#err(e)) {
-                    state._log(caller, "list", request.token # " :: ERR :: Pending settlement completed");
                     return #err(e);
                 };
                 case _ ();
@@ -376,7 +556,6 @@ module {
                 };
             };
 
-            state._log(caller, "list", request.token # " :: OK");
 
             #ok();
         };
@@ -388,7 +567,7 @@ module {
                 case (#ok(_, tokenIndex)) { tokenIndex; };
             };
             switch (listings.get(index)) {
-                case (?listing) #ok((_accountId(listing.seller, listing.subaccount), ?listing));
+                case (?listing) #ok((AccountBlob.toText(AccountBlob.fromPrincipal(listing.seller, listing.subaccount))), ?listing);
                 case _ #err(#Other("No such listing."));
             };
         };
@@ -416,48 +595,28 @@ module {
             token   : Ext.TokenIdentifier,
             price   : Nat64,
             buyer   : Ext.AccountIdentifier,
-            bytes   : [Nat8],
+            deprecated : [Nat8],
         ) : async Types.LockResponse {
-
-            // Validate subaccount bytes.
-            // NOTE: This subaccount is a secret created by the buyer. Therefore, it should never be exposed to the seller until the seller's side is fulfilled. These bytes are hashed with the seller's address to create an escrow address, which is a critical component of this protocol.
-            if (bytes.size() != 32) {
-                state._log(caller, "list", token # " :: ERR :: Invalid subaccount (possible attack)");
-                return #err(#Other("Invalid subaccount."));
-            };
-
-            // Disallow the zero subaccount.
-            // NOTE: A vulnerability was discovered where using the zero subaccount here would allow a bad actor to buy an NFT using the seller's own money.
-            var i : Nat = 0;
-            var failed : Bool = true;
-            while(i < 29) {
-                if (failed) {
-                    if (bytes[i] > 0) { 
-                    failed := false;
-                    };
-                };
-                i += 1;
-            };
 
             // Decode token index from token identifier.
             let index : Ext.TokenIndex = switch (_unpackTokenIdentifier(token)) {
                 case (#ok(i)) i;
                 case (#err(e)) {
-                    state._log(caller, "list", token # " :: ERR :: Invalid token");
+                    state._log(caller, "lock", token # " :: ERR :: Invalid token");
                     return #err(e);
                 };
             };
 
             // Ensure token is not already locked.
             if (_isLocked(index)) {
-                state._log(caller, "list", token # " :: ERR :: Already locked");
+                state._log(caller, "lock", token # " :: ERR :: Already locked");
                 return #err(#Other("Already locked."));
             };
 
             // Retrieve the token's listing.
             switch (listings.get(index)) {
                 case (null) {
-                    state._log(caller, "list", token # " :: ERR :: No such listing");
+                    state._log(caller, "lock", token # " :: ERR :: No such listing");
                     #err(#Other("No such listing."));
                 };
 
@@ -465,43 +624,29 @@ module {
 
                     // Double check listing price
                     if (price != listing.price) {
-                        state._log(caller, "list", token # " :: ERR :: Wrong price");
+                        state._log(caller, "lock", token # " :: ERR :: Wrong price");
                         return #err(#Other("Incorrect listing price."));
                     };
 
-                    // Ensure the payment address is unique.
-                    let paymentAddress : Ext.AccountIdentifier = AccountIdentifier.toText(
-                        AccountIdentifier.fromPrincipal(
-                            listing.seller,
-                            ?bytes,
-                        )
-                    );
-                    if (not _isUniquePaymentAddress(paymentAddress)) {
-                        state._log(caller, "list", token # " :: ERR :: Payment address already used");
-                        return #err(#Other("Payment address is not unique"));
-                    };
+                    let subaccount = _getNextSubAccount();
+                    let paymentAddress : Ext.AccountIdentifier = AccountBlob.toText(AccountBlob.fromPrincipal(state.cid, ?subaccount));
 
                     // Lock the listing
                     listings.put(index, {
+                        subaccount  = listing.subaccount;
                         price       = listing.price;
                         seller      = listing.seller;
-                        subaccount  = listing.subaccount;
                         locked      = ?(Time.now() + transactionTtl);
                     });
-
-                    // TODO: In the event that a balance of ICP is "stuck," what can we do? Doesn't the seller have control of it?
 
                     // Ensure there isn't a pending transaction which can be settled.
                     switch (await _canSettle(caller, token)) {
                         case (#err(e)) {
-                            state._log(caller, "list", token # " :: ERR :: Pending settlement completed");
+                            state._log(caller, "lock", token # " :: ERR :: Pending settlement completed");
                             return #err(e);
                         };
                         case _ ();
                     };
-
-                    // Retire the payment address.
-                    _usedPaymentAddresses.add((paymentAddress, listing.seller, bytes));
 
                     // Create a pending transaction
                     // NOTE: Keys in this map are TOKEN INDECES. Upon settlement, a transaction is moved to the "finalized transactions" map, which used a generic transaction ID as a key. Effectively, the key type changes during a settlement. This is at best an unclear thing to do, so perhaps worthy of a refactor.
@@ -510,16 +655,14 @@ module {
                         token       = token;
                         memo        = null;
                         seller      = listing.seller;
-                        from        = _accountId(listing.seller, listing.subaccount);
+                        from        = AccountBlob.toText(AccountBlob.fromPrincipal(listing.seller, listing.subaccount));
                         to          = buyer;
                         price       = listing.price;
                         initiated   = Time.now();
                         closed      = null;
-                        bytes;
+                        bytes       = subaccount;
                     });
                     nextTxId += 1;  // Don't forget this 😬
-
-                    state._log(caller, "list", token # " :: OK");
 
                     #ok(paymentAddress);
                     
@@ -550,31 +693,30 @@ module {
                 }
             };
 
-            // Verify token owner.
-            // TODO: pending transactions keyed on tokens loses data...
-            if (not state._Tokens._isOwner(transaction.from, index)) {
-                let v = switch (state._Tokens._getOwner(Nat32.toNat(index))) {
-                    case (?t) t.owner;
-                    case _ "undefined";
-                };
-                state._log(caller, "settle", token # " :: ERR :: Unauthorized");
-                return #err(#Other(transaction.from # " is not owner (" # v # ")."));
-            };
-
-            state._log(caller, "settle", token # " :: INFO :: Calling NNS");
-
             // Check the transaction account on the nns ledger canister.
-            let balance = await state._Nns.balance(
-                NNS.accountIdentifier(
-                    transaction.seller,
-                    Blob.fromArray(transaction.bytes),
-                )
-            );
+            let balance = await state._Nns.balance(AccountBlob.fromPrincipal(state.cid, ?transaction.bytes));
 
+            // Confirm enough funds have been sent.
             if (balance.e8s < transaction.price) {
+                if (not _isLocked(index)) {
+                    // This pending transaction is past its lock, so we delete it to save compute in our cron that iterates pending transactions.
+                    pendingTransactions.delete(index);
+                };
                 state._log(caller, "settle", token # " :: ERR :: Insufficient funds");
                 return #err(#Other("Insufficient funds sent."));
             };
+            
+            // Schedule disbursements for the proceeds from this sale.
+            let funds = balance.e8s - (10_000 * (1 + Nat64.fromNat(fees.size())));
+            // Pay the taxman/taxwoman.
+            var remaining = funds;
+            for ((recipient, pct) in fees.vals()) {
+                let amount : Nat64 = funds * pct / 100_000;
+                _addDisbursement(index, recipient, transaction.bytes, amount);
+                remaining -= amount;
+            };
+            // Pay the seller
+            _addDisbursement(index, transaction.from, transaction.bytes, remaining);
 
             // Update the transaction.
             // NOTE: We use the id of the pending transaction as the key. The pending transaction map uses TOKEN INDECES for keys, but this is an intentional change.
@@ -604,16 +746,10 @@ module {
             };
 
             // Transfer the NFT.
-            state._Tokens.transfer(
-                index,
-                transaction.from,
-                transaction.to
-            );
+            state._Tokens.transfer(index, transaction.from, transaction.to);
 
             // Remove the listing.
             listings.delete(index);
-
-            state._log(caller, "settle", token # " :: INFO :: Calling CAP");
 
             // Insert transaction history event.
             ignore await state._Cap.insert({
@@ -635,8 +771,6 @@ module {
                     ("price", #U64(transaction.price)),
                 ];
             });
-
-            state._log(caller, "settle", token # " :: OK");
 
             #ok();
         };

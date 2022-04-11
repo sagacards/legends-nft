@@ -12,6 +12,7 @@ import Nat8 "mo:base/Nat8";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import Ext "mo:ext/Ext";
 import Prim "mo:prim";
 
@@ -619,11 +620,9 @@ module {
         // @path: /address
         // Get canister NNS address.
         private func httpAddress (path : ?Text) : Types.Response {
-            let a = NNS.accountIdentifier(state.cid, NNS.defaultSubaccount());
+            let a = AccountBlob.toText(AccountBlob.fromPrincipal(state.cid, null));
             {
-                body = Text.encodeUtf8(
-                    Hex.encode(Blob.toArray(a))
-                );
+                body = Text.encodeUtf8(a);
                 headers = [
                     ("Content-Type", "text/plain"),
                     ("Access-Control-Allow-Origin", "*"),

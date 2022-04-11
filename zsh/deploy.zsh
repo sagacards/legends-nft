@@ -3,8 +3,8 @@ PATH=$PATH:/bin/:/usr/bin:/usr/local/bin
 
 canister=${1:-charlie}
 network=${2:-local}
+wallet=${3}
 
-wallet="" && [[ $network == local ]] && wallet=--no-wallet
 confname=$canister && [[ $canister == "charlie" || $canister == "foxtrot" ]] && confname="test"
 
 # Confirm before deploying to mainnet

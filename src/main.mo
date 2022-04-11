@@ -9,7 +9,9 @@ import Nat8 "mo:base/Nat8";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Time "mo:base/Time";
 
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 import AccountIdentifier "mo:principal/AccountIdentifier";
 import Canistergeek "mo:canistergeek/canistergeek";
 import Cap "mo:cap/Cap";
@@ -84,9 +86,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stableTransactions           : [(Nat, EntrepotTypes.Transaction)] = [];
     private stable var stablePendingTransactions    : [(EXT.TokenIndex, EntrepotTypes.Transaction)] = [];
     private stable var stableUsedPaymentAddress     : [(EXT.AccountIdentifier, Principal, EXT.SubAccount)] = [];
-    private stable var stableTotalVolume      : Nat64 = 0;
-    private stable var stableLowestPriceSale  : Nat64 = 0;
-    private stable var stableHighestPriceSale : Nat64 = 0;
+    private stable var stableTotalVolume            : Nat64 = 0;
+    private stable var stableLowestPriceSale        : Nat64 = 0;
+    private stable var stableHighestPriceSale       : Nat64 = 0;
+    private stable var stableEntrepotNextSubAccount : Nat = 0;
+    private stable var stablePendingDisbursements   : [(EXT.TokenIndex, EXT.AccountIdentifier, EXT.SubAccount, Nat64)] = [];
 
     // Public Sale
 
@@ -105,6 +109,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var _canistergeekMonitorUD: ? Canistergeek.UpgradeData = null;
     private stable var _canistergeekLoggerUD: ? Canistergeek.LoggerUpgradeData = null;
+
+    // Heartbeat
+
+    private stable var s_heartbeatIntervalSeconds : Nat = 5;
+    private stable var s_heartbeatLastBeat : Int = 0;
+    private stable var s_heartbeatOn : Bool = true;
 
     // Upgrades
 
@@ -145,6 +155,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
             totalVolume;
             lowestPriceSale;
             highestPriceSale;
+            nextSubAccount;
+            pendingDisbursements;
         } = _Entrepot.toStable();
         stableListings              := listings;
         stableTransactions          := transactions;
@@ -153,6 +165,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableTotalVolume           := totalVolume;
         stableLowestPriceSale       := lowestPriceSale;
         stableHighestPriceSale      := highestPriceSale;
+        stableEntrepotNextSubAccount:= nextSubAccount;
+        stablePendingDisbursements  := pendingDisbursements;
 
         // Preserve Public Sale
         let {
@@ -180,14 +194,65 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
     system func postupgrade() {
-        
-        // Yeet
 
         canistergeekMonitor.postupgrade(_canistergeekMonitorUD);
         _canistergeekMonitorUD := null;
 
         canistergeekLogger.postupgrade(_canistergeekLoggerUD);
         _canistergeekLoggerUD := null;
+    };
+
+
+    ////////////////
+    // Heartbeat //
+    //////////////
+
+
+    system func heartbeat() : async () {
+        if (not s_heartbeatOn) return;
+
+        // Limit heartbeats
+        let now = Time.now();
+        if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds * 1_000_000_000) return;
+        s_heartbeatLastBeat := now;
+        
+        // Run jobs
+        await _Entrepot.cronDisbursements();
+        await _Entrepot.cronSettlements();
+    };
+
+    public shared ({ caller }) func heartbeatSetInterval (
+        i : Nat
+    ) : async () {
+        assert(_Admins._isAdmin(caller));
+        s_heartbeatIntervalSeconds := i;
+    };
+
+    public shared ({ caller }) func heartbeatSwitch (
+        on : Bool
+    ) : async () {
+        assert(_Admins._isAdmin(caller));
+        s_heartbeatOn := on;
+    };
+
+    public query ({ caller }) func readDisbursements () : async [EntrepotTypes.Disbursement] {
+        _Entrepot.disbursements(caller);
+    };
+
+    public query ({ caller }) func disbursementQueueSize () : async Nat {
+        _Entrepot.disbursementQueueSize(caller);
+    };
+
+    public query ({ caller }) func disbursementPendingCount () : async Nat {
+        _Entrepot.disbursementPendingCount(caller);
+    };
+
+    public shared ({ caller }) func deleteDisbursementJob (
+        token : EXT.TokenIndex,
+        address: EXT.AccountIdentifier,
+        amount: Nat64,
+    ) : async () {
+        _Entrepot.deleteDisbursementJob(caller, token, address, amount);
     };
 
 
@@ -436,6 +501,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         isShuffled  = stableShuffled;
         supply      = canisterMeta.supply;
         cid;
+        _log;
     });
 
     public shared func readLedger () : async [?TokenTypes.Token] {
@@ -492,13 +558,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
     });
     
     public query func address () : async (Blob, Text) {
-        let a = NNS.accountIdentifier(cid, NNS.defaultSubaccount());
-        (a, Hex.encode(Blob.toArray(a)));
+        let a = AccountBlob.fromPrincipal(cid, null);
+        (a, AccountBlob.toText(a));
     };
 
     public shared ({ caller }) func balance () : async NNSTypes.ICP {
         _captureMetrics();
-        await _Nns.balance(NNS.accountIdentifier(cid, NNS.defaultSubaccount()));
+        await _Nns.balance(AccountBlob.fromPrincipal(cid, null));
     };
 
     public shared ({ caller }) func nnsTransfer (
@@ -529,6 +595,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
         totalVolume         = stableTotalVolume;
         lowestPriceSale     = stableLowestPriceSale;
         highestPriceSale    = stableHighestPriceSale;
+        nextSubAccount      = stableEntrepotNextSubAccount;
+        pendingDisbursements= stablePendingDisbursements;
         _log;
     });
 
@@ -544,7 +612,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         request : EntrepotTypes.ListRequest,
     ) : async EntrepotTypes.ListResponse {
         _captureMetrics();
-        _log(caller, "list", request.token # " :: Start");
         await _Entrepot.list(caller, request);
     };
 
@@ -567,7 +634,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         bytes : [Nat8],
     ) : async EntrepotTypes.LockResponse {
         _captureMetrics();
-        _log(caller, "lock", token # " :: Start");
         await _Entrepot.lock(caller, token, price, buyer, bytes);
     };
 
@@ -575,7 +641,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
         token : EXT.TokenIdentifier,
     ) : async Result.Result<(), EXT.CommonError> {
         _captureMetrics();
-        _log(caller, "settle", token # " :: Start");
         await _Entrepot.settle(caller, token);
     };
 

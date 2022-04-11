@@ -1,7 +1,8 @@
 import Array "mo:base/Array";
+import Blob "mo:base/Blob";
 import HashMap "mo:base/HashMap";
 
-import AccountIdentifier "mo:principal/AccountIdentifier";
+import AccountBlob "mo:principal/blob/AccountIdentifier";
 
 import Types "types";
 
@@ -15,7 +16,7 @@ module {
         var i : Nat8 = 0;
         while (i < 10) {
             subAccount[31] := i;
-            let accountId = AccountIdentifier.fromPrincipal(caller, ?Array.freeze(subAccount));
+            let accountId = Blob.toArray(AccountBlob.fromPrincipal(caller, ?Array.freeze(subAccount)));
             switch (allowlist.get(accountId)) {
                 case (?n) {
                     if (n != 0) return ?accountId;

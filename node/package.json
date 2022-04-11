@@ -1,15 +1,17 @@
 {
   "name": "legend-nft-helpers",
-  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "process-refunds.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "did": "cp -r ../.dfx/ic/canisters/charlie/charlie.did.js ./"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-fetch": "^3.1.0"
+    "js-sha256": "^0.9.0",
+    "node-fetch": "^3.1.0",
+    "typescript": "^4.6.3"
   }
 }

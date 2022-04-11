@@ -319,41 +319,7 @@ module {
             caller  : Principal,
             memo    : Nat64,
         ) : async Result.Result<Types.TxId, Text> {
-            // allowlistAccount contains an account if the presale is active and
-            // the caller is in the allowlist.
-            let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
-                switch (Allowlist.isInAllowlist(caller, allowlist)) {
-                    // Return error if presale is active and caller is not allowed.
-                    case (null)  return #err("Not in presale allowlist!");
-                    case (? aId) ?aId;
-                };
-            } else { null };
-
-            // Permit a single lock per principal.
-            switch (_findLock(caller)) {
-                case (?lock) {
-                    if (Time.now() < (lock.lockedAt + lockTtl)) {
-                        return #ok(lock.id);
-                    };
-                };
-                case _ ();
-            };
-            switch (state._Tokens._getNextMintIndex()) {
-                case (?token) {
-                    let txId = nextTxId;
-                    nextTxId += 1;
-                    locks.put(txId, {
-                        id          = txId;
-                        buyer       = caller;
-                        buyerAccount= NNS.defaultAccount(caller);
-                        lockedAt    = Time.now();
-                        token;
-                        memo;
-                    });
-                    #ok(txId);
-                };
-                case _ #err("No tokens left to mint.");
-            };
+            #err("Deprecated");
         };
 
         // Poll for purchase completion.
@@ -363,95 +329,7 @@ module {
             memo        : Nat64,
             canister    : Principal,
         ) : async Result.Result<Ext.TokenIndex, Text> {
-            let price = _getPrice();
-            switch (await state._Nns.block(blockheight)) {
-                case (#Ok(block)) {
-                    switch (block) {
-                        case (#Err(_)) return #err("Some kind of block error");
-                        case (#Ok(b)) {
-                            if (b.transaction.memo != memo) {
-                                return #err("Memo mismatch: " # Nat64.toText(memo) # ", " # Nat64.toText(b.transaction.memo));
-                            };
-                            switch (b.transaction.transfer) {
-                                case (#Send(transfer)) {
-                                    if (
-                                        NNS.defaultAccount(canister) != _upper(transfer.to)
-                                    ) {
-                                        return #err("Incorrect transfer recipient: " # NNS.defaultAccount(canister) # ", " # _upper(transfer.to));
-                                    } else if (
-                                        NNS.defaultAccount(caller) != _upper(transfer.from)
-                                    ) {
-                                        return #err("Incorrect transfer sender: " # NNS.defaultAccount(caller) # ", " # _upper(transfer.from));
-                                    } else if (transfer.amount.e8s < price) {
-                                        return #err("Incorrect transfer amount.");
-                                    };
-                                    switch (_findLockWithMemo(caller, memo)) {
-                                        case (?lock) {
-                                            purchases.put(lock.id, {
-                                                id          = lock.id;
-                                                buyer       = lock.buyer;
-                                                buyerAccount= NNS.defaultAccount(lock.buyer);
-                                                token       = lock.token;
-                                                memo        = lock.memo;
-                                                price       = transfer.amount.e8s;
-                                                lockedAt    = lock.lockedAt;
-                                                closedAt    = Time.now();
-                                                blockheight = blockheight;
-                                            });
-                                            locks.delete(lock.id);
-                                            switch (
-                                                state._Tokens._mint(
-                                                    lock.token,
-                                                    #principal(lock.buyer),
-                                                    null,
-                                                    // TODO: GET SUBACCOUNT
-                                                    // switch (notification.from_subaccount) {
-                                                    //     case (?sa) ?Blob.toArray(sa);
-                                                    //     case _ null;
-                                                    // }
-                                                )
-                                            ) {
-                                                case (#ok(_)) {
-                                                    let allowlistAccount : ?Types.AccountIdentifier = if (presale) {
-                                                        switch (Allowlist.isInAllowlist(caller, allowlist)) {
-                                                            // Return error if presale is active and caller is not allowed.
-                                                            case (null)  return #err("Not in presale allowlist.");
-                                                            case (? aId) ?aId;
-                                                        };
-                                                    } else { null };
-                                                    // Mint was successful, so we can remove allowlist entry.
-                                                    switch (allowlistAccount) {
-                                                        case (? aId) Allowlist.consumeAllowlist(aId, allowlist);
-                                                        case (_) {} // Not presale, nothing to do there.
-                                                    };
-                                                    // Insert transaction history event.
-                                                    ignore await state._Cap.insert({
-                                                        caller;
-                                                        operation = "mint";
-                                                        details = [
-                                                            ("token", #Text(state._Tokens.tokenId(state.cid, lock.token))),
-                                                            ("to", #Text(lock.buyerAccount)),
-                                                            ("price_decimals", #U64(8)),
-                                                            ("price_currency", #Text("ICP")),
-                                                            ("price", #U64(price)),
-                                                        ];
-                                                    });
-                                                    #ok(lock.token);
-                                                };
-                                                case (#err(_)) #err("Failed to mint.");
-                                            };
-                                        };
-                                        case _ return #err("No such lock.");
-                                    }
-                                };
-                                case (#Burn(_)) return #err("Incorrect transaction type.");
-                                case (#Mint(_)) return #err("Incorrect transaction type.");
-                            };
-                        };
-                    };
-                };
-                case (#Err(e)) return #err("Block lookup error: (" # Nat64.toText(blockheight) # ") " # e);
-            };
+            #err("Deprecated");
         };
 
         public func getPrice () : Nat64 {
@@ -470,65 +348,7 @@ module {
             canister        : Principal,
             nnsTransactions : [Types.NNSTransaction],
         )  : async Result.Result<(), Text> {
-            assert(state._Admins._isAdmin(caller));
-            for (transaction in Iter.fromArray(nnsTransactions)) {
-                let account = _upper(transaction.from);
-                switch (_findAccountPurchase(account, transaction.memo, transaction.blockheight)) {
-                    case (?p) ();
-                    case _ {
-                        switch (_findRefund(account, transaction.memo, transaction.blockheight)) {
-                            case (?p) {};
-                            case _ {
-                                // Transaction not found in our canister.
-
-                                // Issue refund.
-                                switch (await state._Nns.transfer(
-                                    caller,
-                                    { e8s = transaction.amount; },
-                                    account,
-                                    transaction.memo,
-                                )) {
-                                    case (#Ok(refundheight)) {
-                                        // Record failure.
-                                        let txId = nextTxId;
-                                        nextTxId += 1;
-                                        refunds.put(txId, {
-                                            id           = txId;
-                                            buyer        = account;
-                                            transactions = {
-                                                original = {
-                                                    blockheight = transaction.blockheight;
-                                                    from        = _upper(transaction.from);
-                                                    amount      = transaction.amount;
-                                                    memo        = transaction.memo;
-                                                    timestamp   = transaction.timestamp;
-                                                };
-                                                refund = {
-                                                    blockheight = refundheight;
-                                                    from        = NNS.defaultAccount(canister);
-                                                    amount      = transaction.amount;
-                                                    memo        = transaction.memo;
-                                                    timestamp   = Time.now();
-                                                };
-                                            };
-                                        });
-                                    };
-                                    case (#Err(error)) {
-                                        switch (error) {
-                                            case (#BadFee(_)) return #err("Bad fee.");
-                                            case (#InsufficientFunds(_)) return #err("Insufficient funds.");
-                                            case (#TxCreatedInFuture(_)) return #err("Tx from future.");
-                                            case (#TxDuplicate(_)) return #err("Duplicate tx.");
-                                            case (#TxTooOld(_)) return #err("Tx too old.");
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-            return #ok();
+            #err("Deprecated");
         };
 
 

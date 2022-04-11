@@ -7,3 +7,5 @@ node_modules
 package-lock.json
 upload_log.txt
 backups
+keys.json
+node/keys.json
