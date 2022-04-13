@@ -1,7 +1,6 @@
 import Time "mo:base/Time";
 
 import AccountIdentifier "mo:principal/AccountIdentifier";
-import Cap "mo:cap/Cap";
 
 import Admins "../Admins";
 import NNS "../NNS/lib";
@@ -13,32 +12,14 @@ module {
 
     public type State = {
         _Admins     : Admins.Admins;
-        _Cap        : Cap.Cap;
-        _Nns        : NNS.Factory;
-        _Tokens     : Tokens.Factory;
-        nextTxId    : TxId;
         purchases   : [(TxId, Purchase)];
         refunds     : [(TxId, Refund)];
-        locks       : [(TxId, Lock)];
-        allowlist   : [(AccountIdentifier, Nat8)];
         cid         : Principal;
-        presale     : Bool;
-        pricePrivateE8s : Nat64;
-        pricePublicE8s : Nat64;
     };
 
     public type AccountIdentifier = AccountIdentifier.AccountIdentifier;
 
     public type TxId = Nat32;
-
-    public type Lock = {
-        id          : TxId;
-        buyer       : Principal;
-        buyerAccount: Text;
-        token       : TokenTypes.TokenIndex;
-        memo        : Nat64;
-        lockedAt    : Time.Time;
-    };
 
     public type Purchase = {
         id          : TxId;

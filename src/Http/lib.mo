@@ -548,58 +548,6 @@ module {
         };
 
         
-        // @path: /public-sale-price
-        // Get price of a Legend in the public sale.
-        private func httpPaymentsPrice (path : ?Text) : Types.Response {
-            {
-                body = Text.encodeUtf8(
-                    Nat64.toText(state._PublicSale.getPrice())
-                );
-                headers = [
-                    ("Content-Type", "text/plain"),
-                    ("Access-Control-Allow-Origin", "*"),
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
-        
-        // TODO: More types
-        // @path: /public-sale-mode
-        // Get the current public sale status.
-        private func httpPaymentsStatus (path : ?Text) : Types.Response {
-            {
-                body = Text.encodeUtf8(
-                    Bool.toText(state._PublicSale.presale)
-                );
-                headers = [
-                    ("Content-Type", "text/plain"),
-                    ("Access-Control-Allow-Origin", "*"),
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
-        
-        // @path: /public-sale-available
-        // Get number of NFTs remaining in public sale.
-        private func httpPaymentsAvailable (path : ?Text) : Types.Response {
-            {
-                body = Text.encodeUtf8(
-                    Nat.toText(state._PublicSale.available())
-                );
-                headers = [
-                    ("Content-Type", "text/plain"),
-                    ("Access-Control-Allow-Origin", "*"),
-                ];
-                status_code = 200;
-                streaming_strategy = null;
-            };
-        };
-
-        
         // @path: /supply
         // Get supply.
         private func httpSupply (path : ?Text) : Types.Response {
@@ -719,9 +667,6 @@ module {
             ("legend", httpLegend),
             ("side-by-side-preview", httpSideBySidePreview),
             ("animated-preview", httpAnimatedPreview),
-            ("public-sale-price", httpPaymentsPrice),
-            ("public-sale-mode", httpPaymentsStatus),
-            ("public-sale-available", httpPaymentsAvailable),
             ("supply", httpSupply),
             ("address", httpAddress),
         ];
