@@ -30,8 +30,6 @@ import Http "Http";
 import HttpTypes "Http/types";
 import NNS "NNS";
 import NNSTypes "NNS/types";
-import Payouts "Payouts";
-import PayoutsTypes "Payouts/types";
 import PublicSale "PublicSale";
 import PublicSaleTypes "PublicSale/types";
 import TokenTypes "Tokens/types";
@@ -94,16 +92,8 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     // Public Sale
 
-    private stable var stablePaymentsLocks      : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)] = [];
     private stable var stablePaymentsPurchases  : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)] = [];
-    private stable var stablePaymentsNextTxId   : PublicSaleTypes.TxId = 0;
     private stable var stablePaymentsRefunds    : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)] = [];
-
-    private stable var stablePricePrivateE8s : Nat64 = 200_000_000;
-    private stable var stablePricePublicE8s : Nat64 = 200_000_000;
-
-    private stable var presale = true;
-    private stable var stableAllowlist          : [(PublicSaleTypes.AccountIdentifier, Nat8)] = [];
 
     // Canister geek
 
@@ -170,22 +160,11 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
         // Preserve Public Sale
         let {
-            locks;
             purchases;
-            nextTxId;
             refunds;
-            allowlist;
-            pricePrivateE8s;
-            pricePublicE8s;
         } = _PublicSale.toStable();
-        stablePaymentsLocks     := locks;
         stablePaymentsPurchases := purchases;
         stablePaymentsRefunds   := refunds;
-        stableAllowlist         := allowlist;
-        stablePaymentsNextTxId  := nextTxId;
-        stablePricePrivateE8s   := pricePrivateE8s;
-        stablePricePublicE8s    := pricePublicE8s;
-        presale := _PublicSale.presale;
 
         // Preserve canistergeek
 
@@ -376,41 +355,6 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     public query func getAdmins () : async [Principal] {
         _Admins.getAdmins();
-    };
-
-    // Allowlist
-
-    public shared ({ caller }) func togglePresale(b : Bool) {
-        _captureMetrics();
-        assert(_Admins._isAdmin(caller));
-        _PublicSale.presale := b;
-    };
-
-    public shared ({ caller }) func isPresale () : async Bool {
-        _captureMetrics();
-        _PublicSale.presale;
-    };
-
-    public shared ({ caller }) func setAllowlist(
-        allowlist : [(Text, Nat8)],
-    ) {
-        _captureMetrics();
-        assert(_Admins._isAdmin(caller));
-        let h = HashMap.HashMap<PublicSaleTypes.AccountIdentifier, Nat8>(
-            allowlist.size(),
-            AccountIdentifier.equal,
-            AccountIdentifier.hash,
-        );
-        for ((k, v) in Iter.fromArray(allowlist)) h.put(switch (AccountIdentifier.fromText(k)) {
-            case (#ok(x)) x;
-            case _ throw Error.reject("Invalid account");
-        }, v);
-        _PublicSale.allowlist := h;
-    };
-
-    public query ({ caller }) func getAllowlist() : async [(PublicSaleTypes.AccountIdentifier, Nat8)] {
-        assert(_Admins._isAdmin(caller));
-        Iter.toArray(_PublicSale.allowlist.entries());
     };
     
     
@@ -745,105 +689,33 @@ shared ({ caller = creator }) actor class LegendsNFT(
     //////////////////
     // Public Sale //
     ////////////////
+    // DEPRECATED. What's still here is only left to maintain old canister state.
 
 
     let _PublicSale = PublicSale.Factory({
         _Admins;
-        _Cap;
-        _Nns;
-        _Tokens;
-        locks       = stablePaymentsLocks;
         purchases   = stablePaymentsPurchases;
         refunds     = stablePaymentsRefunds;
-        allowlist   = stableAllowlist;
-        nextTxId    = stablePaymentsNextTxId;
-        pricePrivateE8s = stablePricePrivateE8s;
-        pricePublicE8s = stablePricePublicE8s;
         cid;
-        presale;
     });
-    _PublicSale.presale := presale;
 
-    public query func publicSaleBackup () : async {
-        nextTxId    : PublicSaleTypes.TxId;
-        locks       : [(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
+    public query ({ caller }) func publicSaleBackup () : async {
         purchases   : [(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
         refunds     : [(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
-        allowlist   : [(PublicSaleTypes.AccountIdentifier, Nat8)];
     } {
+        assert(_Admins._isAdmin(caller));
         _PublicSale.toStable();
     };
 
     public shared ({ caller }) func publicSaleRestore (
         backup : {
-            nextTxId    : ?PublicSaleTypes.TxId;
-            locks       : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Lock)];
             purchases   : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Purchase)];
             refunds     : ?[(PublicSaleTypes.TxId, PublicSaleTypes.Refund)];
-            allowlist   : ?[(PublicSaleTypes.AccountIdentifier, Nat8)];
-            presale     : ?Bool;
-            pricePrivateE8s : ?Nat64;
-            pricePublicE8s : ?Nat64;
         }
     ) : async () {
         _captureMetrics();
         _PublicSale.restore(caller, backup);
     };
-
-    public shared ({ caller }) func publicSaleLock (
-        memo : Nat64,
-    ) : async Result.Result<PublicSaleTypes.TxId, Text> {
-        _captureMetrics();
-        await _PublicSale.lock(caller, memo);
-    };
-
-    public shared ({ caller }) func publicSaleNotify (
-        memo        : Nat64,
-        blockheight : NNSTypes.BlockHeight,
-    ) : async Result.Result<EXT.TokenIndex, Text> {
-        _captureMetrics();
-        await _PublicSale.notify(caller, blockheight, memo, cid);
-    };
-
-    public query func publicSaleGetPrice () : async Nat64 {
-        _PublicSale.getPrice();
-    };
-
-    public query func publicSaleGetAvailable () : async Nat {
-        _PublicSale.available();
-    };
-
-    public shared ({ caller }) func publicSaleProcessRefunds (
-        transactions : [PublicSaleTypes.NNSTransaction],
-    ) : async Result.Result<(), Text> {
-        _captureMetrics();
-        await _PublicSale.processRefunds(caller, cid, transactions);
-    };
-
-    public shared ({ caller }) func configurePublicSalePrice (
-        privatePriceE8s : Nat64,
-        publicPriceE8s : Nat64,
-    ) : async () {
-        _captureMetrics();
-        _PublicSale.configurePrice(caller, privatePriceE8s, publicPriceE8s);
-    };
-
-
-    //////////////
-    // Payouts //
-    ////////////
-
-
-    // let _Payouts = Payouts.Factory({
-    //     admins;
-    //     tokens;
-    //     nns;
-    //     payments;
-    // });
-
-    // public shared ({ caller }) func payout () : async PayoutTypes.Manifest {
-    //     await payouts.payout(caller, _canisterPrincipal());
-    // };
 
 
     ///////////
