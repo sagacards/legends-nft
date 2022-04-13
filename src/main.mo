@@ -73,10 +73,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
     private stable var stableAdmins : [Principal] = [creator];
 
     // Tokens
-
+    
     private stable var stableTokens : [?TokenTypes.Token] = Array.tabulate<?TokenTypes.Token>(Nat16.toNat(canisterMeta.supply), func (i) { null });
     private stable var stableLegends: [TokenTypes.Metadata] = [];
     private stable var stableShuffled = false;
+    // V2
+    private stable var stableTokensV2 : [TokenTypes.TokenMetadata] = [];
 
     // Entrepot
 
@@ -119,7 +121,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         stableAdmins := _Admins.toStable();
 
         // Preserve token ledger
-        let { tokens = x; metadata = y; isShuffled } = _Tokens.toStable();
+        let { tokens = x; metadata = y; tokensV2 = z; isShuffled } = _Tokens.toStable();
         stableTokens := x;
 
         // If supply has increased, update stable tokens array
@@ -135,6 +137,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         // Preserve token metadata
         stableLegends := y;
         stableShuffled := isShuffled;
+        stableTokensV2 := z;
 
         // Preserve entrepot
         let {
@@ -440,6 +443,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Admins;
         _Assets;
         _Cap;
+        tokensV2    = stableTokensV2;
         tokens      = stableTokens;
         metadata    = stableLegends;
         isShuffled  = stableShuffled;
@@ -467,12 +471,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Tokens.configureMetadata(caller, conf);
     };
 
-    public query ({ caller }) func tokensBackup () : async TokenTypes.LocalStableState {
+    public query ({ caller }) func tokensBackup () : async TokenTypes.State {
         _Tokens.backup(caller);
     };
 
     public shared ({ caller }) func tokensRestore (
-        backup : TokenTypes.LocalStableState,
+        backup : TokenTypes.State,
     ) : async Result.Result<(), Text> {
         _captureMetrics();
         _Tokens.restore(caller, backup);
@@ -524,6 +528,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     ///////////////
     // Entrepot //
     /////////////
+
 
     let _Entrepot = Entrepot.Factory({
         _Admins;

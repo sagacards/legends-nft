@@ -1,6 +1,8 @@
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
 import Buffer "mo:base/Buffer";
+import HashMap "mo:base/HashMap";
+import Hash "mo:base/Hash";
 import Iter "mo:base/Iter";
 import Int "mo:base/Int";
 import Int8 "mo:base/Int8";
@@ -25,36 +27,46 @@ import Types "types";
 
 module {
 
-    public class Factory (state : Types.State) {
+    public class Factory (state : Types.Params) {
 
 
         ////////////
         // State //
         //////////
 
+        // V1 State
 
         var ledger      : [var ?Types.Token]    = Array.init(Nat16.toNat(state.supply), null);
         var metadata    : [Types.Metadata]      = [];
 
         var isShuffled = state.isShuffled;
 
+        // V2 State
+
+        var tokens = HashMap.HashMap<Types.TokenIdentifier, Types.TokenMetadata>(0, Nat.equal, Hash.hash);
+        var owners = HashMap.HashMap<Principal, Types.TokenMetadata>(0, Principal.equal, Principal.hash);
+
         // Dump all local state from this module for stableness purposes.
-        public func toStable () : Types.LocalStableState {
+        public func toStable () : Types.State {
             {
                 metadata;
                 isShuffled;
                 tokens = Array.freeze(ledger);
+                tokensV2 = Iter.toArray(tokens.vals());
             }
         };
 
         // Restore local state from a backup.
         public func _restore (
-            backup  : Types.LocalStableState,
+            backup  : Types.State,
         ) : () {
             var i = 0;
             for (token in backup.tokens.vals()) {
                 ledger[i] := token;
                 i += 1;
+            };
+            for (token in backup.tokensV2.vals()) {
+                tokens.put(token.tokenIdentifier, token);
             };
             metadata    := backup.metadata;
             isShuffled  := backup.isShuffled;
@@ -270,7 +282,7 @@ module {
         // @auth: admin
         public func backup (
             caller : Principal,
-        ) : Types.LocalStableState {
+        ) : Types.State {
             assert(state._Admins._isAdmin(caller));
             toStable();
         };
@@ -279,7 +291,7 @@ module {
         // @auth: admin
         public func restore (
             caller  : Principal,
-            backup  : Types.LocalStableState,
+            backup  : Types.State,
         ) : Result.Result<(), Text> {
             assert(state._Admins._isAdmin(caller));
             _restore(backup);
