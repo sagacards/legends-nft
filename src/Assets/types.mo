@@ -60,12 +60,18 @@ module Assets {
             layers      : [FilePath];
             back        : FilePath;
             border      : FilePath;
+            mask        : FilePath;
         };
         colors  : {
             base        : Text;
             specular    : Text;
             emissive    : Text;
             background  : Text;
+        };
+        stock   : {
+            base        : Text;
+            specular    : Text;
+            emissive    : Text;
         };
         views   : {
             flat        : FilePath;

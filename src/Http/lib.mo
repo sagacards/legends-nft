@@ -165,6 +165,7 @@ module {
             index : Nat,
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(state.cid, Nat32.fromNat(index));
+            let { back; border; ink; mask; normal; } = state._Tokens.nfts(?index)[0];
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
@@ -189,7 +190,7 @@ module {
                 };
                 maps = {
                     normal = do {
-                        switch (state._Assets._findTag("normal")) {
+                        switch (state._Assets._findTags(["normal", normal])) {
                             case (?a) a.meta.filename;
                             case _ "";
                         };
@@ -214,6 +215,12 @@ module {
                             case _ "";
                         };
                     };
+                    mask = do {
+                        switch (state._Assets._findTags(["mask", mask])) {
+                            case (?a) a.meta.filename;
+                            case _ "";
+                        };
+                    };
                 };
                 colors = do {
                     var map = {
@@ -225,6 +232,14 @@ module {
                     };
                     for (color in state._Assets.getColors().vals()) {
                         if (color.name == ink) map := color;
+                    };
+                    map;
+                };
+                stock = do {
+                    var map = {
+                        base     = "#000000";
+                        specular = "#000000";
+                        emissive = "#000000";
                     };
                     map;
                 };
@@ -276,6 +291,8 @@ module {
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
                     "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
+                    "\t\t\"mask\"       : \"/assets/" # manifest.maps.mask # "\",\n" #
+                    "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"layers\"     : [\n" #
                         Array.foldLeft<AssetTypes.FilePath, Text>(
                             manifest.maps.layers,
@@ -295,6 +312,11 @@ module {
                     "\t\t\"specular\"   : \"" # manifest.colors.specular # "\",\n" #
                     "\t\t\"emissive\"   : \"" # manifest.colors.emissive # "\",\n" #
                     "\t\t\"background\" : \"" # manifest.colors.background # "\"\n" #
+                "\t},\n" #
+                "\t\"stock\": {\n" #
+                    "\t\t\"base\"       : \"" # manifest.stock.base # "\",\n" #
+                    "\t\t\"specular\"   : \"" # manifest.stock.specular # "\",\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.stock.emissive # "\",\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #

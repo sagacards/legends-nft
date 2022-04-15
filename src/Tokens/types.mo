@@ -30,6 +30,9 @@ module {
         back    : Text;
         border  : Text;
         ink     : Text;
+        stock   : Text;
+        normal  : Text;
+        mask    : Text;
     };
 
     public type TokenIndex = Nat32;
