@@ -164,8 +164,7 @@ module {
         private func renderManifest (
             index : Nat,
         ) : AssetTypes.LegendManifest {
-            let tokenId = Ext.TokenIdentifier.encode(Principal.fromText("nges7-giaaa-aaaaj-qaiya-cai"), Nat32.fromNat(index));
-            let { back; border; ink; } = state._Tokens.nfts(?index)[0];
+            let tokenId = Ext.TokenIdentifier.encode(state.cid, Nat32.fromNat(index));
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
