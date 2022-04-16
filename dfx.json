@@ -15,6 +15,86 @@
     "1-the-magician": {
       "main": "src/main.mo",
       "type": "motoko"
+    },
+    "10-wheel-of-fortune": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "11-justice": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "12-the-hanged-man": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "13-death": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "14-temperance": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "15-the-devil": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "16-the-tower": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "17-the-star": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "18-the-moon": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "19-the-sun": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "2-the-high-priestess": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "20-judgement": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "21-the-world": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "3-the-empress": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "4-the-emperor": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "5-the-hierophant": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "6-the-lovers": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "7-the-chariot": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "8-strength": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "9-the-hermit": {
+      "main": "src/main.mo",
+      "type": "motoko"
     }
   },
   "defaults": {
