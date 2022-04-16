@@ -1,0 +1,284 @@
+path,title,tags,description,mime
+
+client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
+
+art/common/normal-leaf.webp,Normal Map,normal leaf,A noise based normal map for a gold foil like texture,image/webp
+
+art/common/icon.png,Favicon,favicon,A favicon,image/png
+
+art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
+art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
+art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back saxon-bordered,An alpha map for the Bordered Saxon card back,image/webp
+art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon,An alpha map for the Worn Saxon card back,image/webp
+art/common/back-compass.webp,Compass Card Back,back compass,An alpha map for the Compass card back,image/webp
+art/common/back-cup-extra.webp,Cup Extra Card Back,back cup-extra,An alpha map for the Cup card back,image/webp
+art/common/back-cup-inverted.webp,Cup Inverted Card Back,back cup-inverted,An alpha map for the Cup card back,image/webp
+art/common/back-cup-wider.webp,Cup Wider Card Back,back cup-wider,An alpha map for the Cup card back,image/webp
+art/common/back-cups.webp,Cups Card Back,back cups,An alpha map for the Cups card back,image/webp
+art/common/back-helmet.webp,Helmet Card Back,back helmet,An alpha map for the Helmet card back,image/webp
+art/common/back-knotwork-moon.webp,Knotwork Moon Card Back,back knotwork-moon,An alpha map for the Knotwork card back,image/webp
+art/common/back-knotwork-ravens.webp,Knotwork Ravens Card Back,back knotwork-ravens,An alpha map for the Knotwork card back,image/webp
+art/common/back-oath-rings-inverted.webp,Oath Rings Inverted Card Back,back oath-rings-inverted,An alpha map for the Oath card back,image/webp
+art/common/back-oath-rings.webp,Oath Rings Card Back,back oath-rings,An alpha map for the Oath card back,image/webp
+art/common/back-odal-rune.webp,Odal Rune Card Back,back odal-rune,An alpha map for the Odal card back,image/webp
+art/common/back-raven-outline.webp,Raven Outline Card Back,back raven-outline,An alpha map for the Raven card back,image/webp
+art/common/back-raven-solid.webp,Raven Solid Card Back,back raven-solid,An alpha map for the Raven card back,image/webp
+art/common/back-swords.webp,Swords Card Back,back swords,An alpha map for the Swords card back,image/webp
+art/common/back-wyrd.webp,Wyrd Card Back,back wyrd,An alpha map for the Wyrd card back,image/webp
+art/common/back-cinematic.webp,Cinematic Card Back,back wyrd,An alpha map for the Cinematic card back,image/webp
+
+art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
+art/common/border-naked.webp,Naked Card Border,border bare,An alpha map for the Nake card border,image/webp
+art/common/border-round.webp,Round Card Border,border round,An alpha map for the Round card border,image/webp
+art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon,An alpha map for the Worn Saxon card border,image/webp
+art/common/border-saxon.webp,Saxon Card Border,border saxon,An alpha map for the Saxon card border,image/webp
+art/common/border-staggered.webp,Staggered Card Border,border staggered,An alpha map for the Staggered card border,image/webp
+art/common/border-thicc.webp,Thicc Card Border,border thicc,An alpha map for the Thicc card border,image/webp
+art/common/border-birka-inverted.webp,Birka-inverted Card Border,border birka-inverted,An alpha map for the Birka card border,image/webp
+art/common/border-birka.webp,Birka Card Border,border birka,An alpha map for the Birka card border,image/webp
+art/common/border-haus-1.webp,Haus 1 Card Border,border haus-1,An alpha map for the Haus card border,image/webp
+art/common/border-haus-2.webp,Haus 2 Card Border,border haus-2,An alpha map for the Haus card border,image/webp
+art/common/border-haus-3.webp,Haus 3 Card Border,border haus-3,An alpha map for the Haus card border,image/webp
+art/common/border-haus-4.webp,Haus 4 Card Border,border haus-4,An alpha map for the Haus card border,image/webp
+art/common/border-midgard-serpent.webp,Midgard Serpent Card Border,border midgard-serpent,An alpha map for the Midgard card border,image/webp
+art/common/border-moon.webp,Moon Card Border,border moon,An alpha map for the Moon card border,image/webp
+art/common/border-odal.webp,Odal Card Border,border odal,An alpha map for the Odal card border,image/webp
+art/common/border-solar-cross.webp,Solar Cross Card Border,border solar-cross,An alpha map for the Solar card border,image/webp
+art/common/border-sun.webp,Sun Card Border,border sun,An alpha map for the Sun card border,image/webp
+art/common/border-valknut.webp,Valknut Card Border,border valknut,An alpha map for the Valknut card border,image/webp
+art/common/border-wyrd.webp,Wyrd Card Border,border wyrd,An alpha map for the Wyrd card border,image/webp
+art/common/border-cinematic.webp,Cinematic Card Border,border wyrd,An alpha map for the Cinematic card border,image/webp
+
+art/common/mask-line.webp,Line Mask,mask line,An alpha map for a mask,image/webp
+art/common/mask-cinematic.webp,cinematic Mask,mask cinematic,An alpha map for a mask,image/webp
+art/common/mask-greek.webp,greek Mask,mask greek,An alpha map for a mask,image/webp
+art/common/mask-round.webp,round Mask,mask round,An alpha map for a mask,image/webp
+
+art/2-the-high-priestess/animated/preview-animated-fate-thicc-priestess-brilliant-priestess-line.webm,Animated Preview,preview animated fate thicc priestess-brilliant priestess line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-thin-priestess-bright-priestess-none.webm,Animated Preview,preview animated cinematic thin priestess-bright priestess none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-midgard-serpent-priestess-bright-priestess-none.webm,Animated Preview,preview animated oath-rings-inverted midgard-serpent priestess-bright priestess none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-wider-moon-priestess-priestess-none.webm,Animated Preview,preview animated cup-wider moon priestess priestess none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-swords-greek-priestess-priestess-greek.webm,Animated Preview,preview animated swords greek priestess priestess greek,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-worn-saxon-priestess-priestess-none.webm,Animated Preview,preview animated saxon worn-saxon priestess priestess none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-round-priestess-priestess-none.webm,Animated Preview,preview animated saxon round priestess priestess none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-sun-santo-black-none.webm,Animated Preview,preview animated raven-solid sun santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-moon-moon-lavender-white-none.webm,Animated Preview,preview animated knotwork-moon moon lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-thin-octarine-black-none.webm,Animated Preview,preview animated compass thin octarine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-fate-thicc-octarine-black-none.webm,Animated Preview,preview animated fate thicc octarine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-extra-line-lavender-black-none.webm,Animated Preview,preview animated cup-extra line lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-outline-bare-lavender-white-none.webm,Animated Preview,preview animated raven-outline bare lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-odal-dawn-black-none.webm,Animated Preview,preview animated compass odal dawn black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-worn-saxon-sanguine-black-none.webm,Animated Preview,preview animated oath-rings-inverted worn-saxon sanguine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-extra-solar-cross-lavender-brilliant-white-none.webm,Animated Preview,preview animated cup-extra solar-cross lavender-brilliant white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-fate-solar-cross-witching-hour-white-none.webm,Animated Preview,preview animated fate solar-cross witching-hour white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-thicc-santo-white-line.webm,Animated Preview,preview animated raven-solid thicc santo white line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-moon-greek-santo-bright-black-none.webm,Animated Preview,preview animated knotwork-moon greek santo-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-saxon-worn-octarine-black-none.webm,Animated Preview,preview animated bordered-saxon saxon-worn octarine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-swords-birka-inverted-ward-black-none.webm,Animated Preview,preview animated swords birka-inverted ward black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cups-thicc-ferrous-brilliant-black-none.webm,Animated Preview,preview animated cups thicc ferrous-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-line-santo-white-line.webm,Animated Preview,preview animated oath-rings line santo white line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-moon-energetic-brilliant-white-none.webm,Animated Preview,preview animated bordered-saxon moon energetic-brilliant white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-inverted-bare-santo-black-none.webm,Animated Preview,preview animated cup-inverted bare santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-saxon-santo-black-none.webm,Animated Preview,preview animated helmet saxon santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-inverted-saxon-lavender-bright-black-none.webm,Animated Preview,preview animated cup-inverted saxon lavender-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-saxon-worn-sanguine-white-none.webm,Animated Preview,preview animated raven-solid saxon-worn sanguine white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-moon-lavender-brilliant-black-none.webm,Animated Preview,preview animated helmet moon lavender-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-naked-octarine-brilliant-black-none.webm,Animated Preview,preview animated bordered-saxon naked octarine-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-staggered-copper-black-none.webm,Animated Preview,preview animated helmet staggered copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cups-midgard-serpent-energetic-white-none.webm,Animated Preview,preview animated cups midgard-serpent energetic white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-outline-haus-3-copper-black-none.webm,Animated Preview,preview animated raven-outline haus-3 copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-bordered-greek-lavender-bright-white-none.webm,Animated Preview,preview animated saxon-bordered greek lavender-bright white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-ravens-thin-dawn-black-none.webm,Animated Preview,preview animated knotwork-ravens thin dawn black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-outline-staggered-santo-black-none.webm,Animated Preview,preview animated raven-outline staggered santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-bare-copper-white-none.webm,Animated Preview,preview animated oath-rings-inverted bare copper white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-fate-haus-4-ferrous-black-none.webm,Animated Preview,preview animated fate haus-4 ferrous black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-solar-cross-lavender-black-none.webm,Animated Preview,preview animated bordered-saxon solar-cross lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-extra-haus-3-lavender-white-none.webm,Animated Preview,preview animated cup-extra haus-3 lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-thicc-fools-gold-black-none.webm,Animated Preview,preview animated cinematic thicc fools-gold black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-haus-2-priestess-bright-black-none.webm,Animated Preview,preview animated compass haus-2 priestess-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-round-octarine-black-none.webm,Animated Preview,preview animated oath-rings-inverted round octarine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-birka-inverted-santo-black-none.webm,Animated Preview,preview animated compass birka-inverted santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-birka-inverted-copper-black-none.webm,Animated Preview,preview animated cinematic birka-inverted copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-haus-3-witching-hour-black-none.webm,Animated Preview,preview animated compass haus-3 witching-hour black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-bare-copper-black-none.webm,Animated Preview,preview animated saxon bare copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-swords-sun-lavender-black-none.webm,Animated Preview,preview animated swords sun lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-valknut-sanguine-bright-black-none.webm,Animated Preview,preview animated helmet valknut sanguine-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-bordered-haus-2-santo-white-none.webm,Animated Preview,preview animated saxon-bordered haus-2 santo white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cups-thin-copper-black-none.webm,Animated Preview,preview animated cups thin copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-bordered-solar-cross-priestess-black-none.webm,Animated Preview,preview animated saxon-bordered solar-cross priestess black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-haus-4-octarine-brilliant-black-none.webm,Animated Preview,preview animated raven-solid haus-4 octarine-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-thin-lavender-black-none.webm,Animated Preview,preview animated cinematic thin lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-odal-rune-naked-lavender-black-none.webm,Animated Preview,preview animated odal-rune naked lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-swords-moon-ferrous-black-none.webm,Animated Preview,preview animated swords moon ferrous black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-haus-3-crystal-white-none.webm,Animated Preview,preview animated raven-solid haus-3 crystal white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cups-thicc-lavender-white-none.webm,Animated Preview,preview animated cups thicc lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-staggered-copper-black-none.webm,Animated Preview,preview animated saxon staggered copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-thin-santo-black-line.webm,Animated Preview,preview animated raven-solid thin santo black line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-greek-energetic-black-greek.webm,Animated Preview,preview animated cinematic greek energetic black greek,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-worn-saxon-greek-sanguine-black-greek.webm,Animated Preview,preview animated worn-saxon greek sanguine black greek,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-odal-rune-birka-copper-black-none.webm,Animated Preview,preview animated odal-rune birka copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-worn-saxon-midgard-serpent-energetic-brilliant-black-none.webm,Animated Preview,preview animated worn-saxon midgard-serpent energetic-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-worn-saxon-saxon-worn-sanguine-black-none.webm,Animated Preview,preview animated worn-saxon saxon-worn sanguine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-wyrd-thin-sanguine-black-none.webm,Animated Preview,preview animated wyrd thin sanguine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-worn-saxon-birka-inverted-santo-black-none.webm,Animated Preview,preview animated worn-saxon birka-inverted santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-midgard-serpent-opal-white-none.webm,Animated Preview,preview animated bordered-saxon midgard-serpent opal white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-valknut-energetic-white-none.webm,Animated Preview,preview animated cinematic valknut energetic white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-moon-round-garnet-white-none.webm,Animated Preview,preview animated knotwork-moon round garnet white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-sun-crystal-black-none.webm,Animated Preview,preview animated compass sun crystal black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-moon-saxon-lavender-brilliant-white-none.webm,Animated Preview,preview animated knotwork-moon saxon lavender-brilliant white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-odal-rune-round-energetic-white-none.webm,Animated Preview,preview animated odal-rune round energetic white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-birka-inverted-lavender-bright-black-none.webm,Animated Preview,preview animated oath-rings-inverted birka-inverted lavender-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-wider-bare-lavender-black-none.webm,Animated Preview,preview animated cup-wider bare lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-naked-sanguine-black-none.webm,Animated Preview,preview animated oath-rings naked sanguine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-worn-saxon-lavender-black-none.webm,Animated Preview,preview animated compass worn-saxon lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-bare-copper-black-none.webm,Animated Preview,preview animated saxon bare copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-wider-haus-1-ferrous-black-none.webm,Animated Preview,preview animated cup-wider haus-1 ferrous black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-round-sanguine-bright-black-none.webm,Animated Preview,preview animated saxon round sanguine-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-haus-3-lavender-black-none.webm,Animated Preview,preview animated saxon haus-3 lavender black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-wyrd-thicc-ferrous-black-none.webm,Animated Preview,preview animated wyrd thicc ferrous black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-line-copper-black-none.webm,Animated Preview,preview animated saxon line copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-haus-2-energetic-black-none.webm,Animated Preview,preview animated cinematic haus-2 energetic black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-wider-valknut-ferrous-black-none.webm,Animated Preview,preview animated cup-wider valknut ferrous black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-outline-line-fools-gold-white-line.webm,Animated Preview,preview animated raven-outline line fools-gold white line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-ravens-saxon-copper-black-none.webm,Animated Preview,preview animated knotwork-ravens saxon copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-line-energetic-white-none.webm,Animated Preview,preview animated bordered-saxon line energetic white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-wyrd-haus-1-witching-hour-black-none.webm,Animated Preview,preview animated wyrd haus-1 witching-hour black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cinematic-saxon-santo-black-none.webm,Animated Preview,preview animated cinematic saxon santo black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-fate-haus-2-sanguine-bright-white-none.webm,Animated Preview,preview animated fate haus-2 sanguine-bright white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cups-thicc-ferrous-white-line.webm,Animated Preview,preview animated cups thicc ferrous white line,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-saxon-worn-lavender-brilliant-black-none.webm,Animated Preview,preview animated oath-rings-inverted saxon-worn lavender-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-midgard-serpent-octarine-bright-black-none.webm,Animated Preview,preview animated raven-solid midgard-serpent octarine-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-midgard-serpent-cinematic-black-none.webm,Animated Preview,preview animated helmet midgard-serpent cinematic black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-worn-saxon-lavender-white-none.webm,Animated Preview,preview animated bordered-saxon worn-saxon lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-saxon-moon-witching-hour-black-none.webm,Animated Preview,preview animated saxon moon witching-hour black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-odal-lavender-brilliant-black-none.webm,Animated Preview,preview animated helmet odal lavender-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-bordered-saxon-odal-lavender-brilliant-black-none.webm,Animated Preview,preview animated bordered-saxon odal lavender-brilliant black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-compass-line-octarine-white-none.webm,Animated Preview,preview animated compass line octarine white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-line-witching-hour-white-none.webm,Animated Preview,preview animated helmet line witching-hour white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-round-energetic-white-none.webm,Animated Preview,preview animated raven-solid round energetic white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-solid-line-sanguine-white-none.webm,Animated Preview,preview animated raven-solid line sanguine white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-oath-rings-inverted-naked-lavender-white-none.webm,Animated Preview,preview animated oath-rings-inverted naked lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-swords-naked-copper-black-none.webm,Animated Preview,preview animated swords naked copper black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-raven-outline-worn-saxon-energetic-bright-black-none.webm,Animated Preview,preview animated raven-outline worn-saxon energetic-bright black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-ravens-haus-3-energetic-black-none.webm,Animated Preview,preview animated knotwork-ravens haus-3 energetic black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-helmet-odal-lavender-white-none.webm,Animated Preview,preview animated helmet odal lavender white none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-knotwork-moon-greek-octarine-black-none.webm,Animated Preview,preview animated knotwork-moon greek octarine black none,An animated preview,video/webm
+art/2-the-high-priestess/animated/preview-animated-cup-inverted-odal-santo-white-none.webm,Animated Preview,preview animated cup-inverted odal santo white none,An animated preview,video/webm
+
+art/2-the-high-priestess/static/preview-side-by-side-fate-thicc-priestess-brilliant-priestess-line.webm,Side By Side Preview,preview side-by-side fate thicc priestess-brilliant priestess line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-thin-priestess-bright-priestess-none.webm,Side By Side Preview,preview side-by-side cinematic thin priestess-bright priestess none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-midgard-serpent-priestess-bright-priestess-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted midgard-serpent priestess-bright priestess none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-wider-moon-priestess-priestess-none.webm,Side By Side Preview,preview side-by-side cup-wider moon priestess priestess none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-swords-greek-priestess-priestess-greek.webm,Side By Side Preview,preview side-by-side swords greek priestess priestess greek,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-worn-saxon-priestess-priestess-none.webm,Side By Side Preview,preview side-by-side saxon worn-saxon priestess priestess none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-round-priestess-priestess-none.webm,Side By Side Preview,preview side-by-side saxon round priestess priestess none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-sun-santo-black-none.webm,Side By Side Preview,preview side-by-side raven-solid sun santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-moon-moon-lavender-white-none.webm,Side By Side Preview,preview side-by-side knotwork-moon moon lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-thin-octarine-black-none.webm,Side By Side Preview,preview side-by-side compass thin octarine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-fate-thicc-octarine-black-none.webm,Side By Side Preview,preview side-by-side fate thicc octarine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-extra-line-lavender-black-none.webm,Side By Side Preview,preview side-by-side cup-extra line lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-outline-bare-lavender-white-none.webm,Side By Side Preview,preview side-by-side raven-outline bare lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-odal-dawn-black-none.webm,Side By Side Preview,preview side-by-side compass odal dawn black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-worn-saxon-sanguine-black-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted worn-saxon sanguine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-extra-solar-cross-lavender-brilliant-white-none.webm,Side By Side Preview,preview side-by-side cup-extra solar-cross lavender-brilliant white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-fate-solar-cross-witching-hour-white-none.webm,Side By Side Preview,preview side-by-side fate solar-cross witching-hour white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-thicc-santo-white-line.webm,Side By Side Preview,preview side-by-side raven-solid thicc santo white line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-moon-greek-santo-bright-black-none.webm,Side By Side Preview,preview side-by-side knotwork-moon greek santo-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-saxon-worn-octarine-black-none.webm,Side By Side Preview,preview side-by-side bordered-saxon saxon-worn octarine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-swords-birka-inverted-ward-black-none.webm,Side By Side Preview,preview side-by-side swords birka-inverted ward black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cups-thicc-ferrous-brilliant-black-none.webm,Side By Side Preview,preview side-by-side cups thicc ferrous-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-line-santo-white-line.webm,Side By Side Preview,preview side-by-side oath-rings line santo white line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-moon-energetic-brilliant-white-none.webm,Side By Side Preview,preview side-by-side bordered-saxon moon energetic-brilliant white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-inverted-bare-santo-black-none.webm,Side By Side Preview,preview side-by-side cup-inverted bare santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-saxon-santo-black-none.webm,Side By Side Preview,preview side-by-side helmet saxon santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-inverted-saxon-lavender-bright-black-none.webm,Side By Side Preview,preview side-by-side cup-inverted saxon lavender-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-saxon-worn-sanguine-white-none.webm,Side By Side Preview,preview side-by-side raven-solid saxon-worn sanguine white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-moon-lavender-brilliant-black-none.webm,Side By Side Preview,preview side-by-side helmet moon lavender-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-naked-octarine-brilliant-black-none.webm,Side By Side Preview,preview side-by-side bordered-saxon naked octarine-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-staggered-copper-black-none.webm,Side By Side Preview,preview side-by-side helmet staggered copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cups-midgard-serpent-energetic-white-none.webm,Side By Side Preview,preview side-by-side cups midgard-serpent energetic white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-outline-haus-3-copper-black-none.webm,Side By Side Preview,preview side-by-side raven-outline haus-3 copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-bordered-greek-lavender-bright-white-none.webm,Side By Side Preview,preview side-by-side saxon-bordered greek lavender-bright white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-ravens-thin-dawn-black-none.webm,Side By Side Preview,preview side-by-side knotwork-ravens thin dawn black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-outline-staggered-santo-black-none.webm,Side By Side Preview,preview side-by-side raven-outline staggered santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-bare-copper-white-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted bare copper white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-fate-haus-4-ferrous-black-none.webm,Side By Side Preview,preview side-by-side fate haus-4 ferrous black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-solar-cross-lavender-black-none.webm,Side By Side Preview,preview side-by-side bordered-saxon solar-cross lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-extra-haus-3-lavender-white-none.webm,Side By Side Preview,preview side-by-side cup-extra haus-3 lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-thicc-fools-gold-black-none.webm,Side By Side Preview,preview side-by-side cinematic thicc fools-gold black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-haus-2-priestess-bright-black-none.webm,Side By Side Preview,preview side-by-side compass haus-2 priestess-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-round-octarine-black-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted round octarine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-birka-inverted-santo-black-none.webm,Side By Side Preview,preview side-by-side compass birka-inverted santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-birka-inverted-copper-black-none.webm,Side By Side Preview,preview side-by-side cinematic birka-inverted copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-haus-3-witching-hour-black-none.webm,Side By Side Preview,preview side-by-side compass haus-3 witching-hour black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-bare-copper-black-none.webm,Side By Side Preview,preview side-by-side saxon bare copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-swords-sun-lavender-black-none.webm,Side By Side Preview,preview side-by-side swords sun lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-valknut-sanguine-bright-black-none.webm,Side By Side Preview,preview side-by-side helmet valknut sanguine-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-bordered-haus-2-santo-white-none.webm,Side By Side Preview,preview side-by-side saxon-bordered haus-2 santo white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cups-thin-copper-black-none.webm,Side By Side Preview,preview side-by-side cups thin copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-bordered-solar-cross-priestess-black-none.webm,Side By Side Preview,preview side-by-side saxon-bordered solar-cross priestess black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-haus-4-octarine-brilliant-black-none.webm,Side By Side Preview,preview side-by-side raven-solid haus-4 octarine-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-thin-lavender-black-none.webm,Side By Side Preview,preview side-by-side cinematic thin lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-odal-rune-naked-lavender-black-none.webm,Side By Side Preview,preview side-by-side odal-rune naked lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-swords-moon-ferrous-black-none.webm,Side By Side Preview,preview side-by-side swords moon ferrous black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-haus-3-crystal-white-none.webm,Side By Side Preview,preview side-by-side raven-solid haus-3 crystal white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cups-thicc-lavender-white-none.webm,Side By Side Preview,preview side-by-side cups thicc lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-staggered-copper-black-none.webm,Side By Side Preview,preview side-by-side saxon staggered copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-thin-santo-black-line.webm,Side By Side Preview,preview side-by-side raven-solid thin santo black line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-greek-energetic-black-greek.webm,Side By Side Preview,preview side-by-side cinematic greek energetic black greek,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-worn-saxon-greek-sanguine-black-greek.webm,Side By Side Preview,preview side-by-side worn-saxon greek sanguine black greek,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-odal-rune-birka-copper-black-none.webm,Side By Side Preview,preview side-by-side odal-rune birka copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-worn-saxon-midgard-serpent-energetic-brilliant-black-none.webm,Side By Side Preview,preview side-by-side worn-saxon midgard-serpent energetic-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-worn-saxon-saxon-worn-sanguine-black-none.webm,Side By Side Preview,preview side-by-side worn-saxon saxon-worn sanguine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-wyrd-thin-sanguine-black-none.webm,Side By Side Preview,preview side-by-side wyrd thin sanguine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-worn-saxon-birka-inverted-santo-black-none.webm,Side By Side Preview,preview side-by-side worn-saxon birka-inverted santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-midgard-serpent-opal-white-none.webm,Side By Side Preview,preview side-by-side bordered-saxon midgard-serpent opal white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-valknut-energetic-white-none.webm,Side By Side Preview,preview side-by-side cinematic valknut energetic white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-moon-round-garnet-white-none.webm,Side By Side Preview,preview side-by-side knotwork-moon round garnet white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-sun-crystal-black-none.webm,Side By Side Preview,preview side-by-side compass sun crystal black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-moon-saxon-lavender-brilliant-white-none.webm,Side By Side Preview,preview side-by-side knotwork-moon saxon lavender-brilliant white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-odal-rune-round-energetic-white-none.webm,Side By Side Preview,preview side-by-side odal-rune round energetic white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-birka-inverted-lavender-bright-black-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted birka-inverted lavender-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-wider-bare-lavender-black-none.webm,Side By Side Preview,preview side-by-side cup-wider bare lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-naked-sanguine-black-none.webm,Side By Side Preview,preview side-by-side oath-rings naked sanguine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-worn-saxon-lavender-black-none.webm,Side By Side Preview,preview side-by-side compass worn-saxon lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-bare-copper-black-none.webm,Side By Side Preview,preview side-by-side saxon bare copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-wider-haus-1-ferrous-black-none.webm,Side By Side Preview,preview side-by-side cup-wider haus-1 ferrous black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-round-sanguine-bright-black-none.webm,Side By Side Preview,preview side-by-side saxon round sanguine-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-haus-3-lavender-black-none.webm,Side By Side Preview,preview side-by-side saxon haus-3 lavender black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-wyrd-thicc-ferrous-black-none.webm,Side By Side Preview,preview side-by-side wyrd thicc ferrous black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-line-copper-black-none.webm,Side By Side Preview,preview side-by-side saxon line copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-haus-2-energetic-black-none.webm,Side By Side Preview,preview side-by-side cinematic haus-2 energetic black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-wider-valknut-ferrous-black-none.webm,Side By Side Preview,preview side-by-side cup-wider valknut ferrous black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-outline-line-fools-gold-white-line.webm,Side By Side Preview,preview side-by-side raven-outline line fools-gold white line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-ravens-saxon-copper-black-none.webm,Side By Side Preview,preview side-by-side knotwork-ravens saxon copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-line-energetic-white-none.webm,Side By Side Preview,preview side-by-side bordered-saxon line energetic white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-wyrd-haus-1-witching-hour-black-none.webm,Side By Side Preview,preview side-by-side wyrd haus-1 witching-hour black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cinematic-saxon-santo-black-none.webm,Side By Side Preview,preview side-by-side cinematic saxon santo black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-fate-haus-2-sanguine-bright-white-none.webm,Side By Side Preview,preview side-by-side fate haus-2 sanguine-bright white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cups-thicc-ferrous-white-line.webm,Side By Side Preview,preview side-by-side cups thicc ferrous white line,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-saxon-worn-lavender-brilliant-black-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted saxon-worn lavender-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-midgard-serpent-octarine-bright-black-none.webm,Side By Side Preview,preview side-by-side raven-solid midgard-serpent octarine-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-midgard-serpent-cinematic-black-none.webm,Side By Side Preview,preview side-by-side helmet midgard-serpent cinematic black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-worn-saxon-lavender-white-none.webm,Side By Side Preview,preview side-by-side bordered-saxon worn-saxon lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-saxon-moon-witching-hour-black-none.webm,Side By Side Preview,preview side-by-side saxon moon witching-hour black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-odal-lavender-brilliant-black-none.webm,Side By Side Preview,preview side-by-side helmet odal lavender-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-bordered-saxon-odal-lavender-brilliant-black-none.webm,Side By Side Preview,preview side-by-side bordered-saxon odal lavender-brilliant black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-compass-line-octarine-white-none.webm,Side By Side Preview,preview side-by-side compass line octarine white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-line-witching-hour-white-none.webm,Side By Side Preview,preview side-by-side helmet line witching-hour white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-round-energetic-white-none.webm,Side By Side Preview,preview side-by-side raven-solid round energetic white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-solid-line-sanguine-white-none.webm,Side By Side Preview,preview side-by-side raven-solid line sanguine white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-oath-rings-inverted-naked-lavender-white-none.webm,Side By Side Preview,preview side-by-side oath-rings-inverted naked lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-swords-naked-copper-black-none.webm,Side By Side Preview,preview side-by-side swords naked copper black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-raven-outline-worn-saxon-energetic-bright-black-none.webm,Side By Side Preview,preview side-by-side raven-outline worn-saxon energetic-bright black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-ravens-haus-3-energetic-black-none.webm,Side By Side Preview,preview side-by-side knotwork-ravens haus-3 energetic black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-helmet-odal-lavender-white-none.webm,Side By Side Preview,preview side-by-side helmet odal lavender white none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-knotwork-moon-greek-octarine-black-none.webm,Side By Side Preview,preview side-by-side knotwork-moon greek octarine black none,A side-by-side preview,image/webp
+art/2-the-high-priestess/static/preview-side-by-side-cup-inverted-odal-santo-white-none.webm,Side By Side Preview,preview side-by-side cup-inverted odal santo white none,A side-by-side preview,image/webp
+
+art/2-the-high-priestess/priestess-layer-a.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/2-the-high-priestess/priestess-layer-b.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/2-the-high-priestess/priestess-layer-c.webp,A layer,layer,A layer in the magician parallax,image/webp
+
+art/2-the-high-priestess/priestess-flat.webp,Flat,flat,A flat version of the card face,image/webp
+
