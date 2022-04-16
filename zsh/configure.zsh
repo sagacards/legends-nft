@@ -24,10 +24,10 @@ IFS=','
 payload="(vec {"
 {
 	read # skip headers
-	while read border back ink
+	while read border back ink mask stock
 	do
 		if [[ $border == "" ]] continue # skip empty lines
-        payload="$payload record { border = \"$border\"; back = \"$back\"; ink = \"$ink\"; };"
+        payload="$payload record { border = \"$border\"; back = \"$back\"; ink = \"$ink\"; mask = \"$mask\"; stock = \"$stock\"; normal = \"leaf\"; };"
 	done
 } < $metadata
 IFS=$OLDIFS
@@ -63,7 +63,7 @@ config="./config/canisters/$confname.json"
 [ ! -f $config ] && { echo "$config file not found"; exit 99; }
 read -r -d$'\1' price_private price_public <<< $(jq -r '.private_sale_price_e8s, .public_sale_price_e8s' $config)
 
-dfx canister --network $network call $canister configurePublicSalePrice "( $price_private : nat64, $price_public : nat64 )"
+# dfx canister --network $network call $canister configurePublicSalePrice "( $price_private : nat64, $price_public : nat64 )"
 
 # Configure NRI
 
