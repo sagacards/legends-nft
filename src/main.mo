@@ -401,6 +401,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Assets.purge(caller, confirm, tag);
     };
 
+    public shared ({ caller }) func assetsDelete (
+        filename : Text,
+    ) : async Result.Result<(), Text> {
+        _Assets.delete(caller, filename);
+    };
+
     public query ({ caller }) func assetsBackup () : async AssetTypes.State {
         assert _Admins._isAdmin(caller);
         _Assets.backup();

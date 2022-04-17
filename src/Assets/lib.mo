@@ -240,6 +240,36 @@ module {
             #ok();
         };
 
+        // Delete an asset by filename.
+        // @auth: admin
+        public func delete (
+            caller   : Principal,
+            filename : Text,
+        ) : Result.Result<(), Text> {
+            assert(state._Admins._isAdmin(caller));
+            files.delete(filename);
+            var i = 0;
+            label l for (asset in assets.vals()) {
+                if (asset.meta.filename == filename) {
+                    assets.put(i, {
+                        asset = {
+                            contentType = "";
+                            payload = [];
+                        };
+                        meta = {
+                            description = "";
+                            filename = asset.meta.filename;
+                            name = "";
+                            tags = [];
+                        };
+                    });
+                    break l;
+                };
+                i += 1;
+            };
+            #ok();
+        };
+
         // Set tags on assets.
         public func tag (
             caller  : Principal,
