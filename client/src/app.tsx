@@ -325,8 +325,8 @@ function Card({
 interface InkProps {
     alpha?: THREE.Texture;
     color: THREE.Color;
-    emissive?: THREE.Color;
-    specular?: THREE.Color;
+    emissive: THREE.Color;
+    specular: THREE.Color;
     side?: THREE.Side;
     normal?: THREE.Texture;
     shininess?: number;
@@ -532,9 +532,11 @@ function LegendCard({ rotation, ...props }: GroupProps) {
             {createPortal(<CardArt textures={useLegendLayers()} />, scene.current)}
             <Card
                 materials={<>
-                    <meshStandardMaterial
+                    <meshPhongMaterial
                         attachArray="material"
                         color={stockBase}
+                        specular={stockSpecular}
+                        emissive={stockEmissive}
                     />
                     <meshPhongMaterial
                         attachArray="material"
@@ -562,14 +564,14 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                         specular={colorSpecular}
                         normal={normal}
                     />
-                    {mask && <CardInk
+                    {mask && <group position={[0, 0, -.001]}><CardInk
                         alpha={mask}
                         side={THREE.FrontSide}
                         color={stockBase}
-                        specular={undefined}
-                        emissive={undefined}
+                        emissive={stockEmissive}
+                        specular={stockSpecular}
                         normal={undefined}
-                    />}
+                    /></group>}
                     <CardInk
                         side={THREE.BackSide}
                         alpha={back}
