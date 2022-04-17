@@ -457,7 +457,8 @@ module {
                             let legend = state._Tokens._getMetadata(i);
                             renderAssetWithTags([
                                 "preview", "side-by-side", "back-" # legend.back,
-                                "border-" # legend.border, "ink-" # legend.ink
+                                "border-" # legend.border, "ink-" # legend.ink,
+                                "mask-" # legend.mask, "stock-" # legend.stock
                             ]);
                         };
                     };
@@ -484,7 +485,8 @@ module {
                             let legend = state._Tokens._getMetadata(i);
                             renderAssetWithTags([
                                 "preview", "animated", "back-" # legend.back,
-                                "border-" # legend.border, "ink-" # legend.ink
+                                "border-" # legend.border, "ink-" # legend.ink,
+                                "mask-" # legend.mask, "stock-" # legend.stock
                             ]);
                         };
                     };
@@ -543,7 +545,8 @@ module {
             if (Text.contains(request.url, #text("type=animated"))) {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
-                    "border-" # legend.border, "ink-" # legend.ink
+                    "border-" # legend.border, "ink-" # legend.ink,
+                    "mask-" # legend.mask, "stock-" # legend.stock
                 ]);
             };
             if (not Text.contains(request.url, #text("type=thumbnail"))) {
@@ -551,7 +554,8 @@ module {
             };
             renderAssetWithTags([
                 "preview", "side-by-side", "back-" # legend.back,
-                "border-" # legend.border, "ink-" # legend.ink
+                "border-" # legend.border, "ink-" # legend.ink,
+                "mask-" # legend.mask, "stock-" # legend.stock
             ]);
         };
 
@@ -565,7 +569,8 @@ module {
                     let legend = state._Tokens._getMetadata(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
-                        "border-" # legend.border, "ink-" # legend.ink
+                        "border-" # legend.border, "ink-" # legend.ink,
+                        "mask-" # legend.mask, "stock-" # legend.stock
                     ]);
                 };
                 case _ http404(?"No token at that index.");
@@ -618,12 +623,14 @@ module {
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {
                         return renderAssetWithTags([
                             "preview", "animated", "back-" # legend.back,
-                            "border-" # legend.border, "ink-" # legend.ink
+                            "border-" # legend.border, "ink-" # legend.ink,
+                            "mask-" # legend.mask, "stock-" # legend.stock
                         ]);
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webp") {
                         return renderAssetWithTags([
                             "preview", "side-by-side", "back-" # legend.back,
-                            "border-" # legend.border, "ink-" # legend.ink
+                            "border-" # legend.border, "ink-" # legend.ink,
+                            "mask-" # legend.mask, "stock-" # legend.stock
                         ]);
                     } else if (Text.map(tokens[1], Prim.charToLower) == "json") {
                         return {
