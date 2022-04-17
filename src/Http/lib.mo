@@ -86,7 +86,8 @@ module {
         ) : ?Types.Response {
             switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
-                case _ ?http404(?"Token not yet minted.");
+                // case _ ?http404(?"Token not yet minted.");
+                case _ null;
             };
         };
 
@@ -217,8 +218,8 @@ module {
                     };
                     mask = do {
                         switch (state._Assets._findTags(["mask", mask])) {
-                            case (?a) a.meta.filename;
-                            case _ "";
+                            case (?a) ?a.meta.filename;
+                            case _ null;
                         };
                     };
                 };
@@ -291,7 +292,10 @@ module {
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
                     "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
-                    "\t\t\"mask\"       : \"/assets/" # manifest.maps.mask # "\",\n" #
+                    "\t\t\"mask\"       : " # (switch (manifest.maps.mask) {
+                        case (?mask) "\"/assets/" # mask # "\",\n";
+                        case _ "null,\n";
+                    }) #
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"layers\"     : [\n" #
                         Array.foldLeft<AssetTypes.FilePath, Text>(
@@ -316,7 +320,7 @@ module {
                 "\t\"stock\": {\n" #
                     "\t\t\"base\"       : \"" # manifest.stock.base # "\",\n" #
                     "\t\t\"specular\"   : \"" # manifest.stock.specular # "\",\n" #
-                    "\t\t\"emissive\"   : \"" # manifest.stock.emissive # "\",\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.stock.emissive # "\"\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #

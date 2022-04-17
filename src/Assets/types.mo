@@ -60,7 +60,7 @@ module Assets {
             layers      : [FilePath];
             back        : FilePath;
             border      : FilePath;
-            mask        : FilePath;
+            mask        : ?FilePath;
         };
         colors  : {
             base        : Text;
