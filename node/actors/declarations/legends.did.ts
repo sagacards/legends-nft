@@ -1,4 +1,6 @@
-exports.idlFactory = ({ IDL }) => {
+import { IDL } from '@dfinity/candid';
+
+export const idlFactory : IDL.InterfaceFactory = ({ IDL }) => {
   const TokenIdentifier = IDL.Text;
   const AccountIdentifier = IDL.Text;
   const User = IDL.Variant({
@@ -519,17 +521,4 @@ exports.idlFactory = ({ IDL }) => {
     'uploadFinalize' : IDL.Func([IDL.Text, Meta], [Result], []),
   });
   return LegendsNFT;
-};
-exports.init = ({ IDL }) => {
-  return [
-    IDL.Principal,
-    IDL.Opt(IDL.Text),
-    IDL.Record({
-      'name' : IDL.Text,
-      'description' : IDL.Text,
-      'artists' : IDL.Vec(IDL.Text),
-      'supply' : IDL.Nat16,
-      'flavour' : IDL.Text,
-    }),
-  ];
 };

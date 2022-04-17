@@ -1,4 +1,6 @@
-const idlFactory = ({ IDL }) => {
+import { IDL } from '@dfinity/candid';
+
+export const idlFactory : IDL.InterfaceFactory = ({ IDL }) => {
   const AccountIdentifier__1 = IDL.Vec(IDL.Nat8);
   const AccountBalanceArgs = IDL.Record({ 'account' : AccountIdentifier__1 });
   const Tokens = IDL.Record({ 'e8s' : IDL.Nat64 });
@@ -38,7 +40,3 @@ const idlFactory = ({ IDL }) => {
   });
   return MockLedger;
 };
-const init = ({ IDL }) => { return []; };
-
-exports.idlFactory = idlFactory;
-exports.init = init;

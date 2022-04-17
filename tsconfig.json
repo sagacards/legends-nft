@@ -1,0 +1,25 @@
+{
+    "ts-node": {
+        "swc": true,
+        "files": true
+    },
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "commonjs",
+        "lib": [
+            "DOM",
+            "es5"
+        ],
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true
+    },
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+        "./node_modules",
+        "./dist"
+    ]
+}

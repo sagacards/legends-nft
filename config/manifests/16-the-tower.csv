@@ -1,4 +1,4 @@
-path,title,tags,description,mime
+wpath,title,tags,description,mime
 
 client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
 
