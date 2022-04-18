@@ -51,12 +51,12 @@ art/common/border-valknut.webp,Valknut Card Border,border valknut,An alpha map f
 art/common/border-wyrd.webp,Wyrd Card Border,border wyrd,An alpha map for the Wyrd card border,image/webp
 art/common/border-cinematic.webp,Cinematic Card Border,border cinematic,An alpha map for the Cinematic card border,image/webp
 
-art/common/mask-line.webp,Line Mask,mask line,An alpha map for a mask,image/webp
-art/common/mask-cinematic.webp,cinematic Mask,mask cinematic,An alpha map for a mask,image/webp
-art/common/mask-greek.webp,greek Mask,mask greek,An alpha map for a mask,image/webp
-art/common/mask-round.webp,round Mask,mask round,An alpha map for a mask,image/webp
-art/common/mask-birka.webp,birka Mask,mask birka,An alpha map for a mask,image/webp
-art/common/mask-haus.webp,haus Mask,mask haus,An alpha map for a mask,image/webp
+art/common/mask-line.webp,Line Mask,mask line mask-line,An alpha map for a mask,image/webp
+art/common/mask-cinematic.webp,cinematic Mask,mask cinematic mask-cinematic,An alpha map for a mask,image/webp
+art/common/mask-greek.webp,greek Mask,mask greek mask-greek,An alpha map for a mask,image/webp
+art/common/mask-round.webp,round Mask,mask round mask-round,An alpha map for a mask,image/webp
+art/common/mask-birka.webp,birka Mask,mask birka mask-birka,An alpha map for a mask,image/webp
+art/common/mask-haus.webp,haus Mask,mask haus mask-haus,An alpha map for a mask,image/webp
 
 art/2-the-high-priestess/animated/preview-animated-fate-thicc-priestess-brilliant-priestess-line.webm,Animated Preview,preview animated back-fate border-thicc ink-priestess-brilliant stock-priestess mask-line,An animated preview,video/webm
 art/2-the-high-priestess/animated/preview-animated-cinematic-thin-priestess-bright-priestess-none.webm,Animated Preview,preview animated back-cinematic border-thin ink-priestess-bright stock-priestess mask-none,An animated preview,video/webm

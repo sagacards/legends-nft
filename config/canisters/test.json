@@ -1,13 +1,7 @@
 {
-    "name": "Legends Test Canister",
-    "supply": 10000,
-    "flavour": "For testing only.",
-    "artists": "vec { \"Jorgen\" }",
-    "description": "...",
-    "public_sale_price_e8s": 5,
-    "private_sale_price_e8s": 4
+    "name": "Legend 2: The High Priestess",
+    "supply": 110,
+    "flavour": "...",
+    "artists": "vec { \"Colin Arc\"; \"The Saxon Storyteller\"; \"Jorgen Builder\" }",
+    "description": "Collectible Major Arcana cards celebrating the enduring spirit of tarot, the innervating virtues of web3, and the first deck developed by Saga Tarot."
 }
-
-
-
-
