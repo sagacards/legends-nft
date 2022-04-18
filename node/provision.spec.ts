@@ -57,7 +57,6 @@ describe(`${canister}`, () => {
                     const size = Number(r.headers.get('Content-Length'));
                     if (size < 5_000) console.error(`Invalid static image on token #${i}`);
                     expect(size).toBeGreaterThan(5_000);
-                    expect(r.headers.get('Content-Type')).toBe('image/webp');
                     expect(r.status).toBe(200);
                     return r.text()
                 })
@@ -74,7 +73,6 @@ describe(`${canister}`, () => {
                     const size = Number(r.headers.get('Content-Length'));
                     if (size < 5_000) console.error(`Invalid animated image on token #${i}`);
                     expect(size).toBeGreaterThan(5_000);
-                    expect(r.headers.get('Content-Type')).toBe('image/webp');
                     expect(r.status).toBe(200);
                     return r.text()
                 })
