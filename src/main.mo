@@ -21,6 +21,9 @@ import EXT "mo:ext/Ext";
 import Admins "Admins";
 import AssetTypes "Assets/types";
 import Assets "Assets";
+import Bazaar "Bazaar";
+import BazaarTypes "Bazaar/types";
+import BazaarInterface "Bazaar/Interface";
 import Entrepot "Entrepot";
 import EntrepotTypes "Entrepot/types";
 import Ext "Ext";
@@ -731,6 +734,49 @@ shared ({ caller = creator }) actor class LegendsNFT(
     ) : async () {
         _captureMetrics();
         _PublicSale.restore(caller, backup);
+    };
+
+
+    /////////////
+    // Bazaar //
+    ///////////
+
+
+    let _Bazaar = Bazaar.Factory({
+        _Admins;
+        _Tokens;
+    });
+
+    public shared ({ caller }) func launchpadEventCreate (
+        event : BazaarInterface.Data,
+    ) : async Nat {
+        await _Bazaar.launchpadEventCreate(caller, event);
+    };
+    
+    public shared ({ caller }) func launchpadEventUpdate (
+        index : Nat,
+        event : BazaarInterface.Data,
+    ) : async BazaarInterface.Result<()> {
+        await _Bazaar.launchpadEventUpdate(caller, index, event);
+    };
+
+    public shared({ caller }) func withdrawAll(
+        to : BazaarInterface.AccountIdentifier,
+    ) : async BazaarInterface.TransferResult {
+        await _Bazaar.withdrawAll(caller, to);
+    };
+
+    public query func launchpadTotalAvailable (
+        index : Nat,
+    ) : async Nat {
+        _Bazaar.launchpadTotalAvailable(index);
+    };
+    
+    public shared ({ caller }) func launchpadMint (
+        caller : Principal,
+        to : Principal,
+    ) : async Result.Result<Nat, BazaarTypes.MintError> {
+        _Bazaar.launchpadMint(caller, to);
     };
 
 
