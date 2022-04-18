@@ -166,7 +166,7 @@ module {
             index : Nat,
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(state.cid, Nat32.fromNat(index));
-            let { back; border; ink; mask; normal; } = state._Tokens.nfts(?index)[0];
+            let { back; border; ink; mask; normal; stock; } = state._Tokens.nfts(?index)[0];
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
@@ -183,6 +183,8 @@ module {
                 back;
                 border;
                 ink;
+                mask;
+                stock;
                 nri = {
                     back = nriBack;
                     border = nriBorder;
@@ -236,11 +238,14 @@ module {
                     };
                     map;
                 };
-                stock = do {
+                stockColors = do {
                     var map = {
                         base     = "#000000";
                         specular = "#000000";
                         emissive = "#000000";
+                    };
+                    for (color in state._Assets.getStockColors().vals()) {
+                        if (color.name == stock) map := color;
                     };
                     map;
                 };
@@ -282,6 +287,8 @@ module {
                 "\t\"back\"     : \"" # manifest.back # "\",\n" #
                 "\t\"border\"   : \"" # manifest.border # "\",\n" #
                 "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
+                "\t\"mask\"     : \"" # manifest.mask # "\",\n" #
+                "\t\"stock\"    : \"" # manifest.stock # "\",\n" #
                 "\t\"nri\"      : {\n" #
                     "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
                     "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
@@ -318,9 +325,9 @@ module {
                     "\t\t\"background\" : \"" # manifest.colors.background # "\"\n" #
                 "\t},\n" #
                 "\t\"stock\": {\n" #
-                    "\t\t\"base\"       : \"" # manifest.stock.base # "\",\n" #
-                    "\t\t\"specular\"   : \"" # manifest.stock.specular # "\",\n" #
-                    "\t\t\"emissive\"   : \"" # manifest.stock.emissive # "\"\n" #
+                    "\t\t\"base\"       : \"" # manifest.stockColors.base # "\",\n" #
+                    "\t\t\"specular\"   : \"" # manifest.stockColors.specular # "\",\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.stockColors.emissive # "\"\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
