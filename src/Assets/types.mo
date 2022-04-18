@@ -12,19 +12,14 @@ module Assets {
     public type State = {
         assets  : [Record];
         colors  : [Color];
+        stockColors : [Color];
     };
 
     public type Dependencies = {
         _Admins : Admins.Admins;
     };
 
-    // TODO: This after upgrading DFX
-    // public type Params = State and Dependencies;
-    public type Params = {
-        assets  : [Record];
-        colors  : [Color];
-        _Admins : Admins.Admins;
-    };
+    public type Params = State and Dependencies;
 
     public type Asset = {
         contentType : Text;
@@ -49,6 +44,8 @@ module Assets {
         back    : Tag;
         border  : Tag;
         ink     : Tag;
+        mask    : Tag;
+        stock   : Tag;
         nri     : {
             back        : Float;
             border      : Float;
@@ -68,7 +65,7 @@ module Assets {
             emissive    : Text;
             background  : Text;
         };
-        stock   : {
+        stockColors: {
             base        : Text;
             specular    : Text;
             emissive    : Text;

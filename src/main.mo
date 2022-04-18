@@ -67,6 +67,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var stableAssets : [AssetTypes.Record] = [];
     private stable var stableColors : [AssetTypes.Color] = [];
+    private stable var stableStockColors : [AssetTypes.Color] = [];
 
     // Admins
 
@@ -111,9 +112,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
     system func preupgrade() {
 
         // Preserve assets
-        let { colors; assets } = _Assets.backup();
+        let { colors; assets; stockColors; } = _Assets.backup();
         stableAssets := assets;
         stableColors := colors;
+        stableStockColors := stockColors;
 
         // Preserve admins
         stableAdmins := _Admins.toStable();
@@ -367,6 +369,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _Admins;
         assets = stableAssets;
         colors = stableColors;
+        stockColors = stableStockColors;
     });
 
     public shared ({ caller }) func upload (
@@ -434,6 +437,13 @@ shared ({ caller = creator }) actor class LegendsNFT(
     ) : async () {
         _captureMetrics();
         _Assets.configureColors(caller, colors);
+    };
+
+    public shared ({ caller }) func configureStockColors (
+        colors : [AssetTypes.Color],
+    ) : async () {
+        _captureMetrics();
+        _Assets.configureStockColors(caller, colors);
     };
 
 
