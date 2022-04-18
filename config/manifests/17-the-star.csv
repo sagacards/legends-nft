@@ -1,0 +1,64 @@
+path,title,tags,description,mime
+
+client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
+
+art/common/normal-leaf.webp,Normal Map,normal leaf,A noise based normal map for a gold foil like texture,image/webp
+
+art/common/icon.png,Favicon,favicon,A favicon,image/png
+
+art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
+art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
+art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back saxon-bordered,An alpha map for the Bordered Saxon card back,image/webp
+art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon,An alpha map for the Worn Saxon card back,image/webp
+art/common/back-compass.webp,Compass Card Back,back compass,An alpha map for the Compass card back,image/webp
+art/common/back-cup-extra.webp,Cup Extra Card Back,back cup-extra,An alpha map for the Cup card back,image/webp
+art/common/back-cup-inverted.webp,Cup Inverted Card Back,back cup-inverted,An alpha map for the Cup card back,image/webp
+art/common/back-cup-wider.webp,Cup Wider Card Back,back cup-wider,An alpha map for the Cup card back,image/webp
+art/common/back-cups.webp,Cups Card Back,back cups,An alpha map for the Cups card back,image/webp
+art/common/back-helmet.webp,Helmet Card Back,back helmet,An alpha map for the Helmet card back,image/webp
+art/common/back-knotwork-moon.webp,Knotwork Moon Card Back,back knotwork-moon,An alpha map for the Knotwork card back,image/webp
+art/common/back-knotwork-ravens.webp,Knotwork Ravens Card Back,back knotwork-ravens,An alpha map for the Knotwork card back,image/webp
+art/common/back-oath-rings-inverted.webp,Oath Rings Inverted Card Back,back oath-rings-inverted,An alpha map for the Oath card back,image/webp
+art/common/back-oath-rings.webp,Oath Rings Card Back,back oath-rings,An alpha map for the Oath card back,image/webp
+art/common/back-odal-rune.webp,Odal Rune Card Back,back odal-rune,An alpha map for the Odal card back,image/webp
+art/common/back-raven-outline.webp,Raven Outline Card Back,back raven-outline,An alpha map for the Raven card back,image/webp
+art/common/back-raven-solid.webp,Raven Solid Card Back,back raven-solid,An alpha map for the Raven card back,image/webp
+art/common/back-swords.webp,Swords Card Back,back swords,An alpha map for the Swords card back,image/webp
+art/common/back-wyrd.webp,Wyrd Card Back,back wyrd,An alpha map for the Wyrd card back,image/webp
+art/common/back-cinematic.webp,Cinematic Card Back,back wyrd,An alpha map for the Cinematic card back,image/webp
+
+art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
+art/common/border-naked.webp,Naked Card Border,border bare,An alpha map for the Nake card border,image/webp
+art/common/border-round.webp,Round Card Border,border round,An alpha map for the Round card border,image/webp
+art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon,An alpha map for the Worn Saxon card border,image/webp
+art/common/border-saxon.webp,Saxon Card Border,border saxon,An alpha map for the Saxon card border,image/webp
+art/common/border-staggered.webp,Staggered Card Border,border staggered,An alpha map for the Staggered card border,image/webp
+art/common/border-thicc.webp,Thicc Card Border,border thicc,An alpha map for the Thicc card border,image/webp
+art/common/border-birka-inverted.webp,Birka-inverted Card Border,border birka-inverted,An alpha map for the Birka card border,image/webp
+art/common/border-birka.webp,Birka Card Border,border birka,An alpha map for the Birka card border,image/webp
+art/common/border-haus-1.webp,Haus 1 Card Border,border haus-1,An alpha map for the Haus card border,image/webp
+art/common/border-haus-2.webp,Haus 2 Card Border,border haus-2,An alpha map for the Haus card border,image/webp
+art/common/border-haus-3.webp,Haus 3 Card Border,border haus-3,An alpha map for the Haus card border,image/webp
+art/common/border-haus-4.webp,Haus 4 Card Border,border haus-4,An alpha map for the Haus card border,image/webp
+art/common/border-midgard-serpent.webp,Midgard Serpent Card Border,border midgard-serpent,An alpha map for the Midgard card border,image/webp
+art/common/border-moon.webp,Moon Card Border,border moon,An alpha map for the Moon card border,image/webp
+art/common/border-odal.webp,Odal Card Border,border odal,An alpha map for the Odal card border,image/webp
+art/common/border-solar-cross.webp,Solar Cross Card Border,border solar-cross,An alpha map for the Solar card border,image/webp
+art/common/border-sun.webp,Sun Card Border,border sun,An alpha map for the Sun card border,image/webp
+art/common/border-valknut.webp,Valknut Card Border,border valknut,An alpha map for the Valknut card border,image/webp
+art/common/border-wyrd.webp,Wyrd Card Border,border wyrd,An alpha map for the Wyrd card border,image/webp
+art/common/border-cinematic.webp,Cinematic Card Border,border wyrd,An alpha map for the Cinematic card border,image/webp
+
+art/common/mask-line.webp,Line Mask,mask line,An alpha map for a mask,image/webp
+art/common/mask-cinematic.webp,cinematic Mask,mask cinematic,An alpha map for a mask,image/webp
+art/common/mask-greek.webp,greek Mask,mask greek,An alpha map for a mask,image/webp
+art/common/mask-round.webp,round Mask,mask round,An alpha map for a mask,image/webp
+
+art/17-the-star/star-layer-a.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/17-the-star/star-layer-b.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/17-the-star/star-layer-c.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/17-the-star/star-layer-d.webp,A layer,layer,A layer in the magician parallax,image/webp
+art/17-the-star/star-layer-e.webp,A layer,layer,A layer in the magician parallax,image/webp
+
+art/17-the-star/star-flat.webp,Flat,flat,A flat version of the card face,image/webp
+

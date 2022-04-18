@@ -35,12 +35,18 @@ interface LegendManifest {
         back: FilePath;
         border: FilePath;
         background: FilePath;
+        mask?: FilePath;
     };
     colors: {
         base: Color;
         specular: Color;
         emissive: Color;
         background: Color;
+    };
+    stock: {
+        base: Color;
+        specular: Color;
+        emissive: Color;
     };
     views: {
         flat: FilePath;
@@ -58,13 +64,12 @@ interface LegendManifest {
 
 // Fetching w/ react suspense
 export const host = window.location.host.includes('localhost')
-    ? `https://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.ic0.app`
+    ? `https://zzk67-giaaa-aaaaj-qaujq-cai.raw.ic0.app`
     : `https://${window.location.host}`;
 const index = window.location.host.includes('localhost')
     ? parseInt(window.location.pathname.split('/')[1])
     : (window as any).legendIndex || 0;
-const isCinematic = index === 82;
-const promise = fetch(`${host}/legend-manifest/${index}/`).then(r => r.json());
+const promise = fetch(`${host}/${index}.json`).then(r => r.json());
 function suspend<T>(promise: Promise<T>) {
     let result: T;
     let status = 'pending';
@@ -108,20 +113,32 @@ function useLegendBorder(): THREE.Texture {
     return useLoader(THREE.TextureLoader, `${host}${border}`);
 };
 
-// Special mask for cinematic variant.
-function useCinematicCover(): THREE.Texture {
-    return useLoader(THREE.TextureLoader, `${host}/assets/cinematic-cover.webp`);
-};
-
 // Get parallax layer textures from canister.
 function useLegendLayers(): THREE.Texture[] {
     const { maps: { layers } } = useLegendManifest();
     return layers.map(layer => useLoader(THREE.TextureLoader, `${host}${layer}`));
 };
 
+// Get mask alpha map from canister.
+function useLegendMask(): THREE.Texture | undefined {
+    const { maps: { mask } } = useLegendManifest();
+    return mask ? useLoader(THREE.TextureLoader, `${host}${mask}`) : undefined;
+};
+
 // Get colors from canister.
-function useLegendColors(): [THREE.Color, THREE.Color, THREE.Color] {
-    const { colors: { base, specular, emissive } } = useLegendManifest();
+function useLegendColors(): [THREE.Color, THREE.Color, THREE.Color, THREE.Color] {
+    const { colors: { base, specular, emissive, background } } = useLegendManifest();
+    return [
+        new THREE.Color(base).convertSRGBToLinear(),
+        new THREE.Color(specular).convertSRGBToLinear(),
+        new THREE.Color(emissive).convertSRGBToLinear(),
+        new THREE.Color(background).convertSRGBToLinear(),
+    ];
+}
+
+// Get card stock colors from canister.
+function useLegendStock(): [THREE.Color, THREE.Color, THREE.Color] {
+    const { stock: { base, specular, emissive } } = useLegendManifest();
     return [
         new THREE.Color(base).convertSRGBToLinear(),
         new THREE.Color(specular).convertSRGBToLinear(),
@@ -303,53 +320,43 @@ function Card({
 /////////////
 
 
-interface CardInkProps {
-    colorBase: THREE.Color;
-    colorSpecular: THREE.Color;
-    colorEmissive: THREE.Color;
+// A material plane set just on top of the face of the card.
+
+interface InkProps {
+    alpha?: THREE.Texture;
+    color: THREE.Color;
+    emissive?: THREE.Color;
+    specular?: THREE.Color;
+    side?: THREE.Side;
+    normal?: THREE.Texture;
+    shininess?: number;
 };
 
-export function CardBackInk(props: CardInkProps) {
-    const texture = React.useMemo(() => useLegendBack(), []);
-    const normal = React.useMemo(() => useLegendNormal(), []);
-    return (
-        <mesh position={[0, 0, -0.026]}>
-            <planeGeometry args={[2.74, 4.75]} />
-            <meshPhongMaterial
-                side={THREE.BackSide}
-                alphaMap={texture}
-                transparent={true}
-                color={props.colorBase}
-                emissive={props.colorEmissive}
-                emissiveIntensity={0.125}
-                specular={props.colorSpecular}
-                shininess={200}
-                normalMap={isCinematic ? undefined : normal}
-                // @ts-ignore
-                normalScale={[0.05, 0.05]}
-            />
-        </mesh>
-    );
-}
-
-export function CardBorderInk(props: CardInkProps) {
-    const texture = React.useMemo(() => useLegendBorder(), []);
-    const normal = React.useMemo(() => useLegendNormal(), []);
+export function CardInk({
+    alpha,
+    color,
+    emissive,
+    specular,
+    side,
+    shininess,
+    normal,
+} : InkProps) {
     return (
         <>
-            <mesh position={[0, 0, 0.0265]}>
-                <planeGeometry args={[2.74, 4.75]} />
+            <mesh position={[0, 0, 0.05 * (side === THREE.BackSide ? -1 : 1)]}>
+                <planeGeometry args={[2.75, 4.75]} />
                 <meshPhongMaterial
-                    alphaMap={texture}
+                    alphaMap={alpha}
                     transparent={true}
-                    color={props.colorBase}
-                    emissive={props.colorEmissive}
+                    color={color}
+                    emissive={emissive}
                     emissiveIntensity={0.125}
-                    specular={props.colorSpecular}
-                    shininess={200}
-                    normalMap={isCinematic ? undefined : normal}
+                    specular={specular}
+                    shininess={shininess || 200}
+                    normalMap={normal}
                     // @ts-ignore
                     normalScale={[0.05, 0.05]}
+                    side={side || THREE.FrontSide}
                 />
             </mesh>
         </>
@@ -368,7 +375,7 @@ const f = [2.75, 4.75]; // Tarot card dimensions
     
 // Layers comprising the card face, layed out on the Z axis.
 function CardArt(props: { textures: THREE.Texture[] }) {
-    const scale = isCinematic ? .65 : 1;
+    const scale = 1;
     const geometry = React.useMemo(() => new THREE.PlaneGeometry(d[0] * e * scale, d[1] * e * scale), [scale]);
     return (
         <group>
@@ -384,8 +391,12 @@ function CardArt(props: { textures: THREE.Texture[] }) {
 function LegendCard({ rotation, ...props }: GroupProps) {
 
     // Legends traits
-    const [colorBase, colorSpecular, colorEmissive] = React.useMemo(useLegendColors, []);
-    const normal = React.useMemo(() => useLegendNormal(), []);
+    const [colorBase, colorSpecular, colorEmissive, colorBackground] = React.useMemo(useLegendColors, []);
+    const [stockBase, stockSpecular, stockEmissive] = React.useMemo(useLegendStock, []);
+    const normal = React.useMemo(useLegendNormal, []);
+    const mask = React.useMemo(useLegendMask, []);
+    const back = React.useMemo(useLegendBack, []);
+    const border = React.useMemo(useLegendBorder, []);
 
     // Refs
     const scene = React.useRef(new THREE.Scene());
@@ -460,8 +471,6 @@ function LegendCard({ rotation, ...props }: GroupProps) {
         performance: state.performance.current
     }));
 
-    const cover = useCinematicCover();
-
     useFrame((state) => {
         if (!mesh.current) return;
 
@@ -523,7 +532,10 @@ function LegendCard({ rotation, ...props }: GroupProps) {
             {createPortal(<CardArt textures={useLegendLayers()} />, scene.current)}
             <Card
                 materials={<>
-                    <meshStandardMaterial attachArray="material" color={"#111"} />
+                    <meshStandardMaterial
+                        attachArray="material"
+                        color={stockBase}
+                    />
                     <meshPhongMaterial
                         attachArray="material"
                         color={colorBase}
@@ -531,7 +543,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                         emissiveIntensity={0.125}
                         specular={colorSpecular}
                         shininess={200}
-                        normalMap={isCinematic ? undefined : normal}
+                        normalMap={normal}
                         // @ts-ignore
                         normalScale={[0.03, 0.03]}
                     />
@@ -542,29 +554,29 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                     />
                 </>}
                 children={<>
-                    {isCinematic && <mesh position={[0, 0, 0.0265]}>
-                        <planeGeometry args={[2.74, 4.75]} />
-                        <meshPhongMaterial
-                            alphaMap={cover}
-                            transparent={true}
-                            color={'#121212'}
-                            // @ts-ignore
-                            specular={'#121212'}
-                            // @ts-ignore
-                            emissive={'#121212'}
-                            emissiveIntensity={0.125}
-                            shininess={100}
-                        />
-                    </mesh>}
-                    <CardBorderInk
-                        colorBase={colorBase}
-                        colorEmissive={colorEmissive}
-                        colorSpecular={colorSpecular}
+                    <CardInk
+                        side={THREE.FrontSide}
+                        alpha={border}
+                        color={colorBase}
+                        emissive={colorEmissive}
+                        specular={colorSpecular}
+                        normal={normal}
                     />
-                    <CardBackInk
-                        colorBase={colorBase}
-                        colorEmissive={colorEmissive}
-                        colorSpecular={colorSpecular}
+                    {mask && <CardInk
+                        alpha={mask}
+                        side={THREE.FrontSide}
+                        color={stockBase}
+                        specular={undefined}
+                        emissive={undefined}
+                        normal={undefined}
+                    />}
+                    <CardInk
+                        side={THREE.BackSide}
+                        alpha={back}
+                        color={colorBase}
+                        emissive={colorEmissive}
+                        specular={colorSpecular}
+                        normal={normal}
                     />
                 </>}
             />
@@ -839,7 +851,7 @@ function LegendPreviewCanvas() {
                     <mesh position={[0, 0, -1]}>
                         <planeGeometry args={[10, 10]} />
                         <meshStandardMaterial
-                            normalMap={isCinematic ? undefined : normal}
+                            normalMap={normal}
                             // @ts-ignore
                             normalScale={[0.03, 0.03]}
                             color={'#000'}

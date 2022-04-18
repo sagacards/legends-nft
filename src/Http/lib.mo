@@ -86,7 +86,8 @@ module {
         ) : ?Types.Response {
             switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
-                case _ ?http404(?"Token not yet minted.");
+                // case _ ?http404(?"Token not yet minted.");
+                case _ null;
             };
         };
 
@@ -165,7 +166,7 @@ module {
             index : Nat,
         ) : AssetTypes.LegendManifest {
             let tokenId = Ext.TokenIdentifier.encode(state.cid, Nat32.fromNat(index));
-            let { back; border; ink; mask; normal; } = state._Tokens.nfts(?index)[0];
+            let { back; border; ink; mask; normal; stock; } = state._Tokens.nfts(?index)[0];
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
                 case (?(_, i)) i;
                 case _ 0.0;
@@ -182,6 +183,8 @@ module {
                 back;
                 border;
                 ink;
+                mask;
+                stock;
                 nri = {
                     back = nriBack;
                     border = nriBorder;
@@ -217,8 +220,8 @@ module {
                     };
                     mask = do {
                         switch (state._Assets._findTags(["mask", mask])) {
-                            case (?a) a.meta.filename;
-                            case _ "";
+                            case (?a) ?a.meta.filename;
+                            case _ null;
                         };
                     };
                 };
@@ -235,11 +238,14 @@ module {
                     };
                     map;
                 };
-                stock = do {
+                stockColors = do {
                     var map = {
                         base     = "#000000";
                         specular = "#000000";
                         emissive = "#000000";
+                    };
+                    for (color in state._Assets.getStockColors().vals()) {
+                        if (color.name == stock) map := color;
                     };
                     map;
                 };
@@ -281,6 +287,8 @@ module {
                 "\t\"back\"     : \"" # manifest.back # "\",\n" #
                 "\t\"border\"   : \"" # manifest.border # "\",\n" #
                 "\t\"ink\"      : \"" # manifest.ink # "\",\n" #
+                "\t\"mask\"     : \"" # manifest.mask # "\",\n" #
+                "\t\"stock\"    : \"" # manifest.stock # "\",\n" #
                 "\t\"nri\"      : {\n" #
                     "\t\t\"back\"       : " # Float.toText(manifest.nri.back) # ",\n" #
                     "\t\t\"border\"     : " # Float.toText(manifest.nri.border) # ",\n" #
@@ -291,7 +299,10 @@ module {
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"back\"       : \"/assets/" # manifest.maps.back # "\",\n" #
                     "\t\t\"border\"     : \"/assets/" # manifest.maps.border # "\",\n" #
-                    "\t\t\"mask\"       : \"/assets/" # manifest.maps.mask # "\",\n" #
+                    "\t\t\"mask\"       : " # (switch (manifest.maps.mask) {
+                        case (?mask) "\"/assets/" # mask # "\",\n";
+                        case _ "null,\n";
+                    }) #
                     "\t\t\"normal\"     : \"/assets/" # manifest.maps.normal # "\",\n" #
                     "\t\t\"layers\"     : [\n" #
                         Array.foldLeft<AssetTypes.FilePath, Text>(
@@ -314,9 +325,9 @@ module {
                     "\t\t\"background\" : \"" # manifest.colors.background # "\"\n" #
                 "\t},\n" #
                 "\t\"stock\": {\n" #
-                    "\t\t\"base\"       : \"" # manifest.stock.base # "\",\n" #
-                    "\t\t\"specular\"   : \"" # manifest.stock.specular # "\",\n" #
-                    "\t\t\"emissive\"   : \"" # manifest.stock.emissive # "\",\n" #
+                    "\t\t\"base\"       : \"" # manifest.stockColors.base # "\",\n" #
+                    "\t\t\"specular\"   : \"" # manifest.stockColors.specular # "\",\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.stockColors.emissive # "\"\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
@@ -453,7 +464,8 @@ module {
                             let legend = state._Tokens._getMetadata(i);
                             renderAssetWithTags([
                                 "preview", "side-by-side", "back-" # legend.back,
-                                "border-" # legend.border, "ink-" # legend.ink
+                                "border-" # legend.border, "ink-" # legend.ink,
+                                "mask-" # legend.mask, "stock-" # legend.stock
                             ]);
                         };
                     };
@@ -480,7 +492,8 @@ module {
                             let legend = state._Tokens._getMetadata(i);
                             renderAssetWithTags([
                                 "preview", "animated", "back-" # legend.back,
-                                "border-" # legend.border, "ink-" # legend.ink
+                                "border-" # legend.border, "ink-" # legend.ink,
+                                "mask-" # legend.mask, "stock-" # legend.stock
                             ]);
                         };
                     };
@@ -539,7 +552,8 @@ module {
             if (Text.contains(request.url, #text("type=animated"))) {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
-                    "border-" # legend.border, "ink-" # legend.ink
+                    "border-" # legend.border, "ink-" # legend.ink,
+                    "mask-" # legend.mask, "stock-" # legend.stock
                 ]);
             };
             if (not Text.contains(request.url, #text("type=thumbnail"))) {
@@ -547,7 +561,8 @@ module {
             };
             renderAssetWithTags([
                 "preview", "side-by-side", "back-" # legend.back,
-                "border-" # legend.border, "ink-" # legend.ink
+                "border-" # legend.border, "ink-" # legend.ink,
+                "mask-" # legend.mask, "stock-" # legend.stock
             ]);
         };
 
@@ -561,7 +576,8 @@ module {
                     let legend = state._Tokens._getMetadata(i);
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
-                        "border-" # legend.border, "ink-" # legend.ink
+                        "border-" # legend.border, "ink-" # legend.ink,
+                        "mask-" # legend.mask, "stock-" # legend.stock
                     ]);
                 };
                 case _ http404(?"No token at that index.");
@@ -614,12 +630,14 @@ module {
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webm") {
                         return renderAssetWithTags([
                             "preview", "animated", "back-" # legend.back,
-                            "border-" # legend.border, "ink-" # legend.ink
+                            "border-" # legend.border, "ink-" # legend.ink,
+                            "mask-" # legend.mask, "stock-" # legend.stock
                         ]);
                     } else if (Text.map(tokens[1], Prim.charToLower) == "webp") {
                         return renderAssetWithTags([
                             "preview", "side-by-side", "back-" # legend.back,
-                            "border-" # legend.border, "ink-" # legend.ink
+                            "border-" # legend.border, "ink-" # legend.ink,
+                            "mask-" # legend.mask, "stock-" # legend.stock
                         ]);
                     } else if (Text.map(tokens[1], Prim.charToLower) == "json") {
                         return {

@@ -49,7 +49,7 @@ art/common/border-valknut.webp,Valknut Card Border,border valknut,An alpha map f
 art/common/border-wyrd.webp,Wyrd Card Border,border wyrd,An alpha map for the Wyrd card border,image/webp
 art/common/border-cinematic.webp,Cinematic Card Border,border wyrd,An alpha map for the Cinematic card border,image/webp
 
-art/1-the-magician/magician-flat.webp,Magician Flat,preview flat,A flat version of the ,image/webp
+art/1-the-magician/magician-flat.webp,Magician Flat,preview flat,A flat version of the magician,image/webp
 art/1-the-magician/magician-layer-a.webp,Magician Layer A,layer,A layer in the Magician parallax,image/webp
 art/1-the-magician/magician-layer-b.webp,Magician Layer B,layer,A layer in the Magician parallax,image/webp
 art/1-the-magician/magician-layer-c.webp,Magician Layer C,layer,A layer in the Magician parallax,image/webp
@@ -360,3 +360,6 @@ art/1-the-magician/animated/compressed/preview-animated-cup-wider-thicc-witching
 art/1-the-magician/animated/compressed/preview-animated-saxon-saxon-energetic.webm,Animated Preview,preview animated saxon saxon ink-energetic,An animated preview displaying the card back and border,image/webm
 art/1-the-magician/animated/compressed/preview-animated-saxon-saxon-fools-gold.webm,Animated Preview,preview animated saxon saxon ink-fools-gold,An animated preview displaying the card back and border,image/webm
 art/1-the-magician/animated/compressed/preview-animated-cinematic-cinematic-cinematic.webm,Animated Preview,preview animated cinematic cinematic ink-cinematic,An animated preview displaying the card back and border,image/webm
+
+art/1-the-magician/magician-flat.webp,Flat,flat,A flat version of the card face,image/webp
+

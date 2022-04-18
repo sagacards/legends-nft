@@ -120,6 +120,9 @@ module {
         // TODO: Use token traits instead.
         private var colors : [Types.Color] = state.colors;
 
+        // Colors for legends card stock.
+        private var stockColors : [Types.Color] = state.stockColors;
+
         public func restore (backup : Types.State) : () {
             for (asset in backup.assets.vals()) {
                 _putAsset(asset);
@@ -131,6 +134,7 @@ module {
             return {
                 assets = assets.toArray();
                 colors;
+                stockColors;
             };
         };
 
@@ -160,6 +164,11 @@ module {
         // Get all colors.
         public func getColors () : [Types.Color] {
             colors;
+        };
+
+        // Get all stock colors.
+        public func getStockColors () : [Types.Color] {
+            stockColors;
         };
 
 
@@ -240,6 +249,36 @@ module {
             #ok();
         };
 
+        // Delete an asset by filename.
+        // @auth: admin
+        public func delete (
+            caller   : Principal,
+            filename : Text,
+        ) : Result.Result<(), Text> {
+            assert(state._Admins._isAdmin(caller));
+            files.delete(filename);
+            var i = 0;
+            label l for (asset in assets.vals()) {
+                if (asset.meta.filename == filename) {
+                    assets.put(i, {
+                        asset = {
+                            contentType = "";
+                            payload = [];
+                        };
+                        meta = {
+                            description = "";
+                            filename = asset.meta.filename;
+                            name = "";
+                            tags = [];
+                        };
+                    });
+                    break l;
+                };
+                i += 1;
+            };
+            #ok();
+        };
+
         // Set tags on assets.
         public func tag (
             caller  : Principal,
@@ -274,6 +313,15 @@ module {
         ) : () {
             assert state._Admins._isAdmin(caller);
             colors := newColors;
+        };
+
+        // Configure stock colors.
+        public func configureStockColors (
+            caller      : Principal,
+            newColors   : [Types.Color],
+        ) : () {
+            assert state._Admins._isAdmin(caller);
+            stockColors := newColors;
         };
 
     };
