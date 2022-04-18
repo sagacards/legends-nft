@@ -28,6 +28,7 @@ let params : Types.Params = {
         createAsset("asset3", ["preview", "tag0", "tag1", "tag3"]),
     ];
     colors = [];
+    stockColors = [];
     _Admins = Admins.Admins({ admins = [admin] });
 };
 let a = Assets.Assets(params);
