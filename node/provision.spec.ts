@@ -1,5 +1,6 @@
-import * as csv from '@fast-csv/parse';
 import fetch from 'cross-fetch';
+import { PromisePool } from '@supercharge/promise-pool';
+import { LegendManifest } from './actors/declarations/legends.did.d';
 import { isJSON } from './util';
 
 const canister = '2-the-high-priestess';
@@ -28,8 +29,16 @@ describe(`${canister}`, () => {
         const root = `${protocol}://${canister}.${host}`;
         const requests = Array(supply).fill(null).map((x, i) => {
             return fetch(`${root}/${i}.json`)
-                .then(r => r.text())
-                .then(r => expect(isJSON(r)).toBe(true))
+                .then(async (r) => {
+                    const text = await r.text();
+                    if (r.status !== 200) console.error(`Token #${i} ${text}`);
+                    expect(r.status).toBe(200);
+                    return text;
+                })
+                .then(r => {
+                    const isJson = isJSON(r);
+                    return expect(isJson).toBe(true);
+                })
         });
         await Promise.all(requests);
     });
@@ -79,6 +88,29 @@ describe(`${canister}`, () => {
         });
         await Promise.all(requests);
     });
+
+    // it('has valid assets for every field in each token json manifest', async () => {
+    //     const canister = await canisterId();
+    //     const root = `${protocol}://${canister}.${host}`;
+    //     const { results, errors } = await PromisePool
+    //     .withConcurrency(5)
+    //     .for(Array(supply).fill(null))
+    //     .process(async (x, i) => {
+    //         return await fetch(`${root}/${i}.json`)
+    //             .then(r => r.json())
+    //             .then((r : LegendManifest) => [...Object.values(r.maps).flat(), ...Object.values(r.views)])
+    //             .then(assets => Promise.all(assets.map(asset =>
+    //                 asset && fetch(`${root}${asset}`)
+    //                 .then(r => {
+    //                     // const size = Number(r.headers.get('Content-Length'));
+    //                     const status = r.status;
+    //                     if (status !== 200) console.error(`Token #${i} Asset ${asset} Status ${status}`);
+    //                     // expect(size).toBeGreaterThan(10);
+    //                     expect(status).toBe(200);
+    //                 })
+    //             )))
+    //     })
+    // });
 
     it('has every asset from the manifest', async () => {
         // const manifest = await import(`../config/manifests/${canister}.csv`);

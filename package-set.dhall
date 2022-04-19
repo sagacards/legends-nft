@@ -13,6 +13,10 @@ let
       , repo = "https://github.com/jorgenbuilder/canistergeek-ic-motoko"
       , version = "master"
       , dependencies = [] : List Text
+      }, { name = "bazaar"
+      , repo = "https://github.com/sagacards/bazaar"
+      , version = "main"
+      , dependencies = [] : List Text
       }] : List Package
 
 in  upstream # additions
