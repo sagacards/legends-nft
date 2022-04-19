@@ -801,4 +801,10 @@ shared ({ caller = creator }) actor class LegendsNFT(
         _HttpHandler.request(request);
     };
 
+    public query func renderManifest (
+        index : Nat,
+    ) : async Result.Result<AssetTypes.LegendManifest, Text> {
+        _HttpHandler.renderManifest(index);
+    };
+
 };

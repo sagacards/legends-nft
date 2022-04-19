@@ -427,3 +427,36 @@ export type UpdateCallsAggregatedData = Array<bigint>;
 export type User = { 'principal' : Principal } |
   { 'address' : AccountIdentifier };
 export interface _SERVICE extends LegendsNFT {}
+export interface LegendManifest {
+  'ink' : Tag,
+  'nri' : {
+    'avg' : number,
+    'ink' : number,
+    'back' : number,
+    'border' : number,
+  },
+  'views' : {
+    'interactive' : FilePath,
+    'flat' : FilePath,
+    'animated' : FilePath,
+    'sideBySide' : FilePath,
+  },
+  'back' : Tag,
+  'maps' : {
+    'normal' : FilePath,
+    'back' : FilePath,
+    'mask' : [] | [FilePath],
+    'layers' : Array<FilePath>,
+    'border' : FilePath,
+  },
+  'mask' : Tag,
+  'border' : Tag,
+  'stock' : Tag,
+  'colors' : {
+    'background' : string,
+    'base' : string,
+    'specular' : string,
+    'emissive' : string,
+  },
+  'stockColors' : { 'base' : string, 'specular' : string, 'emissive' : string },
+}
