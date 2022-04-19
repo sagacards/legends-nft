@@ -9,13 +9,13 @@ art/common/icon.webp,Favicon,favicon,A favicon,image/png
 art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
 art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
 art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back bordered-saxon,An alpha map for the Bordered Saxon card back,image/webp
-art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon,An alpha map for the Worn Saxon card back,image/webp
+art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon saxon-worn,An alpha map for the Worn Saxon card back,image/webp
 
 art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
 art/common/border-line.webp,Line Card Border,border thin,An alpha map for the Line card border,image/webp
 art/common/border-naked.webp,Nake Card Border,border bare,An alpha map for the Nake card border,image/webp
 art/common/border-round.webp,Round Card Border,border round,An alpha map for the Round card border,image/webp
-art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon,An alpha map for the Worn Saxon card border,image/webp
+art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon saxon-worn,An alpha map for the Worn Saxon card border,image/webp
 art/common/border-saxon.webp,Saxon Card Border,border saxon,An alpha map for the Saxon card border,image/webp
 art/common/border-staggered.webp,Staggered Card Border,border staggered,An alpha map for the Staggered card border,image/webp
 art/common/border-thicc.webp,Thicc Card Border,border thicc,An alpha map for the Thicc card border,image/webp
@@ -161,5 +161,5 @@ art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-rose.w
 art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-silver.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-silver,An animated preview displaying the rotating card,image/webm
 art/0-the-fool/animated/compressed/preview-animated-worn-saxon-worn-saxon-spice.webm,Animated Preview,preview animated back-worn-saxon border-worn-saxon ink-spice,An animated preview displaying the rotating card,image/webm
 
-art/0-the-fool/fool-flat.webp,Flat,flat,A flat version of the card face,image/webp
+art/0-the-fool/fool-flat.webp,Flat,preview flat,A flat version of the card face,image/webp
 

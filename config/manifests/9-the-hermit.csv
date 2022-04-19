@@ -8,8 +8,8 @@ art/common/icon.png,Favicon,favicon,A favicon,image/png
 
 art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
 art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
-art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back saxon-bordered,An alpha map for the Bordered Saxon card back,image/webp
-art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon,An alpha map for the Worn Saxon card back,image/webp
+art/common/back-saxon-bordered.webp,Bordered Saxon Card Back,back saxon-bordered bordered-saxon,An alpha map for the Bordered Saxon card back,image/webp
+art/common/back-saxon-worn.webp,Worn Saxon Card Back,back worn-saxon saxon-worn,An alpha map for the Worn Saxon card back,image/webp
 art/common/back-compass.webp,Compass Card Back,back compass,An alpha map for the Compass card back,image/webp
 art/common/back-cup-extra.webp,Cup Extra Card Back,back cup-extra,An alpha map for the Cup card back,image/webp
 art/common/back-cup-inverted.webp,Cup Inverted Card Back,back cup-inverted,An alpha map for the Cup card back,image/webp
@@ -28,9 +28,9 @@ art/common/back-wyrd.webp,Wyrd Card Back,back wyrd,An alpha map for the Wyrd car
 art/common/back-cinematic.webp,Cinematic Card Back,back wyrd,An alpha map for the Cinematic card back,image/webp
 
 art/common/border-greek.webp,Greek Card Border,border greek,An alpha map for the Greek card border,image/webp
-art/common/border-naked.webp,Naked Card Border,border bare,An alpha map for the Nake card border,image/webp
+art/common/border-naked.webp,Naked Card Border,border bare naked,An alpha map for the Nake card border,image/webp
 art/common/border-round.webp,Round Card Border,border round,An alpha map for the Round card border,image/webp
-art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon,An alpha map for the Worn Saxon card border,image/webp
+art/common/border-saxon-worn.webp,Worn Saxon Card Border,border worn-saxon saxon-worn,An alpha map for the Worn Saxon card border,image/webp
 art/common/border-saxon.webp,Saxon Card Border,border saxon,An alpha map for the Saxon card border,image/webp
 art/common/border-staggered.webp,Staggered Card Border,border staggered,An alpha map for the Staggered card border,image/webp
 art/common/border-thicc.webp,Thicc Card Border,border thicc,An alpha map for the Thicc card border,image/webp
@@ -58,5 +58,5 @@ art/9-the-hermit/hermit-layer-a.webp,A layer,layer,A layer in the magician paral
 art/9-the-hermit/hermit-layer-b.webp,A layer,layer,A layer in the magician parallax,image/webp
 art/9-the-hermit/hermit-layer-c.webp,A layer,layer,A layer in the magician parallax,image/webp
 
-art/9-the-hermit/hermit-flat.webp,Flat,flat,A flat version of the card face,image/webp
+art/9-the-hermit/hermit-flat.webp,Flat,preview flat,A flat version of the card face,image/webp
 
