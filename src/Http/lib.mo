@@ -10,6 +10,7 @@ import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Nat8 "mo:base/Nat8";
 import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 import Text "mo:base/Text";
 
 import AccountBlob "mo:principal/blob/AccountIdentifier";
@@ -162,9 +163,9 @@ module {
 
         // Builds a legend manifest record.
         // This contains all of the assets and data relevant to an NFT.
-        private func renderManifest (
+        public func renderManifest (
             index : Nat,
-        ) : AssetTypes.LegendManifest {
+        ) : Result.Result<AssetTypes.LegendManifest, Text> {
             let tokenId = Ext.TokenIdentifier.encode(state.cid, Nat32.fromNat(index));
             let { back; border; ink; mask; normal; stock; } = state._Tokens.nfts(?index)[0];
             let nriBack = switch (Array.find<(Text, Float)>(nri, func ((a, b)) { a == "back-" # back })) {
@@ -179,7 +180,7 @@ module {
                 case (?(_, i)) i;
                 case _ 0.0;
             };
-            return {
+            let manifest = {
                 back;
                 border;
                 ink;
@@ -195,7 +196,7 @@ module {
                     normal = do {
                         switch (state._Assets._findTags(["normal", normal])) {
                             case (?a) a.meta.filename;
-                            case _ "";
+                            case _ return #err("Missing normal asset: " # normal);
                         };
                     };
                     layers = do {
@@ -209,13 +210,13 @@ module {
                     back = do {
                         switch (state._Assets._findTags(["back", back])) {
                             case (?a) a.meta.filename;
-                            case _ "";
+                            case _ return #err("Missing back asset: " # back);
                         };
                     };
                     border = do {
                         switch (state._Assets._findTags(["border", border])) {
                             case (?a) a.meta.filename;
-                            case _ "";
+                            case _ return #err("Missing border asset: " # border);
                         };
                     };
                     mask = do {
@@ -253,7 +254,7 @@ module {
                     flat = do {
                         switch (state._Assets._findTags(["preview", "flat"])) {
                             case (?a) "?type=card-art&tokenid=" # tokenId;
-                            case _ "";
+                            case _ return #err("Missing flat asset.");
                         };
                     };
                     sideBySide = do {
@@ -264,19 +265,20 @@ module {
                             ])
                         ) {
                             case (?a) "?type=thumbnail&tokenid=" # tokenId;
-                            case _ "";
+                            case _ return #err("Missing static preview asset.");
                         };
                     };
                     animated = do {
                         switch (state._Assets._findTags(["preview", "animated"])) {
                             case (?a) "?type=animated&tokenid=" # tokenId;
-                            case _ "";
+                            case _ return #err("Missing animated preview asset.");
                         };
                     };
                     interactive = "?tokenid=" # tokenId;
                     manifest = "?type=manifest&tokenid=" # tokenId;  // TODO
                 };
-            }
+            };
+            #ok(manifest);
         };
 
 
@@ -408,7 +410,18 @@ module {
                         case (?err) return err;
                         case _ ();
                     };
-                    let manifest = renderManifest(i);
+                    let manifest = switch(renderManifest(i)) {
+                        case (#ok(m)) m;
+                        case (#err(m)) return {
+                            body = Text.encodeUtf8(m);
+                            headers = [
+                                ("Content-Type", "application/json"),
+                                ("Access-Control-Allow-Origin", "*"),
+                            ];
+                            status_code = 500;
+                            streaming_strategy = null;
+                        };
+                    };
                     // No Motoko JSON lib supporting record types.
                     return {
                         body = Text.encodeUtf8(manifestAsJson(manifest));
@@ -640,8 +653,20 @@ module {
                             "mask-" # legend.mask, "stock-" # legend.stock
                         ]);
                     } else if (Text.map(tokens[1], Prim.charToLower) == "json") {
+                        let manifest = switch(renderManifest(index)) {
+                            case (#ok(m)) m;
+                            case (#err(m)) return {
+                                body = Text.encodeUtf8(m);
+                                headers = [
+                                    ("Content-Type", "application/json"),
+                                    ("Access-Control-Allow-Origin", "*"),
+                                ];
+                                status_code = 500;
+                                streaming_strategy = null;
+                            };
+                        };
                         return {
-                            body = Text.encodeUtf8(manifestAsJson(renderManifest(index)));
+                            body = Text.encodeUtf8(manifestAsJson(manifest));
                             headers = [
                                 ("Content-Type", "application/json"),
                                 ("Access-Control-Allow-Origin", "*"),

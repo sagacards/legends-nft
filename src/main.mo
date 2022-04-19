@@ -13,6 +13,9 @@ import Time "mo:base/Time";
 
 import AccountBlob "mo:principal/blob/AccountIdentifier";
 import AccountIdentifier "mo:principal/AccountIdentifier";
+import BazaarEvents "mo:bazaar/Events";
+import BazaarLedger "mo:bazaar/Ledger";
+import BazaarInterface "mo:bazaar/Interface";
 import Canistergeek "mo:canistergeek/canistergeek";
 import Cap "mo:cap/Cap";
 import CapRouter "mo:cap/Router";
@@ -21,6 +24,7 @@ import EXT "mo:ext/Ext";
 import Admins "Admins";
 import AssetTypes "Assets/types";
 import Assets "Assets";
+import Bazaar "Bazaar";
 import Entrepot "Entrepot";
 import EntrepotTypes "Entrepot/types";
 import Ext "Ext";
@@ -734,6 +738,49 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
 
+    /////////////
+    // Bazaar //
+    ///////////
+
+
+    let _Bazaar = Bazaar.Factory({
+        _Admins;
+        _Tokens;
+        cid;
+    });
+
+    public shared ({ caller }) func launchpadEventCreate (
+        event : BazaarEvents.Data,
+    ) : async Nat {
+        await _Bazaar.launchpadEventCreate(caller, event);
+    };
+    
+    public shared ({ caller }) func launchpadEventUpdate (
+        index : Nat,
+        event : BazaarEvents.Data,
+    ) : async BazaarEvents.Result<()> {
+        await _Bazaar.launchpadEventUpdate(caller, index, event);
+    };
+
+    public shared({ caller }) func withdrawAll(
+        to : Blob,
+    ) : async BazaarLedger.TransferResult {
+        await _Bazaar.withdrawAll(caller, to);
+    };
+
+    public query func launchpadTotalAvailable (
+        index : Nat,
+    ) : async Nat {
+        _Bazaar.launchpadTotalAvailable(index);
+    };
+    
+    public shared ({ caller }) func launchpadMint (
+        to : Principal,
+    ) : async Result.Result<Nat, BazaarInterface.MintError> {
+        await _Bazaar.launchpadMint(caller, to);
+    };
+
+
     ///////////
     // HTTP //
     /////////
@@ -752,6 +799,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     public query func http_request(request : HttpTypes.Request) : async HttpTypes.Response {
         _HttpHandler.request(request);
+    };
+
+    public query func renderManifest (
+        index : Nat,
+    ) : async Result.Result<AssetTypes.LegendManifest, Text> {
+        _HttpHandler.renderManifest(index);
     };
 
 };
