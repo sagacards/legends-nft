@@ -220,7 +220,7 @@ module {
             caller  : Principal,
             to      : Ext.User,
         ) : async Result.Result<(Nat), Text> {
-            assert(state._Admins._isAdmin(caller));
+            assert(state._Admins._isAdmin(caller) or caller == state.cid);
             switch (_getNextMintIndex()) {
                 case (?i) {
 
@@ -232,7 +232,8 @@ module {
                     };
 
                     // Insert transaction history event.
-                    ignore await state._Cap.insert({
+                    // TODO: Queue
+                    ignore state._Cap.insert({
                         caller;
                         operation = "mint";
                         details = [
