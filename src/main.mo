@@ -780,6 +780,12 @@ shared ({ caller = creator }) actor class LegendsNFT(
         await _Bazaar.launchpadMint(caller, to);
     };
 
+    public query func launchpadBalanceOf (
+        user : Principal
+    ) : async Nat {
+        _Bazaar.launchpadBalanceOf(user);
+    };
+
 
     ///////////
     // HTTP //
