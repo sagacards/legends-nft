@@ -1,11 +1,16 @@
+import Array "mo:base/Array";
 import Nat32 "mo:base/Nat32";
+import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 
-import Types "types";
+import AccountIdentifier "mo:principal/AccountIdentifier";
 import Interface "mo:bazaar/Interface";
 import Events "mo:bazaar/Events";
 import Ledger "mo:bazaar/Ledger";
+
+import TokenTypes "../Tokens/types";
+import Types "types";
 
 module {
 
@@ -56,6 +61,18 @@ module {
                 case (#ok(t)) #ok(t);
                 case (#err(e)) #err(#NoneAvailable);
             };
+        };
+
+        public func launchpadBalanceOf (
+            user : Principal
+        ) : Nat {
+            let u = AccountIdentifier.toText(AccountIdentifier.fromPrincipal(user, null));
+            Array.filter<?TokenTypes.Token>(state._Tokens.read(null), func (t) {
+                switch (t) {
+                    case (?t) t.owner == u;
+                    case _ false;
+                };
+            }).size();
         };
     };
 };
