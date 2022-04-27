@@ -53,6 +53,8 @@ art/common/mask-line.webp,Line Mask,mask line,An alpha map for a mask,image/webp
 art/common/mask-cinematic.webp,cinematic Mask,mask cinematic,An alpha map for a mask,image/webp
 art/common/mask-greek.webp,greek Mask,mask greek,An alpha map for a mask,image/webp
 art/common/mask-round.webp,round Mask,mask round,An alpha map for a mask,image/webp
+art/common/mask-birka.webp,birka Mask,mask birka,An alpha map for a mask,image/webp
+art/common/mask-haus.webp,haus Mask,mask haus,An alpha map for a mask,image/webp
 
 art/17-the-star/star-layer-a.webp,A layer,layer,A layer in the magician parallax,image/webp
 art/17-the-star/star-layer-b.webp,A layer,layer,A layer in the magician parallax,image/webp
