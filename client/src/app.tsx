@@ -64,7 +64,7 @@ interface LegendManifest {
 
 // Fetching w/ react suspense
 export const host = window.location.host.includes('localhost')
-    ? `https://zzk67-giaaa-aaaaj-qaujq-cai.raw.ic0.app`
+    ? `https://5t24r-yqaaa-aaaaj-qauta-cai.raw.ic0.app`
     : `https://${window.location.host}`;
 const index = window.location.host.includes('localhost')
     ? parseInt(window.location.pathname.split('/')[1])
