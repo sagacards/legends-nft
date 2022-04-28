@@ -61,17 +61,17 @@ dfx canister --network $network call $canister configureColors $payload
 
 
 # Configure stocks
-colors="./config/stocks/$confname.csv"
+colors="./config/stocks.csv"
 [ ! -f $colors ] && { echo "$colors file not found"; exit 99; }
 OLDIFS=$IFS
 IFS=','
 payload="(vec {"
 {
 	read # skip headers
-	while read name base specular emissive
+	while read name base specular emissive material
 	do
         if [[ $name == "" ]] continue # skip empty lines
-        payload="$payload record { name = \"$name\"; base = \"$base\"; specular = \"$specular\"; emissive = \"$emissive\"; background = \"#000000\";  };"
+        payload="$payload record { name = \"$name\"; base = \"$base\"; specular = \"$specular\"; emissive = \"$emissive\"; material = \"$material\";  };"
 	done
 } < $colors
 IFS=$OLDIFS

@@ -121,7 +121,7 @@ module {
         private var colors : [Types.Color] = state.colors;
 
         // Colors for legends card stock.
-        private var stockColors : [Types.Color] = state.stockColors;
+        private var stockColors : [Types.CardStock] = state.stockColors;
 
         public func restore (backup : Types.State) : () {
             for (asset in backup.assets.vals()) {
@@ -167,7 +167,7 @@ module {
         };
 
         // Get all stock colors.
-        public func getStockColors () : [Types.Color] {
+        public func getStockColors () : [Types.CardStock] {
             stockColors;
         };
 
@@ -318,7 +318,7 @@ module {
         // Configure stock colors.
         public func configureStockColors (
             caller      : Principal,
-            newColors   : [Types.Color],
+            newColors   : [Types.CardStock],
         ) : () {
             assert state._Admins._isAdmin(caller);
             stockColors := newColors;

@@ -12,7 +12,7 @@ module Assets {
     public type State = {
         assets  : [Record];
         colors  : [Color];
-        stockColors : [Color];
+        stockColors : [CardStock];
     };
 
     public type Dependencies = {
@@ -69,6 +69,7 @@ module Assets {
             base        : Text;
             specular    : Text;
             emissive    : Text;
+            material    : Text;
         };
         views   : {
             flat        : FilePath;
@@ -85,6 +86,14 @@ module Assets {
         specular    : Text;
         emissive    : Text;
         background  : Text;
+    };
+
+    public type CardStock = {
+        name        : Text;
+        base        : Text;
+        specular    : Text;
+        emissive    : Text;
+        material    : Text; // phong | standard
     };
 
     public type Interface = {

@@ -47,6 +47,7 @@ interface LegendManifest {
         base: Color;
         specular: Color;
         emissive: Color;
+        material: 'phong' | 'standard';
     };
     views: {
         flat: FilePath;
@@ -137,12 +138,13 @@ function useLegendColors(): [THREE.Color, THREE.Color, THREE.Color, THREE.Color]
 }
 
 // Get card stock colors from canister.
-function useLegendStock(): [THREE.Color, THREE.Color, THREE.Color] {
-    const { stock: { base, specular, emissive } } = useLegendManifest();
+function useLegendStock(): [THREE.Color, THREE.Color, THREE.Color, 'phong' | 'standard'] {
+    const { stock: { base, specular, emissive, material } } = useLegendManifest();
     return [
         new THREE.Color(base).convertSRGBToLinear(),
         new THREE.Color(specular).convertSRGBToLinear(),
         new THREE.Color(emissive).convertSRGBToLinear(),
+        material,
     ];
 }
 
@@ -330,6 +332,7 @@ interface InkProps {
     side?: THREE.Side;
     normal?: THREE.Texture;
     shininess?: number;
+    material?: 'phong' | 'standard';
 };
 
 export function CardInk({
@@ -340,12 +343,13 @@ export function CardInk({
     side,
     shininess,
     normal,
+    material = 'phong',
 } : InkProps) {
     return (
         <>
             <mesh position={[0, 0, 0.05 * (side === THREE.BackSide ? -1 : 1)]}>
                 <planeGeometry args={[2.75, 4.75]} />
-                <meshPhongMaterial
+                {material === 'phong' ? <meshPhongMaterial
                     alphaMap={alpha}
                     transparent={true}
                     color={color}
@@ -357,7 +361,19 @@ export function CardInk({
                     // @ts-ignore
                     normalScale={[0.05, 0.05]}
                     side={side || THREE.FrontSide}
-                />
+                /> : <meshStandardMaterial
+                    alphaMap={alpha}
+                    transparent={true}
+                    color={color}
+                    emissive={emissive}
+                    emissiveIntensity={0.125}
+                    specular={specular}
+                    shininess={shininess || 200}
+                    normalMap={normal}
+                    // @ts-ignore
+                    normalScale={[0.05, 0.05]}
+                    side={side || THREE.FrontSide}
+                />}
             </mesh>
         </>
     );
@@ -392,7 +408,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
 
     // Legends traits
     const [colorBase, colorSpecular, colorEmissive, colorBackground] = React.useMemo(useLegendColors, []);
-    const [stockBase, stockSpecular, stockEmissive] = React.useMemo(useLegendStock, []);
+    const [stockBase, stockSpecular, stockEmissive, stockMaterial] = React.useMemo(useLegendStock, []);
     const normal = React.useMemo(useLegendNormal, []);
     const mask = React.useMemo(useLegendMask, []);
     const back = React.useMemo(useLegendBack, []);
@@ -527,17 +543,18 @@ function LegendCard({ rotation, ...props }: GroupProps) {
         state.gl.setRenderTarget(null);
     });
 
+    // Stock material
+    const stock = React.useMemo(() => stockMaterial === 'phong'
+        ? <meshPhongMaterial attachArray="material" color={stockBase} emissive={stockEmissive} specular={stockSpecular} />
+        : <meshStandardMaterial attachArray="material" color={stockBase} emissive={stockEmissive} />
+    , [stockMaterial]);
+
     return (
         <animated.group {...props} {...cardProps} ref={mesh}>
             {createPortal(<CardArt textures={useLegendLayers()} />, scene.current)}
             <Card
                 materials={<>
-                    <meshPhongMaterial
-                        attachArray="material"
-                        color={stockBase}
-                        specular={stockSpecular}
-                        emissive={stockEmissive}
-                    />
+                    {stock}
                     <meshPhongMaterial
                         attachArray="material"
                         color={colorBase}
@@ -571,6 +588,7 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                         emissive={stockEmissive}
                         specular={stockSpecular}
                         normal={undefined}
+                        material={stockMaterial}
                     /></group>}
                     <CardInk
                         side={THREE.BackSide}

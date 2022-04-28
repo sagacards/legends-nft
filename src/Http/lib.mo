@@ -117,7 +117,7 @@ module {
         };
 
 
-        // Renders an asset based with the given tags or 404.
+        // Renders an asset with the given tags or 404.
         private func renderAssetWithTags (
             tags : [Text]
         ) : Types.Response {
@@ -246,6 +246,7 @@ module {
                         base     = "#000000";
                         specular = "#000000";
                         emissive = "#000000";
+                        material = "standard";
                     };
                     for (color in state._Assets.getStockColors().vals()) {
                         if (color.name == stock) map := color;
@@ -331,7 +332,8 @@ module {
                 "\t\"stock\": {\n" #
                     "\t\t\"base\"       : \"" # manifest.stockColors.base # "\",\n" #
                     "\t\t\"specular\"   : \"" # manifest.stockColors.specular # "\",\n" #
-                    "\t\t\"emissive\"   : \"" # manifest.stockColors.emissive # "\"\n" #
+                    "\t\t\"emissive\"   : \"" # manifest.stockColors.emissive # "\",\n" #
+                    "\t\t\"material\"   : \"" # manifest.stockColors.material # "\"\n" #
                 "\t},\n" #
                 "\t\"views\": {\n" #
                     "\t\t\"flat\"       : \"" # manifest.views.flat # "\",\n" #
