@@ -85,10 +85,12 @@ module {
         private func mintedOr404 (
             index : Nat
         ) : ?Types.Response {
+            if (not state._Tokens.isShuffled) {
+                return null;
+            };
             switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
-                // case _ ?http404(?"Token not yet minted.");
-                case _ null;
+                case _ ?http404(?"Token not yet minted.");
             };
         };
 
