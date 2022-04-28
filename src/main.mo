@@ -71,7 +71,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
 
     private stable var stableAssets : [AssetTypes.Record] = [];
     private stable var stableColors : [AssetTypes.Color] = [];
-    private stable var stableStockColors : [AssetTypes.Color] = [];
+    private stable var stableStockColors : [AssetTypes.CardStock] = [];
 
     // Admins
 
@@ -444,7 +444,7 @@ shared ({ caller = creator }) actor class LegendsNFT(
     };
 
     public shared ({ caller }) func configureStockColors (
-        colors : [AssetTypes.Color],
+        colors : [AssetTypes.CardStock],
     ) : async () {
         _captureMetrics();
         _Assets.configureStockColors(caller, colors);

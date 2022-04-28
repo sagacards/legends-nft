@@ -3,7 +3,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { LegendManifest } from './actors/declarations/legends.did.d';
 import { isJSON } from './util';
 
-const canister = '2-the-high-priestess';
+const canister = '3-the-empress';
 const network = 'ic';
 const protocol = 'https';
 const host = 'raw.ic0.app';
@@ -12,7 +12,7 @@ async function canisterId() {
     if (network === 'ic') {
         return (await import('../canister_ids.json'))[canister].ic;
     } else {
-        return (await import('../.dfx/local/canister_ids.json'))[canister].local;
+        // return (await import('../.dfx/local/canister_ids.json'))[canister].local;
     };
 };
 
@@ -63,8 +63,9 @@ describe(`${canister}`, () => {
         const requests = Array(supply).fill(null).map((x, i) => {
             return fetch(`${root}/${i}.webp`)
                 .then(r => {
+                    const filename = r.headers.get('legends-filename');
                     const size = Number(r.headers.get('Content-Length'));
-                    if (size < 5_000) console.error(`Invalid static image on token #${i}`);
+                    if (size < 5_000) console.error(`Invalid static image on token #${i}: ${filename}`);
                     expect(size).toBeGreaterThan(5_000);
                     expect(r.status).toBe(200);
                     return r.text()
@@ -79,8 +80,9 @@ describe(`${canister}`, () => {
         const requests = Array(supply).fill(null).map((x, i) => {
             return fetch(`${root}/${i}.webm`)
                 .then(r => {
+                    const filename = r.headers.get('legends-filename');
                     const size = Number(r.headers.get('Content-Length'));
-                    if (size < 5_000) console.error(`Invalid animated image on token #${i}`);
+                    if (size < 5_000) console.error(`Invalid animated image on token #${i}: ${filename}`);
                     expect(size).toBeGreaterThan(5_000);
                     expect(r.status).toBe(200);
                     return r.text()
