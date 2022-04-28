@@ -4,8 +4,9 @@ art/4-the-emperor/client/dist/index.html,Animated Preview App,preview-app,A java
 
 art/common/normal-leaf.webp,Normal Map,normal leaf,A noise based normal map for a gold foil like texture,image/webp
 
-art/common/icon.webp,Favicon,favicon,A favicon,image/png
-art/common/logo.webp,Favicon,favicon,A favicon,image/png
+art/common/icon.webp,Favicon,favicon,A favicon,image/webp
+art/common/logo.webp,Favicon,favicon,A favicon,image/webp
+art/common/blank.png,Blank,blank,Blank mystery card,image/png
 
 art/common/back-fate.webp,Fate Card Back,back fate,An alpha map for the Fate card back,image/webp
 art/common/back-saxon.webp,Saxon Card Back,back saxon,An alpha map for the Saxon card back,image/webp
