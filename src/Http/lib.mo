@@ -90,7 +90,7 @@ module {
             };
             switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
-                case _ ?http404(?"Token not yet minted.");
+                case _ ?renderAssetWithTags(["blank"]);
             };
         };
 
