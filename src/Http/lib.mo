@@ -85,7 +85,7 @@ module {
         private func mintedOr404 (
             index : Nat
         ) : ?Types.Response {
-            if (not state._Tokens.isShuffled) {
+            if (not state._Tokens._isShuffled()) {
                 return null;
             };
             switch (state._Tokens._getOwner(index)) {
@@ -641,6 +641,10 @@ module {
         ) : Types.Response {
             switch (natFromText(tokens[0])) {
                 case (?index) {
+                    switch (mintedOr404(index)) {
+                        case (?err) return err;
+                        case _ ();
+                    };
                     let legend = state._Tokens._getMetadata(index);
                     if (tokens.size() == 1) {
                         return renderLegendPreview(index)
