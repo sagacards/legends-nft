@@ -36,7 +36,7 @@ module {
         var ledger      : [var ?Types.Token]    = Array.init(Nat16.toNat(state.supply), null);
         var metadata    : [Types.Metadata]      = [];
 
-        var isShuffled = state.isShuffled;
+        public var isShuffled = state.isShuffled;
 
         // Dump all local state from this module for stableness purposes.
         public func toStable () : Types.LocalStableState {
