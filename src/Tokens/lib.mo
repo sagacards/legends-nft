@@ -36,7 +36,7 @@ module {
         var ledger      : [var ?Types.Token]    = Array.init(Nat16.toNat(state.supply), null);
         var metadata    : [Types.Metadata]      = [];
 
-        public var isShuffled = state.isShuffled;
+        var isShuffled = state.isShuffled;
 
         // Dump all local state from this module for stableness purposes.
         public func toStable () : Types.LocalStableState {
@@ -145,6 +145,10 @@ module {
                     #ok();
                 };
             }
+        };
+
+        public func _isShuffled () : Bool {
+            isShuffled;
         };
 
         // NOTE: I lifted all of this randomness code from Moritz in the BTC Flower project
