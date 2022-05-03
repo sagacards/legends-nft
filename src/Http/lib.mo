@@ -123,7 +123,7 @@ module {
         ) : Types.Response {
             switch (state._Assets._findTags(tags)) {
                 case (?asset) renderAsset(asset);
-                case null http404(?"Missing preview asset.");
+                case null http404(?("Missing preview asset: " # Array.foldLeft<Text, Text>(tags, "", func (a, b) { a # b # ", " })));
             };
         };
 
