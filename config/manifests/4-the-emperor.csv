@@ -1,6 +1,6 @@
 path,title,tags,description,mime
 
-client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
+art/4-the-emperor/client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
 
 art/common/normal-leaf.webp,Normal Map,normal leaf,A noise based normal map for a gold foil like texture,image/webp
 
@@ -63,3 +63,116 @@ art/4-the-emperor/emperor-layer-c.webp,A layer,layer,A layer in the magician par
 
 art/4-the-emperor/emperor-flat.webp,Flat,flat,A flat version of the card face,image/webp
 
+art/4-the-emperor/preview-animated-oath-rings-haus-2-ferrous-brilliant-black-none.webm,Animated Preview,preview animated back-oath-rings border-haus-2 ink-ferrous-brilliant stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-moon-silver-black-birka.webm,Animated Preview,preview animated back-saxon border-moon ink-silver stock-black mask-birka,An animated preview,video/webm
+art/4-the-emperor/preview-animated-fate-sun-copper-black-none.webm,Animated Preview,preview animated back-fate border-sun ink-copper stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-oath-rings-sun-santo-brilliant-black-line.webm,Animated Preview,preview animated back-oath-rings border-sun ink-santo-brilliant stock-black mask-line,An animated preview,video/webm
+art/4-the-emperor/preview-animated-swords-round-santo-brilliant-emperor-none.webm,Animated Preview,preview animated back-swords border-round ink-santo-brilliant stock-emperor mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cups-line-ferrous-black-line.webm,Animated Preview,preview animated back-cups border-line ink-ferrous stock-black mask-line,An animated preview,video/webm
+art/4-the-emperor/preview-animated-raven-solid-odal-sanguine-black-none.webm,Animated Preview,preview animated back-raven-solid border-odal ink-sanguine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-greek-copper-emperor-none.webm,Animated Preview,preview animated back-worn-saxon border-greek ink-copper stock-emperor mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-naked-ferrous-black-none.webm,Animated Preview,preview animated back-compass border-naked ink-ferrous stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-wider-worn-saxon-santo-black-none.webm,Animated Preview,preview animated back-cup-wider border-worn-saxon ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-solar-cross-octarine-emperor-none.webm,Animated Preview,preview animated back-saxon border-solar-cross ink-octarine stock-emperor mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-raven-solid-haus-1-octarine-black-none.webm,Animated Preview,preview animated back-raven-solid border-haus-1 ink-octarine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-wyrd-solar-cross-energetic-bright-black-none.webm,Animated Preview,preview animated back-wyrd border-solar-cross ink-energetic-bright stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-bare-octarine-black-none.webm,Animated Preview,preview animated back-compass border-bare ink-octarine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-birka-inverted-ferrous-black-none.webm,Animated Preview,preview animated back-compass border-birka-inverted ink-ferrous stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-line-santo-bright-black-none.webm,Animated Preview,preview animated back-compass border-line ink-santo-bright stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cups-staggered-octarine-black-none.webm,Animated Preview,preview animated back-cups border-staggered ink-octarine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-solar-cross-ferrous-black-none.webm,Animated Preview,preview animated back-worn-saxon border-solar-cross ink-ferrous stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-extra-birka-ward-black-birka.webm,Animated Preview,preview animated back-cup-extra border-birka ink-ward stock-black mask-birka,An animated preview,video/webm
+art/4-the-emperor/preview-animated-oath-rings-inverted-moon-santo-brilliant-black-none.webm,Animated Preview,preview animated back-oath-rings-inverted border-moon ink-santo-brilliant stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-inverted-sun-energetic-bright-black-none.webm,Animated Preview,preview animated back-cup-inverted border-sun ink-energetic-bright stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-helmet-birka-copper-black-birka.webm,Animated Preview,preview animated back-helmet border-birka ink-copper stock-black mask-birka,An animated preview,video/webm
+art/4-the-emperor/preview-animated-odal-rune-odal-santo-black-none.webm,Animated Preview,preview animated back-odal-rune border-odal ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-staggered-emperor-emperor-line.webm,Animated Preview,preview animated back-compass border-staggered ink-emperor stock-emperor mask-line,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cinematic-valknut-sanguine-black-none.webm,Animated Preview,preview animated back-cinematic border-valknut ink-sanguine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-extra-saxon-worn-energetic-bright-black-none.webm,Animated Preview,preview animated back-cup-extra border-saxon-worn ink-energetic-bright stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-saxon-worn-santo-black-none.webm,Animated Preview,preview animated back-worn-saxon border-saxon-worn ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cinematic-valknut-ferrous-black-birka.webm,Animated Preview,preview animated back-cinematic border-valknut ink-ferrous stock-black mask-birka,An animated preview,video/webm
+art/4-the-emperor/preview-animated-compass-thin-energetic-white-none.webm,Animated Preview,preview animated back-compass border-thin ink-energetic stock-white mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-wider-haus-1-santo-black-none.webm,Animated Preview,preview animated back-cup-wider border-haus-1 ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cinematic-greek-ferrous-brilliant-black-none.webm,Animated Preview,preview animated back-cinematic border-greek ink-ferrous-brilliant stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-wider-midgard-serpent-copper-black-none.webm,Animated Preview,preview animated back-cup-wider border-midgard-serpent ink-copper stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-saxon-worn-copper-white-none.webm,Animated Preview,preview animated back-worn-saxon border-saxon-worn ink-copper stock-white mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-bordered-haus-2-gold-black-none.webm,Animated Preview,preview animated back-saxon-bordered border-haus-2 ink-gold stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-worn-saxon-emperor-black-none.webm,Animated Preview,preview animated back-saxon border-worn-saxon ink-emperor stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-wyrd-odal-sanguine-emperor-none.webm,Animated Preview,preview animated back-wyrd border-odal ink-sanguine stock-emperor mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cinematic-odal-garnet-black-none.webm,Animated Preview,preview animated back-cinematic border-odal ink-garnet stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-bordered-solar-cross-silver-black-none.webm,Animated Preview,preview animated back-saxon-bordered border-solar-cross ink-silver stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-knotwork-ravens-haus-3-energetic-black-none.webm,Animated Preview,preview animated back-knotwork-ravens border-haus-3 ink-energetic stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-extra-round-dawn-black-none.webm,Animated Preview,preview animated back-cup-extra border-round ink-dawn stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-helmet-sun-garnet-emperor-none.webm,Animated Preview,preview animated back-helmet border-sun ink-garnet stock-emperor mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-wider-worn-saxon-energetic-white-none.webm,Animated Preview,preview animated back-cup-wider border-worn-saxon ink-energetic stock-white mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-worn-saxon-ferrous-black-none.webm,Animated Preview,preview animated back-saxon border-worn-saxon ink-ferrous stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-knotwork-moon-odal-gold-black-none.webm,Animated Preview,preview animated back-knotwork-moon border-odal ink-gold stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cup-wider-solar-cross-octarine-black-none.webm,Animated Preview,preview animated back-cup-wider border-solar-cross ink-octarine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-wyrd-moon-ferrous-black-none.webm,Animated Preview,preview animated back-wyrd border-moon ink-ferrous stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-birka-inverted-santo-white-none.webm,Animated Preview,preview animated back-worn-saxon border-birka-inverted ink-santo stock-white mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cups-thin-macbeth-emperor-line.webm,Animated Preview,preview animated back-cups border-thin ink-macbeth stock-emperor mask-line,An animated preview,video/webm
+art/4-the-emperor/preview-animated-knotwork-ravens-haus-1-copper-black-none.webm,Animated Preview,preview animated back-knotwork-ravens border-haus-1 ink-copper stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-knotwork-moon-sun-santo-black-none.webm,Animated Preview,preview animated back-knotwork-moon border-sun ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-cinematic-saxon-sanguine-black-none.webm,Animated Preview,preview animated back-cinematic border-saxon ink-sanguine stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-worn-saxon-haus-3-garnet-emperor-haus.webm,Animated Preview,preview animated back-worn-saxon border-haus-3 ink-garnet stock-emperor mask-haus,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-haus-1-lavender-white-none.webm,Animated Preview,preview animated back-saxon border-haus-1 ink-lavender stock-white mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-saxon-bordered-greek-lavender-bright-black-none.webm,Animated Preview,preview animated back-saxon-bordered border-greek ink-lavender-bright stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-knotwork-ravens-haus-1-santo-black-none.webm,Animated Preview,preview animated back-knotwork-ravens border-haus-1 ink-santo stock-black mask-none,An animated preview,video/webm
+art/4-the-emperor/preview-animated-swords-wyrd-sultan-black-none.webm,Animated Preview,preview animated back-swords border-wyrd ink-sultan stock-black mask-none,An animated preview,video/webm
+
+art/4-the-emperor/preview-side-by-side-oath-rings-haus-2-ferrous-brilliant-black-none.webp,Side By Side Preview,preview side-by-side back-oath-rings border-haus-2 ink-ferrous-brilliant stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-moon-silver-black-birka.webp,Side By Side Preview,preview side-by-side back-saxon border-moon ink-silver stock-black mask-birka,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-fate-sun-copper-black-none.webp,Side By Side Preview,preview side-by-side back-fate border-sun ink-copper stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-oath-rings-sun-santo-brilliant-black-line.webp,Side By Side Preview,preview side-by-side back-oath-rings border-sun ink-santo-brilliant stock-black mask-line,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-swords-round-santo-brilliant-emperor-none.webp,Side By Side Preview,preview side-by-side back-swords border-round ink-santo-brilliant stock-emperor mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cups-line-ferrous-black-line.webp,Side By Side Preview,preview side-by-side back-cups border-line ink-ferrous stock-black mask-line,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-raven-solid-odal-sanguine-black-none.webp,Side By Side Preview,preview side-by-side back-raven-solid border-odal ink-sanguine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-greek-copper-emperor-none.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-greek ink-copper stock-emperor mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-naked-ferrous-black-none.webp,Side By Side Preview,preview side-by-side back-compass border-naked ink-ferrous stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-wider-worn-saxon-santo-black-none.webp,Side By Side Preview,preview side-by-side back-cup-wider border-worn-saxon ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-solar-cross-octarine-emperor-none.webp,Side By Side Preview,preview side-by-side back-saxon border-solar-cross ink-octarine stock-emperor mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-raven-solid-haus-1-octarine-black-none.webp,Side By Side Preview,preview side-by-side back-raven-solid border-haus-1 ink-octarine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-wyrd-solar-cross-energetic-bright-black-none.webp,Side By Side Preview,preview side-by-side back-wyrd border-solar-cross ink-energetic-bright stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-bare-octarine-black-none.webp,Side By Side Preview,preview side-by-side back-compass border-bare ink-octarine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-birka-inverted-ferrous-black-none.webp,Side By Side Preview,preview side-by-side back-compass border-birka-inverted ink-ferrous stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-line-santo-bright-black-none.webp,Side By Side Preview,preview side-by-side back-compass border-line ink-santo-bright stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cups-staggered-octarine-black-none.webp,Side By Side Preview,preview side-by-side back-cups border-staggered ink-octarine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-solar-cross-ferrous-black-none.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-solar-cross ink-ferrous stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-extra-birka-ward-black-birka.webp,Side By Side Preview,preview side-by-side back-cup-extra border-birka ink-ward stock-black mask-birka,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-oath-rings-inverted-moon-santo-brilliant-black-none.webp,Side By Side Preview,preview side-by-side back-oath-rings-inverted border-moon ink-santo-brilliant stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-inverted-sun-energetic-bright-black-none.webp,Side By Side Preview,preview side-by-side back-cup-inverted border-sun ink-energetic-bright stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-helmet-birka-copper-black-birka.webp,Side By Side Preview,preview side-by-side back-helmet border-birka ink-copper stock-black mask-birka,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-odal-rune-odal-santo-black-none.webp,Side By Side Preview,preview side-by-side back-odal-rune border-odal ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-staggered-emperor-emperor-line.webp,Side By Side Preview,preview side-by-side back-compass border-staggered ink-emperor stock-emperor mask-line,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cinematic-valknut-sanguine-black-none.webp,Side By Side Preview,preview side-by-side back-cinematic border-valknut ink-sanguine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-extra-saxon-worn-energetic-bright-black-none.webp,Side By Side Preview,preview side-by-side back-cup-extra border-saxon-worn ink-energetic-bright stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-saxon-worn-santo-black-none.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-saxon-worn ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cinematic-valknut-ferrous-black-birka.webp,Side By Side Preview,preview side-by-side back-cinematic border-valknut ink-ferrous stock-black mask-birka,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-compass-thin-energetic-white-none.webp,Side By Side Preview,preview side-by-side back-compass border-thin ink-energetic stock-white mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-wider-haus-1-santo-black-none.webp,Side By Side Preview,preview side-by-side back-cup-wider border-haus-1 ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cinematic-greek-ferrous-brilliant-black-none.webp,Side By Side Preview,preview side-by-side back-cinematic border-greek ink-ferrous-brilliant stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-wider-midgard-serpent-copper-black-none.webp,Side By Side Preview,preview side-by-side back-cup-wider border-midgard-serpent ink-copper stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-saxon-worn-copper-white-none.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-saxon-worn ink-copper stock-white mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-bordered-haus-2-gold-black-none.webp,Side By Side Preview,preview side-by-side back-saxon-bordered border-haus-2 ink-gold stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-worn-saxon-emperor-black-none.webp,Side By Side Preview,preview side-by-side back-saxon border-worn-saxon ink-emperor stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-wyrd-odal-sanguine-emperor-none.webp,Side By Side Preview,preview side-by-side back-wyrd border-odal ink-sanguine stock-emperor mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cinematic-odal-garnet-black-none.webp,Side By Side Preview,preview side-by-side back-cinematic border-odal ink-garnet stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-bordered-solar-cross-silver-black-none.webp,Side By Side Preview,preview side-by-side back-saxon-bordered border-solar-cross ink-silver stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-knotwork-ravens-haus-3-energetic-black-none.webp,Side By Side Preview,preview side-by-side back-knotwork-ravens border-haus-3 ink-energetic stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-extra-round-dawn-black-none.webp,Side By Side Preview,preview side-by-side back-cup-extra border-round ink-dawn stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-helmet-sun-garnet-emperor-none.webp,Side By Side Preview,preview side-by-side back-helmet border-sun ink-garnet stock-emperor mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-wider-worn-saxon-energetic-white-none.webp,Side By Side Preview,preview side-by-side back-cup-wider border-worn-saxon ink-energetic stock-white mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-worn-saxon-ferrous-black-none.webp,Side By Side Preview,preview side-by-side back-saxon border-worn-saxon ink-ferrous stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-knotwork-moon-odal-gold-black-none.webp,Side By Side Preview,preview side-by-side back-knotwork-moon border-odal ink-gold stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cup-wider-solar-cross-octarine-black-none.webp,Side By Side Preview,preview side-by-side back-cup-wider border-solar-cross ink-octarine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-wyrd-moon-ferrous-black-none.webp,Side By Side Preview,preview side-by-side back-wyrd border-moon ink-ferrous stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-birka-inverted-santo-white-none.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-birka-inverted ink-santo stock-white mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cups-thin-macbeth-emperor-line.webp,Side By Side Preview,preview side-by-side back-cups border-thin ink-macbeth stock-emperor mask-line,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-knotwork-ravens-haus-1-copper-black-none.webp,Side By Side Preview,preview side-by-side back-knotwork-ravens border-haus-1 ink-copper stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-knotwork-moon-sun-santo-black-none.webp,Side By Side Preview,preview side-by-side back-knotwork-moon border-sun ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-cinematic-saxon-sanguine-black-none.webp,Side By Side Preview,preview side-by-side back-cinematic border-saxon ink-sanguine stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-worn-saxon-haus-3-garnet-emperor-haus.webp,Side By Side Preview,preview side-by-side back-worn-saxon border-haus-3 ink-garnet stock-emperor mask-haus,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-haus-1-lavender-white-none.webp,Side By Side Preview,preview side-by-side back-saxon border-haus-1 ink-lavender stock-white mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-saxon-bordered-greek-lavender-bright-black-none.webp,Side By Side Preview,preview side-by-side back-saxon-bordered border-greek ink-lavender-bright stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-knotwork-ravens-haus-1-santo-black-none.webp,Side By Side Preview,preview side-by-side back-knotwork-ravens border-haus-1 ink-santo stock-black mask-none,A side-by-side preview,image/webp
+art/4-the-emperor/preview-side-by-side-swords-wyrd-sultan-black-none.webp,Side By Side Preview,preview side-by-side back-swords border-wyrd ink-sultan stock-black mask-none,A side-by-side preview,image/webp
