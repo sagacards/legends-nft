@@ -3,7 +3,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { LegendManifest } from './actors/declarations/legends.did.d';
 import { isJSON } from './util';
 
-const canister = '3-the-empress';
+const canister = '4-the-emperor';
 const network = 'ic';
 const protocol = 'https';
 const host = 'raw.ic0.app';
@@ -37,6 +37,7 @@ describe(`${canister}`, () => {
                 })
                 .then(r => {
                     const isJson = isJSON(r);
+                    if (!isJson) console.error(`Token #${i}`);
                     return expect(isJson).toBe(true);
                 })
         });
