@@ -1,6 +1,6 @@
 path,title,tags,description,mime
 
-art/4-the-emperor/client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
+client/dist/index.html,Animated Preview App,preview-app,A javascript/html client for previewing legends,text/html; charset=utf-8
 
 art/common/normal-leaf.webp,Normal Map,normal leaf,A noise based normal map for a gold foil like texture,image/webp
 
