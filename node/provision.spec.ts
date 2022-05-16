@@ -3,7 +3,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { LegendManifest } from './actors/declarations/legends.did.d';
 import { isJSON } from './util';
 
-const canister = '4-the-emperor';
+const canister = '5-the-hierophant';
 const network = 'ic';
 const protocol = 'https';
 const host = 'raw.ic0.app';
