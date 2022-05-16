@@ -571,7 +571,7 @@ module {
                 return renderAssetWithTags([
                     "preview", "animated", "back-" # legend.back,
                     "border-" # legend.border, "ink-" # legend.ink,
-                    "mask-" # legend.mask, "stock-" # legend.stock
+                    legend.mask, "stock-" # legend.stock
                 ]);
             };
             if (not Text.contains(request.url, #text("type=thumbnail"))) {
@@ -580,7 +580,7 @@ module {
             renderAssetWithTags([
                 "preview", "side-by-side", "back-" # legend.back,
                 "border-" # legend.border, "ink-" # legend.ink,
-                "mask-" # legend.mask, "stock-" # legend.stock
+                legend.mask, "stock-" # legend.stock
             ]);
         };
 
@@ -595,7 +595,7 @@ module {
                     renderAssetWithTags([
                         "preview", "side-by-side", "back-" # legend.back,
                         "border-" # legend.border, "ink-" # legend.ink,
-                        "mask-" # legend.mask, "stock-" # legend.stock
+                        legend.mask, "stock-" # legend.stock
                     ]);
                 };
                 case _ http404(?"No token at that index.");
