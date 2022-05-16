@@ -16,6 +16,38 @@
       "main": "src/main.mo",
       "type": "motoko"
     },
+    "2-the-high-priestess": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "3-the-empress": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "4-the-emperor": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "5-the-hierophant": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "6-the-lovers": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "7-the-chariot": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "8-strength": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
+    "9-the-hermit": {
+      "main": "src/main.mo",
+      "type": "motoko"
+    },
     "10-wheel-of-fortune": {
       "main": "src/main.mo",
       "type": "motoko"
@@ -56,43 +88,11 @@
       "main": "src/main.mo",
       "type": "motoko"
     },
-    "2-the-high-priestess": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
     "20-judgement": {
       "main": "src/main.mo",
       "type": "motoko"
     },
     "21-the-world": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "3-the-empress": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "4-the-emperor": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "5-the-hierophant": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "6-the-lovers": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "7-the-chariot": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "8-strength": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    },
-    "9-the-hermit": {
       "main": "src/main.mo",
       "type": "motoko"
     }
@@ -102,7 +102,7 @@
       "packtool": "vessel sources"
     }
   },
-  "dfx": "0.9.3",
+  "dfx": "0.10.0",
   "networks": {
     "local": {
       "bind": "127.0.0.1:8000",
