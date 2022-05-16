@@ -110,6 +110,7 @@ module {
                     ("Content-Type", asset.asset.contentType),
                     ("Access-Control-Allow-Origin", "*"),
                     ("legends-filename", asset.meta.filename),
+                    ("Cache-Control", "max-age=31536000"), // Cache one year
                 ];
                 status_code = 200;
                 streaming_strategy = null;
