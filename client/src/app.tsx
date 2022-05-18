@@ -562,14 +562,14 @@ function LegendCard({ rotation, ...props }: GroupProps) {
                         specular={colorSpecular}
                         normal={normal}
                     />
-                    {mask && <CardInk
+                    {mask && <group position={[0, 0, -0.001]}><CardInk
                         alpha={mask}
                         side={THREE.FrontSide}
                         color={stockBase}
                         specular={undefined}
                         emissive={undefined}
                         normal={undefined}
-                    />}
+                    /></group>}
                     <CardInk
                         side={THREE.BackSide}
                         alpha={back}

@@ -87,7 +87,7 @@ module {
         ) : ?Types.Response {
             switch (state._Tokens._getOwner(index)) {
                 case (?_) null;
-                // case _ ?http404(?"Token not yet minted.");
+                case _ ?renderAssetWithTags(["blank"]);
                 case _ null;
             };
         };
@@ -637,6 +637,10 @@ module {
         ) : Types.Response {
             switch (natFromText(tokens[0])) {
                 case (?index) {
+                    switch (mintedOr404(index)) {
+                        case (?err) return err;
+                        case _ ();
+                    };
                     let legend = state._Tokens._getMetadata(index);
                     if (tokens.size() == 1) {
                         return renderLegendPreview(index)

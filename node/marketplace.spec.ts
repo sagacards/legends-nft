@@ -11,6 +11,8 @@ const price = 40_000;
 
 const users = Array(userCount).fill(null).map(randomUser);
 
+jest.setTimeout(300_000);
+
 describe('marketplace protocol', () => {
 
     it('works', async () => {
