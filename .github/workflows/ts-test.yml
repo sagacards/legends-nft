@@ -10,4 +10,4 @@ jobs:
         with:
           node-version: 17
       - run: npm i
-      - run: npm t
+      # - run: npm t
