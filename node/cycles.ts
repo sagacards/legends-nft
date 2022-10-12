@@ -9,6 +9,7 @@ import { xtc } from "./actors/xtc";
 import { balance } from "./actors/ledger";
 import { principalToAddress } from "ictool";
 import { wicp } from "./actors/wicp";
+import { capRoot, capRouter } from "./actors/cap";
 
 /**
  * Retrieve local canister_ids.json file contents.
@@ -48,6 +49,37 @@ export function parseCanisterIds(json: string): { [key: string]: string } {
             [key]: val.ic,
         };
     }, {});
+}
+
+/**
+ * Retrieve CAP root buckets for a set of canisters.
+ * @param canisters
+ * @returns
+ */
+export function capCanisters(canisters: { [key: string]: string }) {
+    return Promise.all(
+        Object.values(canisters).map(
+            async (canister) =>
+                await capRouter
+                    .get_token_contract_root_bucket({
+                        canister: Principal.fromText(canister),
+                        witness: true,
+                    })
+                    .then((r) => [canister, r.canister?.[0]?.toText()])
+        )
+    );
+}
+
+export async function capBalances(
+    canisters: string[]
+): Promise<[string, number][]> {
+    return Promise.all(
+        canisters.map(async (canister) => {
+            if (!canister) throw new Error("CAP canister not found");
+            const root = capRoot(canister);
+            return [canister, Number(await root.balance())];
+        })
+    );
 }
 
 /**

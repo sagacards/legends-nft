@@ -1,5 +1,7 @@
 import {
     canisterBalances,
+    capBalances,
+    capCanisters,
     executePlan,
     initCanisterActors,
     isPlanFundable,
@@ -17,8 +19,16 @@ async function run() {
     const actors = initCanisterActors(canisters);
     const balances = await canisterBalances(actors);
     console.log(balances);
+    const capCans = await capCanisters(canisters);
+    const _capBalances = await capBalances(capCans.map((c) => c[1] as string));
+    console.log(_capBalances.map(([k, v]) => [k, v / 10 ** 12]));
     const plan: { [key: string]: number } = Object.fromEntries(
-        topUpPlan(balances).map(Object.values)
+        topUpPlan({
+            ...balances,
+            ...Object.fromEntries(
+                _capBalances.map(([k, v]) => [k, v / 10 ** 12])
+            ),
+        }).map(Object.values)
     );
     console.log(plan);
     const balanceXtc = await managementAccountBalanceXtc();

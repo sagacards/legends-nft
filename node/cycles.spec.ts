@@ -1,5 +1,6 @@
 import {
     canisterBalances,
+    capCanisters,
     cyclesFromExtHttp,
     initCanisterActors,
     isPlanFundable,
@@ -59,6 +60,13 @@ describe("local canister discovery", () => {
             expect(key).toBeDefined();
             expect(value).toBeDefined();
         }
+    });
+    it("discovers CAP canisters for local NFT canisters", async () => {
+        const canisters = parseCanisterIds(localCanisterIds());
+        delete canisters.charlie;
+        delete canisters.foxtrot;
+        const cap = await capCanisters(canisters);
+        console.log(cap);
     });
 });
 
