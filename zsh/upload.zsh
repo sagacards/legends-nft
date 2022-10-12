@@ -38,10 +38,10 @@ tags=(${(@s/ /)tags})
 dfx canister --network $network call $canister uploadFinalize "(\
     \"\",\
     record {\
-        \"name\" = $name;\
+        \"name\" = \"$name\";\
         \"filename\" = \"$filename\";\
         \"tags\" = vec { $(for tag in $tags; echo "\"$tag\";") };\
-        \"description\" = $description;\
+        \"description\" = \"$description\";\
     }\
 )" >> ./zsh/upload_log.txt
 
