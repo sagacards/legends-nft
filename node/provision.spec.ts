@@ -1,94 +1,102 @@
-import fetch from 'cross-fetch';
-import { PromisePool } from '@supercharge/promise-pool';
-import { LegendManifest } from './actors/declarations/legends.did.d';
-import { isJSON } from './util';
+import fetch from "cross-fetch";
+import { isJSON } from "./util";
 
-const canister = '5-the-hierophant';
-const network = 'ic';
-const protocol = 'https';
-const host = 'raw.ic0.app';
+const canister = "5-the-hierophant";
+const network = "ic";
+const protocol = "https";
+const host = "raw.ic0.app";
 
 async function canisterId() {
-    if (network === 'ic') {
-        return (await import('../canister_ids.json'))[canister].ic;
+    if (network === "ic") {
+        return (await import("../canister_ids.json"))[canister].ic;
     } else {
         // return (await import('../.dfx/local/canister_ids.json'))[canister].local;
-    };
-};
+    }
+}
 
 jest.setTimeout(300_000);
-
 
 // Get supply
 const supply = 110;
 
 describe(`${canister}`, () => {
-
-    it('has valid json for every token', async () => {
+    it("has valid json for every token", async () => {
         const canister = await canisterId();
         const root = `${protocol}://${canister}.${host}`;
-        const requests = Array(supply).fill(null).map((x, i) => {
-            return fetch(`${root}/${i}.json`)
-                .then(async (r) => {
-                    const text = await r.text();
-                    if (r.status !== 200) console.error(`Token #${i} ${text}`);
-                    expect(r.status).toBe(200);
-                    return text;
-                })
-                .then(r => {
-                    const isJson = isJSON(r);
-                    if (!isJson) console.error(`Token #${i}`);
-                    return expect(isJson).toBe(true);
-                })
-        });
+        const requests = Array(supply)
+            .fill(null)
+            .map((x, i) => {
+                return fetch(`${root}/${i}.json`)
+                    .then(async (r) => {
+                        const text = await r.text();
+                        if (r.status !== 200)
+                            console.error(`Token #${i} ${text}`);
+                        expect(r.status).toBe(200);
+                        return text;
+                    })
+                    .then((r) => {
+                        const isJson = isJSON(r);
+                        if (!isJson) console.error(`Token #${i}`);
+                        return expect(isJson).toBe(true);
+                    });
+            });
         await Promise.all(requests);
     });
 
-    it('has a non-zero html app for every token', async () => {
+    it("has a non-zero html app for every token", async () => {
         const canister = await canisterId();
         const root = `${protocol}://${canister}.${host}`;
-        const requests = Array(supply).fill(null).map((x, i) => {
-            return fetch(`${root}/${i}`)
-                .then(r => {
-                    expect(r.headers.get('Content-Type')).toBe('text/html');
+        const requests = Array(supply)
+            .fill(null)
+            .map((x, i) => {
+                return fetch(`${root}/${i}`).then((r) => {
+                    expect(r.headers.get("Content-Type")).toBe("text/html");
                     expect(r.status).toBe(200);
-                    return r.text()
-                })
-        });
+                    return r.text();
+                });
+            });
         await Promise.all(requests);
     });
-    
-    it('has a non-zero static image for every token', async () => {
+
+    it("has a non-zero static image for every token", async () => {
         const canister = await canisterId();
         const root = `${protocol}://${canister}.${host}`;
-        const requests = Array(supply).fill(null).map((x, i) => {
-            return fetch(`${root}/${i}.webp`)
-                .then(r => {
-                    const filename = r.headers.get('legends-filename');
-                    const size = Number(r.headers.get('Content-Length'));
-                    if (size < 5_000) console.error(`Invalid static image on token #${i}: ${filename}`);
+        const requests = Array(supply)
+            .fill(null)
+            .map((x, i) => {
+                return fetch(`${root}/${i}.webp`).then((r) => {
+                    const filename = r.headers.get("legends-filename");
+                    const size = Number(r.headers.get("Content-Length"));
+                    if (size < 5_000)
+                        console.error(
+                            `Invalid static image on token #${i}: ${filename}`
+                        );
                     expect(size).toBeGreaterThan(5_000);
                     expect(r.status).toBe(200);
-                    return r.text()
-                })
-        });
+                    return r.text();
+                });
+            });
         await Promise.all(requests);
     });
-    
-    it('has a non-zero animated image for every token', async () => {
+
+    it("has a non-zero animated image for every token", async () => {
         const canister = await canisterId();
         const root = `${protocol}://${canister}.${host}`;
-        const requests = Array(supply).fill(null).map((x, i) => {
-            return fetch(`${root}/${i}.webm`)
-                .then(r => {
-                    const filename = r.headers.get('legends-filename');
-                    const size = Number(r.headers.get('Content-Length'));
-                    if (size < 5_000) console.error(`Invalid animated image on token #${i}: ${filename}`);
+        const requests = Array(supply)
+            .fill(null)
+            .map((x, i) => {
+                return fetch(`${root}/${i}.webm`).then((r) => {
+                    const filename = r.headers.get("legends-filename");
+                    const size = Number(r.headers.get("Content-Length"));
+                    if (size < 5_000)
+                        console.error(
+                            `Invalid animated image on token #${i}: ${filename}`
+                        );
                     expect(size).toBeGreaterThan(5_000);
                     expect(r.status).toBe(200);
-                    return r.text()
-                })
-        });
+                    return r.text();
+                });
+            });
         await Promise.all(requests);
     });
 
@@ -115,7 +123,7 @@ describe(`${canister}`, () => {
     //     })
     // });
 
-    it('has every asset from the manifest', async () => {
+    it("has every asset from the manifest", async () => {
         // const manifest = await import(`../config/manifests/${canister}.csv`);
         // const c = await canisterId();
         // const root = `${protocol}://${c}.${host}`;

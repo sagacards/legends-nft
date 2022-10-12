@@ -43,7 +43,7 @@ module {
         ) : async Ledger.TransferResult {
             assert(state._Admins._isAdmin(caller));
             let amount = await lp.balance();
-            await lp.transfer(amount, to);
+            await lp.transfer({ e8s = amount.e8s - 10_000 }, to);
         };
 
         public func launchpadTotalAvailable (
