@@ -189,18 +189,18 @@ shared ({ caller = creator }) actor class LegendsNFT(
     //////////////
 
 
-    system func heartbeat() : async () {
-        if (not s_heartbeatOn) return;
+    // system func heartbeat() : async () {
+    //     if (not s_heartbeatOn) return;
 
-        // Limit heartbeats
-        let now = Time.now();
-        if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds * 1_000_000_000) return;
-        s_heartbeatLastBeat := now;
+    //     // Limit heartbeats
+    //     let now = Time.now();
+    //     if (now - s_heartbeatLastBeat < s_heartbeatIntervalSeconds * 1_000_000_000) return;
+    //     s_heartbeatLastBeat := now;
         
-        // Run jobs
-        await _Entrepot.cronDisbursements();
-        await _Entrepot.cronSettlements();
-    };
+    //     // Run jobs
+    //     await _Entrepot.cronDisbursements();
+    //     await _Entrepot.cronSettlements();
+    // };
 
     public shared ({ caller }) func heartbeatSetInterval (
         i : Nat
